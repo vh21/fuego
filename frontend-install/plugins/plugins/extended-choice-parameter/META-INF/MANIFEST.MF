@@ -1,0 +1,17 @@
+Manifest-Version: 1.0
+Archiver-Version: Plexus Archiver
+Created-By: Apache Maven
+Built-By: vimil.varghese
+Build-Jdk: 1.6.0_23
+Extension-Name: extended-choice-parameter
+Implementation-Title: extended-choice-parameter
+Implementation-Version: 0.28
+Group-Id: org.jenkins-ci.plugins
+Short-Name: extended-choice-parameter
+Long-Name: Extended Choice Parameter Plug-In
+Url: http://wiki.jenkins-ci.org/display/JENKINS/Extended+Choice+Parame
+ ter+plugin
+Plugin-Version: 0.28
+Hudson-Version: 1.399
+Plugin-Developers: Vimil Saju:vimil:
+

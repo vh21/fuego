@@ -1,0 +1,58 @@
+\documentclass{article}
+
+\usepackage{cmap,graphicx}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[unicode]{hyperref}
+\usepackage{enumitem}
+\usepackage{framed}
+\usepackage{listings}
+\usepackage{caption}
+ \usepackage{float}
+
+\DeclareCaptionFormat{listing}{\colorbox{gray}{\parbox{\textwidth}{#1#2#3}}}
+\DeclareCaptionFont{white}{\color{AliceBlue}}
+\lstset{captionpos=b,tabsize=3,frame=lines,keywordstyle=\color{blue}, commentstyle=\color{DarkGreen},stringstyle=\color{red}, breaklines=true,showstringspaces=false,basicstyle=\ttfamily,emph={label}}
+
+
+\title{JTA Quickstart guide}
+\author{Cogent Embedded Inc.\\ \texttt{http://cogentembedded.com}}
+
+\begin{document}
+
+\maketitle
+\newpage
+
+\begin{abstract}
+  This document is the complete reference for JTA test system. It contains installation guide, basic usage guide, step-by-step guides for adding test board and integrating a test. In later chapters it is described how test overlays and pdf test report generation work.
+\end{abstract}
+
+\newpage
+\tableofcontents
+\newpage
+\input{intro.tex}
+\newpage
+\input{install.tex}
+\newpage
+\input{board_config.tex}
+\newpage
+\input{running_tests.tex}
+\newpage
+\input{adding_test.tex}
+\newpage
+\input{overlays.tex}
+\newpage
+\input{testplans.tex}
+\newpage
+\input{reports.tex}
+\newpage
+\input{listings.tex}
+
+
+
+\end{document}
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: t
+%%% End: 

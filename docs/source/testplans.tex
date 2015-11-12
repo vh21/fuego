@@ -1,0 +1,101 @@
+\section{Test plans}
+\label{sec:testplans}
+
+Test plans is the core feature of JTA. They provide the very flexibility in configuring tests to be run on different boards and scenarios.
+This section describes how test plans work and their implementation.
+
+\subsection{Spec file format}
+\label{sec:spec_fmt}
+Spec file format uses json syntax. It uses the following format:
+\begin{lstlisting}[label=spec_fmt, caption=Spec file format]
+{
+    "testName": "name of test",
+    "specs": [
+        # spec entries
+        {
+          "name":"spec name",
+          "variable1":"value1",
+          "variable2":"value2",
+          ...
+          "variableN":"valueN",
+        },
+        ...
+    ]
+  \end{lstlisting}
+
+  Each spec file contatins test name and number of spec entries for this test.
+  Each spec entry has a name and a list of variable/value pairs that become \texttt{TESTNAME\_VARIABLE=''VALUE''} in \texttt{prolog.sh} whenever this spec is chosen in \textit{test plan}. \texttt{VALUE} could be bash variable reference as well, since it will be expanded during runtime. For example it could reference block device (e.g. \texttt{\$SATA\_DEV}) from board config file.
+
+\subsection{Test plan file format}
+\label{sec:tp_fmt}
+Test plan file format uses json syntax. It uses the following format:
+\begin{lstlisting}[label=tp_fmt, caption=Test plan file format]
+{
+    "testPlanName": "name of test plan",
+    "tests": [
+        #test spec entries
+        {
+            "testName": "name of test",
+            "spec": "spec name"
+        },
+     ....
+     ]  
+}
+\end{lstlisting}
+
+Each test plan file contains a number of test spec entries, each specyfing which spec should be used with given test. Testplans are usecase oriented, e.g there could be test plan for number of tests to for running on sata device (defined in board file).
+
+Test plan (as for now) does not denote which tests \emph{will} be run, rather it specifies which environment variables should be \emph{generated} in \texttt{prolog.sh}. This is useful in \textit{batch runs} (TODO: reference here) when multiple tests are run with same \texttt{prolog.sh} file.
+
+
+\subsection{The algorithm}
+\label{sec:tp_algo}
+
+These are the steps taken by \texttt{ovgen.py} script with regard to test plan processing:
+\begin{enumerate}
+\item parse  \textit{spec files} in \texttt{overlays/specs} directory;
+\item parse \textit{test plan file} that is specified via \texttt{TEST\_PLAN}  environment variable;
+\item For each test entry \textit{TE} in testplan:  \begin{enumerate}
+  \item Locate the specified test spec \textit{SP} among all test specs;
+  \item Generate all \texttt{VARIABLE=''VALUE''} from \textit{SP} to \texttt{prolog.sh}
+    \end{enumerate}
+  \end{enumerate}
+
+  See [F. \ref{fig:tp_toplevel}.
+  
+  \begin{figure}[p]
+    \centering
+      \includegraphics*[width=16cm]{testplans_toplevel.png}
+  \caption{Testplans top level scheme}
+  \label{fig:tp_toplevel}
+\end{figure}
+
+  \subsection{Test plan / test spec relationship example}
+  \label{sec:tp_example}
+
+  Below is the simple example of test plan generation. See [F. \ref{fig:tp_example}]
+
+  \begin{enumerate}
+  \item User specifies \texttt{testplan\_sata.json} in \texttt{TEST\_PLAN} envirnoment variable  before running test;
+
+  \item ovgen.py script reads all test spec files from
+    \texttt{overlays/specs} as well as specified test plan file;
+
+  \item reads \textit{Benchmark.Bonnie} entry where \textit{sata} spec is specified;
+
+  \item reads \textit{sata} spec from inside  \texttt{Benchmark.bonnie.spec} file;
+
+  \item generates  \texttt{BENCHMARK\_BONNIE\_MOUNT\_BLOCKDEV} and \texttt{BENCHMARK\_BONNIE\_MOUNT\_POINT} variable definitions and writes them to prolog.sh file;
+  \end{enumerate}
+
+  \begin{figure}[H]
+  \includegraphics*[width=16cm]{testplans_example.png}
+  \caption{Simple testplan example}
+  \label{fig:tp_example}
+\end{figure}
+
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "jta-guide"
+%%% End: 

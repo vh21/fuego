@@ -1,0 +1,26 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:p="/lib/hudson/project">
+  <f:optionalBlock name="throttleEnabled"
+                   title="${%Throttle Concurrent Builds}"
+                   inline="true"
+                   checked="${instance.throttleEnabled}">
+    <f:entry title="${%Maximum Total Concurrent Builds}"
+             field="maxConcurrentTotal">
+      <f:textbox />
+    </f:entry>
+    <f:entry title="${%Maximum Concurrent Builds Per Node}"
+             field="maxConcurrentPerNode">
+      <f:textbox />
+    </f:entry>
+    <j:if test="${!empty(descriptor.categories)}">
+      <f:entry title="${%Multi-Project Throttle Category}">
+        <j:forEach var="cat" items="${descriptor.categories}">
+          <f:checkbox name="categories" json="${cat.categoryName}" checked="${instance.categories.contains(cat.categoryName)}" />
+          <label class="attach-previous">${cat.categoryName}</label>
+          <st:nbsp/>
+        </j:forEach>
+      </f:entry>
+    </j:if>
+  </f:optionalBlock>
+</j:jelly>
+    
+      

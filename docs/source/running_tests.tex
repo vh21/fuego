@@ -1,0 +1,62 @@
+\section{Running tests}
+\label{sec:running-tests}
+
+\subsection{Running single tests}
+\label{sec:running-single}
+
+\begin{enumerate}
+\item From the main page open \textit{Functional} or \textit{Benchmarks} tab.
+\item Click on the test name.
+\item Click on \textit{Run test now}.
+\end{enumerate}
+
+Here you can set test run parameters.
+The most relevant are:
+
+\begin{description}
+\item[Device:] Choose a target the test will be run on.
+\item[Reboot:] If checked target device will be rebooted before running test.
+\item[Rebuild:] Rebuild\footnote{Some tests require rebuilding if their parameters were changed.} the test.
+\item[TESTPLAN:] (optional) Derive test parameters from test specifications from chose testplan. For testplans see [\ref{sec:testplans}]
+\end{description}
+
+Press \textit{Run test} button. The test is scheduled for running. If no tests are executed on target it will be run immediately. It will appear in the left frame name \textit{Test run history}. There you can see all this specific test results (including currenlty running one). They can be of a few types:
+\begin{description}
+\item[Solid green circle:] The test has been successefully run.
+\item [Solid red circle:] The test has failed.
+\item [Flashing circle:] The test is currently running.
+\end{description}
+
+If you point mouse over the date of test run the pop-up menu appears from where you can go to \textit{Console output}. There you can view the complete log of test run.
+
+\subsection{Running a group of tests}
+\label{sec:running-batch}
+
+\begin{enumerate}
+\item From the main page open \textit{Batch runs}.
+\item Click on \textit{Run SELECTED tests on SELECTED targets}.
+\item Click on \textit{Run test now}.
+\item Choose a target\footnote{Reports generation is implemented only for the first target selected and only for Run SELECTED tests on SELECTED batch run}
+\item Mark tests/benchmarks you would like to run.
+\item Enter test plan to \texttt{TESTPLAN} variable. Test plan is mandatory for batch runs.
+\item Click on \textit{Run test} button.
+\end{enumerate}
+
+The batch test run is scheduled for running on target. On the test page there is a list of running tests (their statuses are the same as in [\ref{sec:running-single}]).
+
+When batch run is finished you can view generated PDF report.
+
+\subsection{Viewing PDF reports}
+\label{sec:view-pdf}
+\begin{enumerate}
+ \item From the batch test run page click on \textit{Workspace link}
+\item Click on
+  \href{http://localhost:8080/view/batch\%20runs/job/Run\%20SELECTED\%20tests\%20on\%20SELECTED\%20targets/ws/pdf\_reports/}{pdf\_reports} folder.
+\item Click the bottommost pdf file. \\ It has \texttt{<target>.<date>.<testrun>.json.xml.pdf} format.
+
+\end{enumerate}
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "jta-guide"
+%%% End: 

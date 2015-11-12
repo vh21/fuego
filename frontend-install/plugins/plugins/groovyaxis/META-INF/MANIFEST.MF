@@ -1,0 +1,17 @@
+Manifest-Version: 1.0
+Archiver-Version: Plexus Archiver
+Created-By: Apache Maven
+Built-By: emanuelez
+Build-Jdk: 1.6.0_37
+Extension-Name: groovyaxis
+Implementation-Title: groovyaxis
+Implementation-Version: 0.3
+Group-Id: org.jenkins-ci.plugins
+Short-Name: groovyaxis
+Long-Name: groovyaxis
+Url: http://jenkins-ci.org/plugin/groovyaxis/
+Plugin-Version: 0.3
+Hudson-Version: 1.472
+Jenkins-Version: 1.472
+Plugin-Developers: Emanuele Zattin:emanuelez:emanuelez@gmail.com
+

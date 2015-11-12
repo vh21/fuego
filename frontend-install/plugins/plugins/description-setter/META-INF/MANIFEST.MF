@@ -1,0 +1,18 @@
+Manifest-Version: 1.0
+Archiver-Version: Plexus Archiver
+Created-By: Apache Maven
+Built-By: mindless
+Build-Jdk: 1.6.0_24
+Extension-Name: description-setter
+Implementation-Title: description-setter
+Implementation-Version: 1.8
+Group-Id: org.jenkins-ci.plugins
+Short-Name: description-setter
+Long-Name: Jenkins description setter plugin
+Url: http://wiki.jenkins-ci.org/display/JENKINS/Description+Setter+Plu
+ gin
+Plugin-Version: 1.8
+Hudson-Version: 1.398
+Jenkins-Version: 1.398
+Plugin-Developers: Tom Huybrechts:huybrechts:
+

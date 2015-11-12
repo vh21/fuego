@@ -1,0 +1,134 @@
+digraph OVT {
+        compound=true;
+        
+        graph[ordering=in, ranksep=1,rank=same,rankdir="UD"]
+
+              testplan_var [shape=none, label=<
+                            <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+                            <TR> <TD COLSPAN="2"> Environment Variables  </TD> </TR>
+                            <TR> <TD> TEST_PLAN </TD> <TD PORT="tpf"> testplan1.json </TD> </TR>
+                            </TABLE>
+              >
+              ]
+
+
+        	subgraph cluster_tp {
+                        tp1ts1 [shape=none,
+                              label=<
+                              <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+                              <TR><TD PORT="bd">testName</TD><TD PORT="tp1ts1n"> test1 </TD> </TR>
+                              <TR><TD PORT="bd">spec</TD><TD PORT="tp1ts1s"> t1:spec1 </TD> </TR>
+                              </TABLE>>
+                              ]
+
+                              tp1ts2 [shape=none,
+                              label=<
+                              <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+                              <TR><TD PORT="bd">testName</TD><TD PORT="tp1ts2n"> test2 </TD> </TR>
+                              <TR><TD PORT="bd">spec</TD><TD PORT="tp1ts2s"> t2:spec1 </TD> </TR>
+                              </TABLE>>
+                              ]
+
+                              label="test plan1"
+		        color=blue
+	}
+                	subgraph cluster_tp2 {
+                        tp2ts1 [shape=none,
+                              label=<
+                              <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+                              <TR><TD PORT="bd">testName</TD><TD PORT="tp2ts1n"> test1 </TD> </TR>
+                              <TR><TD PORT="bd">spec</TD><TD PORT="tp2ts1s"> t1:spec2 </TD> </TR>
+                              </TABLE>>
+                              ]
+
+                              tp2ts2 [shape=none,
+                              label=<
+                              <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+                              <TR><TD PORT="bd">testName</TD><TD PORT="tp2ts2n"> test2 </TD> </TR>
+                              <TR><TD PORT="bd">spec</TD><TD PORT="tp2ts2n"> t2:spec2 </TD> </TR>
+                              </TABLE>>
+                              ]
+                              label="test plan2"
+
+		        color=blue
+	}
+
+
+              subgraph cluster_sp {
+
+              t1sp2 [shape=none,
+                     label=<
+                     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+                     <TR><TD PORT="bd">spec</TD><TD PORT="t1sp2"> t1:spec2 </TD> </TR>
+                     <TR><TD PORT="bd">variable1</TD><TD> value1 </TD> </TR>
+                     <TR><TD PORT="bd">variableN</TD><TD> valueN </TD> </TR>
+
+                     </TABLE>>
+                     ]
+
+              
+              t1sp1 [shape=none,
+                     label=<
+                     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+                     <TR><TD PORT="bd">spec</TD><TD PORT="t1sp1"> t1:spec1 </TD> </TR>
+                     <TR><TD PORT="bd">variable1</TD><TD> value1 </TD> </TR>
+                     <TR><TD PORT="bd">variableN</TD><TD> valueN </TD> </TR>
+
+                     </TABLE>>
+                     ]
+
+                     label = "test1 specs";
+	             color = red;
+
+              // edge [label="inherit", style="dashed", arrowhead="vee"]
+              // minnow -> baseboard
+              // edge [label="include"]
+              // minnow -> baseparams
+              }
+
+              subgraph cluster_sp2 {
+                     t2sp2 [shape=none,
+                     label=<
+                     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+                     <TR><TD PORT="bd">spec</TD><TD PORT="t2sp2"> t2:spec2 </TD> </TR>
+                     <TR><TD PORT="bd">variable1</TD><TD> value1 </TD> </TR>
+                     <TR><TD PORT="bd">variableN</TD><TD> valueN </TD> </TR>
+
+                     </TABLE>>
+                     ]
+              
+              t2sp1 [shape=none,
+                     label=<
+                     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+                     <TR><TD PORT="bd">spec</TD><TD PORT="t2sp1"> t2:spec1 </TD> </TR>
+                     <TR><TD PORT="bd">variable1</TD><TD> value1 </TD> </TR>
+                     <TR><TD PORT="bd">variableN</TD><TD> valueN </TD> </TR>
+
+                     </TABLE>>
+                     ]
+
+
+                     label = "test2 specs";
+	             color = red;
+
+              }
+
+
+              testplan_var:tpf -> tp1ts1 [ltail="testplan_var", lhead=cluster_tp];
+
+              tp1ts1 -> t1sp1
+              tp1ts2 -> t2sp1
+
+              tp2ts1 -> t1sp2 [style=dashed]
+              tp2ts2 -> t2sp2 [style=dashed]
+
+              t1sp1 -> ovgen
+              t2sp1 -> ovgen
+
+              ovgen -> prolog
+
+              prolog [shape=note, label="shell: prolog.sh"]
+              ovgen [shape=component, label="script: ovgen.py"]
+              
+
+}

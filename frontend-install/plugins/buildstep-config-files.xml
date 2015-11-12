@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<org.jenkinsci.plugins.managedscripts.ScriptBuildStepConfigProvider plugin="managed-scripts@1.1">
+  <configs>
+    <entry>
+      <string>org.jenkinsci.plugins.managedscripts.ScriptConfig1386245625126</string>
+      <org.jenkinsci.plugins.managedscripts.ScriptConfig>
+        <id>org.jenkinsci.plugins.managedscripts.ScriptConfig1386245625126</id>
+        <name>Dhrystone</name>
+        <comment></comment>
+        <content>echo &quot;hello world&quot;</content>
+        <args/>
+      </org.jenkinsci.plugins.managedscripts.ScriptConfig>
+    </entry>
+  </configs>
+</org.jenkinsci.plugins.managedscripts.ScriptBuildStepConfigProvider>

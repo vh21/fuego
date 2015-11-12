@@ -1,0 +1,72 @@
+\section{Installation}
+\label{sec:install}
+
+\subsection{Prerequisites}
+\label{sec:prereq}
+
+\begin{itemize}
+\item Debian \textbf{Wheezy}\footnote{Other Debian releases (Jessie, Sid) should work as well as other distributives, though they are not as thoroughly tested} for \textbf{AMD64} architecture.  \\ It can be fetched from
+  \href{``http://cdimage.debian.org/cdimage/jessie_di_alpha_1/amd64/iso-cd/debian-jessie-DI-a1-amd64-netinst.iso''}{here};
+\item Web browser with \textbf{javascript} and \textbf{CSS} support.
+\end{itemize}
+\subsection{Running install script}
+\label{sec:inst-steps}
+
+\begin{itemize}
+\item Get JTA release via git:
+  \\ 
+  \texttt{git clone https://cogentembedded@bitbucket.org/cogentembedded/jta-public.git}
+\item Run install script under root: \texttt{./debian\_install.sh}\footnote{During the proecess script will call dpkg-reconfigure dash, asking a question about using dash. You must answer ``no'' to the dialogue.}
+
+\end{itemize}
+
+
+When script finishes, JTA web interface will be available on local machine at port \href{http://localhost:8080}{8080}.
+
+\subsection{Installing toolchains and sysroots}
+You need toolchains and sysroots to build tests for different platforms. 
+\label{sec:toolchain-install}
+\subsubsection{Using meta-jta OE layer for generating toolchain}
+We ship toolchains for koelsch and minnow boards that we build from poky from our \href{https://bitbucket.org/cogentembedded/meta-jta/}{custom layer}. If you already use OpenEmbedded from building rootfs for your system yoy can use our layer to generate toolchain and sysroot (using \texttt{bitbake meta-toolchain}) with all libraries and headers needed from building tests. See Poky \href{http://www.yoctoproject.org/docs/1.6/adt-manual/adt-manual.html}{Documentation} for more information.
+
+% \subsubsection{Using custom toolchain}
+
+% \begin{itemize}
+% \item \href{https://launchpad.net/gcc-linaro/+milestone/4.7-2014.01}{Linaro ARM toolchain}
+
+% \item  \href{http://www.mentor.com/embedded-software/sourcery-tools/sourcery-codebench/editions/lite-edition/request?id=478dff82-62bc-44b2-afe2-4684d83b19b9\&downloadlite=scblite2012\&fmpath=/embedded-software/sourcery-tools/sourcery-codebench/editions/lite-edition/form}{Mentor
+%     graphics ARM toolchain}
+
+% \item \href{https://sourcery.mentor.com/GNUToolchain/subscription10027lite=IA32?lite=ia32}{Mentor
+%     Graphics x86 toolchain}
+
+% \item  \href{https://sourcery.mentor.com/GNUToolchain/subscription3130?lite=MIPS}{Mentor Graphics MIPS toolchain}
+% \end{itemize}
+
+Toolchains and sysroots are usually stored in \texttt{JTA\_ENGINE\_PATH/tools} folder.
+
+\subsection{Configuring tools.sh file}
+\texttt{JTA\_ENGINE\_PATH/scripts/tools.sh} file is used to setup paths and compile flags for each platform.
+
+For poky-generated toolchains one should source envirnoment file and set the following variables:
+\begin{itemize}
+\item \texttt{SDKROOT} - path to rootfs
+\item \texttt{PREFIX} - gcc prefix, like \texttt{arm-blabla-linux-gnueabi}
+\item \texttt{HOST} - like \texttt{PREFIX}
+\end{itemize}
+
+Also not code saving original \texttt{\$PATH} to \texttt{\$ORIG\_PATH} since envirnoment script changes it.
+
+See [L. \ref{intel-minnow-tools}] for example.
+
+\subsubsection{Using custom toolchain}
+\label {subsec:custom-toolchain-tools-sh}
+
+For using custom toolchain you \emph{additionally} must define the following variables: \texttt{PATH, PKG\_CONFIG\_SYSROOT\_DIR, PKG\_CONFIG\_PATH, CC, CXX, CPP, AS, LD, RANLIB, AR, NM, CFLAGS, CXXFLAGS, LDFLAGS, CPPFLAGS, ARCH, CROSS\_COMPILE}.
+
+You can use \texttt{environment-setup-core2-32-osv-linux} script as reference.
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "jta-guide"
+%%% End: 

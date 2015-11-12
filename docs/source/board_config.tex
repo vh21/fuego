@@ -1,0 +1,47 @@
+\section{Boards configuration}
+In this document we will use such notions as \textit{targets} and \textit{boards}. Here is what they mean:
+\begin{description}
+\item[Target or Node] is denoted as a front-end Jenkins entity. Jenkins jobs are run on targets.
+\item[Board] is denoted as a back-end entity. Board is defined by it's \texttt{.board} file with necessary variable definitions for running tests.
+\end{description}
+
+Board configuration is done in \texttt{JTA\_ENGINE\_PATH/overlays/boards/<boardname>.board}, where \texttt{<boardname>} is the respective name of the target.
+
+\subsection{Adding a target in frontend}
+\label{sec:target-add}
+The simplest method is to copy from existing one. We provide \textit{template-dev} board for that purpose.
+\begin{enumerate}
+\item Click \href{http://localhost:8080/computer/}{Target status}
+\item Click \href{http://localhost:8080/computer/new}{New node}
+\item Fill in the \textit{Node name} input field.
+\item Choose \textit{Copy Existing Node}. And enter name of source node, namely, \textit{Generic}
+\item You will be forwarded to node configuration page. Locate \textit{Environment variables} section in \textit{Node Properties}. Specify path to board config file [\ref{sec:board_config}] using the variable \textbf{BOARD\_OVERLAY}.
+\end{enumerate}
+
+\subsection{Writing board config overlay}
+\label{sec:board_config}
+Board config file is an overlay (See \ref{subsec:overlay_fmt}) that must inherit \texttt{base-board} and include \texttt{base-params} base classes (in that order).
+
+The following is the step-by-step description of all mandatory environment variables should be set:
+
+\begin{description}
+\item[\texttt{TRANSPORT}:] defines how JTA should communicate with the board. 
+  Currently only \texttt{ssh} is supported;
+\item[\texttt{IPADDR}:]  IP address or host name of board;
+\item[\texttt{LOGIN}:]  user name for ssh login;
+\item[\texttt{PASSWORD}:] password for ssh login;
+\item[\texttt{JTA\_HOME}:] path to the directory on device the tests will run from;
+\item[\texttt{PLATFORM}:] architecture of the board. 
+  Currently \texttt{ia32}, \texttt{arm} and \texttt{mips} are supported. Used by some of tests during compilation.
+\end{description}
+
+The following variables specify devices and mount points that are used by some 
+file system tests: \texttt{SATA\_DEV, SATA\_MP, USB\_DEV, USB\_MP, MMC\_DEV, MMC\_MP}.
+
+
+
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "jta-guide"
+%%% End: 

@@ -1,0 +1,18 @@
+Manifest-Version: 1.0
+Archiver-Version: Plexus Archiver
+Created-By: Apache Maven
+Built-By: Anthony
+Build-Jdk: 1.7.0_04
+Extension-Name: Exclusion
+Implementation-Title: Exclusion
+Implementation-Version: 0.8
+Plugin-Class: org.jvnet.hudson.plugins.exclusion.PluginImpl
+Group-Id: org.jenkins-ci.plugins
+Short-Name: Exclusion
+Long-Name: Jenkins Exclusion Plug-in
+Url: https://wiki.jenkins-ci.org/display/JENKINS/Exclusion-Plugin
+Plugin-Version: 0.8
+Hudson-Version: 1.489
+Jenkins-Version: 1.489
+Plugin-Developers: Anthony Roux:anthonyRoux:m.roux.a@gmail.com
+

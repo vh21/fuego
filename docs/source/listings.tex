@@ -1,0 +1,129 @@
+\section{Listings}
+\label{sec:listings}
+
+\begin{lstlisting}[label=testplan-bc-exp1,caption=\texttt{testplan\_bc\_exp1.json} file]
+{
+    "testPlanName": "testplan_bc",
+    "tests": [
+        {
+            "testName": "Benchmark.bc",
+            "spec": "bc-exp1"
+        }    ]
+}
+\end{lstlisting}
+
+\begin{lstlisting}[label=testplan-bc-exp2,caption=\texttt{testplan\_bc\_exp2.json} file]
+{
+    "testPlanName": "testplan_bc",
+    "tests": [
+        {
+            "testName": "Benchmark.bc",
+            "spec": "bc-exp2"
+        }    ]
+}
+\end{lstlisting}
+
+
+\begin{lstlisting}[label=intel-minnow-tools,caption=\texttt{intel minnow tools} section]
+if [ "${PLATFORM}" = "intel-minnow" ];
+then
+        SDKROOT=$JTA_ENGINE_PATH/tools/intel-minnow/sysroots/core2-32-osv-linux/
+        # environment script changes PATH in the way that python uses libs from sysroot which is not what we want, so save it and use later
+        ORIG_PATH=$PATH
+        PREFIX=i586-osv-linux
+        source $JTA_ENGINE_PATH/tools/intel-minnow/environment-setup-core2-32-osv-linux
+
+        HOST=arm-osv-linux-gnueabi
+        
+        unset PYTHONHOME
+        env -u PYTHONHOME
+\end{lstlisting}
+
+\begin{lstlisting}[label=spec-bc,caption=\texttt{Benchmark.bc.spec} file]
+  {
+    "testName": "Benchmark.bc",
+    "specs": 
+    [
+        {
+            "name":"bc-exp1",
+            "EXPR1":"2*2",
+            "EXPR2":"3*3"
+        },
+        {
+            "name":"bc-exp2",
+            "EXPR":"2+2",
+            "EXPR2":"3+3"
+        }
+    ]
+}
+\end{lstlisting}
+
+\begin{lstlisting}[label=bc-script,caption=\texttt{bc-script.sh} file]
+#!/bin/bash
+
+tarball=bc-script.tar.gz
+
+function test_build {
+    echo "test compiling (should be here)"
+}
+
+function test_deploy {
+	put bc-device.sh  $JTA_HOME/jta.$TESTDIR/
+}
+
+function test_run {
+    assert_define BENCHMARK_BC_EXPR1
+    assert_define BENCHMARK_BC_EXPR2
+    report "cd $JTA_HOME/jta.$TESTDIR; ./bc-device.sh $BENCHMARK_BC_EXPR1 $BENCHMARK_BC_EXPR1"  
+}
+. ../scripts/benchmark.sh
+\end{lstlisting}
+
+
+\begin{lstlisting}[label=bc-device,caption=\texttt{bc-device.sh} file]
+#!/bin/bash
+
+BC_EXPR1=$1
+BC_EXPR2=$1
+
+BC1=`echo $BC_EXPR1 | bc`
+BC2=`echo $BC_EXPR2 | bc`
+echo "$BC1,$BC2"
+\end{lstlisting}
+
+\begin{lstlisting}[label=bc-parser,caption=\texttt{parser.py} file]
+#!/bin/python
+
+import os, re, sys, json
+
+sys.path.insert(0, '/home/jenkins/scripts/parser') 
+import common as plib
+
+cur_dict = {}
+cur_file = open(plib.CUR_LOG,'r')
+print "Reading current values from " + plib.CUR_LOG + "\n"
+
+ref_section_pat = "^\[[\w_ .]+.[gle]{2}\]"
+
+raw_values = cur_file.readlines()
+results = raw_values[-1].rstrip("\n").split(",")
+cur_file.close()
+
+cur_dict["result1"] = results[0]
+cur_dict["result2"] = results[1]
+
+sys.exit(plib.process_data(ref_section_pat, cur_dict, 's', 'value'))
+\end{lstlisting}
+
+\begin{lstlisting}[label=bc-reference,caption=\texttt{reference.log} file]
+[result1|ge]
+0
+[result2|ge]
+0
+\end{lstlisting}
+
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "jta-guide"
+%%% End: 

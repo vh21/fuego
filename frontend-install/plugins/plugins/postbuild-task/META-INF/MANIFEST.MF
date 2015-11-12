@@ -1,0 +1,23 @@
+Manifest-Version: 1.0
+Archiver-Version: Plexus Archiver
+Created-By: Apache Maven
+Built-By: aruna
+Build-Jdk: 1.6.0_22
+Extension-Name: postbuild-task
+Specification-Title: This plugin allows the user to execute a shell/ba
+ tch task depending on the build log output.Java regular expression ar
+ e allowed. If the string matches anywhere in the build log output, th
+ e script will execute.
+Specification-Vendor: Ushus Technologies
+Implementation-Vendor: Ushus Technologies
+Implementation-Title: postbuild-task
+Implementation-Version: 1.8
+Group-Id: org.jvnet.hudson.plugins
+Short-Name: postbuild-task
+Long-Name: Hudson Post build task
+Url: http://wiki.hudson-ci.org/display/HUDSON/Post+build+task
+Plugin-Version: 1.8
+Hudson-Version: 1.357
+Plugin-Developers: Shinod Mohandas:shinodkm:shinodkm@gmail.com,Fred:ca
+ storpilot:castorpilot@gmail.com
+

@@ -1,0 +1,21 @@
+inherit "base-board"
+include "base-params"
+
+IPADDR="192.168.1.152"
+LOGIN="root"
+JTA_HOME="/home/a"
+PASSWORD=""
+PLATFORM="renesas-arm"
+TRANSPORT="ssh"
+ARCHITECTURE="arm"
+
+SATA_DEV="/dev/sda1"
+SATA_MP="/mnt/sata"
+
+USB_DEV="/dev/sdb1"
+USB_MP="/mnt/usb"
+
+MMC_DEV="/dev/mmcblk0p2"
+MMC_MP="/mnt/mmc"
+
+BOARD.CAP_LIST="RENESAS"

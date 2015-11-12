@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Archiver-Version: Plexus Archiver
+Created-By: Apache Maven
+Built-By: jdsiiro
+Build-Jdk: 1.6.0_21
+Extension-Name: page-markup
+Implementation-Title: page-markup
+Implementation-Version: 0.3
+Plugin-Class: hudson.plugins.page_markup.PageMarkupPlugin
+Short-Name: page-markup
+Long-Name: Hudson Page Markup Plug-in
+Url: https://software.sandia.gov/trac/fast/wiki/PageMarkup
+Plugin-Version: 0.3
+Hudson-Version: 1.309
+

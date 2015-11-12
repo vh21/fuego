@@ -1,0 +1,87 @@
+
+	<!--
+		The MIT License Copyright (c) 2010, Dominik Bartholdi Permission is
+		hereby granted, free of charge, to any person obtaining a copy of this
+		software and associated documentation files (the "Software"), to deal
+		in the Software without restriction, including without limitation the
+		rights to use, copy, modify, merge, publish, distribute, sublicense,
+		and/or sell copies of the Software, and to permit persons to whom the
+		Software is furnished to do so, subject to the following conditions:
+
+		The above copyright notice and this permission notice shall be
+		included in all copies or substantial portions of the Software. THE
+		SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+		IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+		MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+		IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+		CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+		TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+		SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+	-->
+
+
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
+	xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+	<l:layout permission="${app.ADMINISTER}" norefresh="true">
+		<st:include page="sidepanel.jelly" />
+		<l:main-panel>
+			<h1>
+				<img width="48" height="48" src="${imagesURL}/48x48/folder.gif" />
+				<img width="16" height="16" src="${imagesURL}/16x16/empty.gif" />
+				<j:out value="${%title}" />
+			</h1>
+
+			<j:out value="${%intro}" />
+			<br />
+            <p />
+            <j:if test="${message != null}">
+            <div class="warning"><j:out value="${message}" /></div>
+            </j:if> 
+            <j:set var="catalogName" value="${request.getParameter('catName') ?: 'gh'}" />			
+			<l:tabBar>
+			     <j:forEach var="c" items="${it.catalogs}">
+                    <l:tab name="${c.displayName}" active="${c.info.name == catalogName}" href="./catalog?catName=${c.info.name}" />
+                 </j:forEach>
+            </l:tabBar>
+			<div class="excerpt">
+				<table class="pane">
+						<j:forEach var="t" items="${it.getCatalogByName(catalogName).entries}">
+							<tr valign="center" style="border-top: 0px;">
+								<td class="pane" width="20">
+									<a href="downloadScript?id=${t.id}&#38;&#38;catalog=${catalogName}">
+										<img width="16" height="16" title="${%import script} '${t.name}'"
+											src="${imagesURL}/16x16/save.gif" />
+									</a>
+								</td>
+								<td class="pane-header">
+									<j:out value="${t.name}" /> <j:if test="${!empty(c.info.scriptDetailUrl)}"> (<a target="_blank" href="${c.info.getReplacedDetailUrl(t.name, t.id)}">details</a>)</j:if>
+								</td>
+								<td class="pane-header">
+									<j:out value="${%by}" />: 
+									<j:forEach var="a" items="${t.authors}">
+									   <j:out value="${a.name} " />
+									</j:forEach>
+								</td>
+							</tr>
+							<tr>
+								<td colspan="2">
+								    <j:out value="${%required core}" />: <j:out value="${t.core}" />
+								</td>
+								<td rowspan="2" valign="top">
+                                    <b><j:out value="${%Parameters}" />:</b><br /> 
+                                    <j:forEach var="p" items="${t.parameters}">
+                                       <j:out value="${p} " /><br />
+                                    </j:forEach>
+                                </td>
+							</tr>
+							<tr>
+								<td colspan="2" style="white-space: normal;">
+									<j:out value="${t.comment}" />
+								</td>
+							</tr>
+						</j:forEach>
+				</table>
+			</div>
+		</l:main-panel>
+	</l:layout>
+</j:jelly>

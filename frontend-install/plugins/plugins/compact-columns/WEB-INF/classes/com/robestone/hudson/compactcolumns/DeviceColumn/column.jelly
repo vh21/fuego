@@ -1,0 +1,13 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler">
+	<td data="${it.getDeviceColumnSortData(job)}">
+        <j:set var="build" value="${it.getLastBuild(job)}"/>
+		<j:choose>
+		<j:when test="${build!=null}">
+            ${build.device}
+		</j:when>
+		<j:otherwise>
+			${%N/A}
+		</j:otherwise>
+		</j:choose>
+	</td>
+</j:jelly>

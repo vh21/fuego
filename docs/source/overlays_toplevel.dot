@@ -1,0 +1,37 @@
+digraph OVT {
+        graph[
+              rank=same
+              ]
+
+        	subgraph cluster_1 {
+                        basedist [shape=folder, label="class: base-distrib.jtaclass"];
+                        nologger [shape=rectangle, label="overlay: nologger.dist"];
+                        edge [label="inherit", style="dashed", arrowhead="vee"]
+                        nologger -> basedist
+		        label = "distribution";
+		        color=blue
+	}
+
+              subgraph cluster_2 {
+              baseboard [shape=folder, label="class: base-board.jtaclass"]
+              baseparams [shape=folder, label="class: base-params.jtaclass"]
+              minnow [shape=rectangle, label="overlay: minnow.board"]
+              label = "board";
+	      color = red;
+
+              edge [label="inherit", style="dashed", arrowhead="vee"]
+              minnow -> baseboard
+              edge [label="include"]
+              minnow -> baseparams
+              }
+
+              minnow -> ovgen
+              nologger -> ovgen
+              
+              ovgen -> prolog
+
+              prolog [shape=note, label="shell: prolog.sh"]
+              ovgen [shape=component, label="script: ovgen.py"]
+              
+
+}

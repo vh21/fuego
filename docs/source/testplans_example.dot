@@ -1,0 +1,58 @@
+digraph Testplan {
+        graph[ordering=in, ranksep=1,rank=same,rankdir="UD"]
+        graph[rankdir="UD"]
+
+        subgraph testplans {
+                testplan_var [shape=none, label=<
+                            <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+                            <TR> <TD COLSPAN="2"> Environment Variables  </TD> </TR>
+                            <TR> <TD> TESTPLAN </TD> <TD PORT="tpf"> testplan_sata.json </TD> </TR>
+                            </TABLE>
+              >
+              ]
+                satatp [shape=none, fontname="Nimbus Mono", rankdir=LR, 
+              label=<
+              <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+              <TR> <TD COLSPAN="2" PORT="tph"> testplan_sata.json (SATA test plan) </TD> </TR>
+              <TR><TD ><BR ALIGN="left"/> testPlanName </TD> <TD PORT="tp_name"> testplan_sata</TD></TR>
+              <TR><TD ><BR ALIGN="left"/> testName  </TD> <TD PORT="tp_test"> Benchmark.Bonnie</TD></TR>
+              <TR><TD ><BR ALIGN="left"/> spec  </TD> <TD PORT="tp_spec"> sata</TD></TR>
+              </TABLE>
+              >
+              ]
+      }
+
+
+        bonniespec [shape=none
+              label=<
+              <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+              <TR> <TD COLSPAN="2"> Bonnie SATA test spec  </TD> </TR>
+              <TR> <TD> testName </TD> <TD PORT="name"> Benchmark.Bonnie </TD> </TR>
+              <TR><TD ><BR ALIGN="left"/> name </TD> <TD PORT="spec"> sata</TD></TR>
+              <TR><TD PORT="mbv"><BR ALIGN="left"/> MOUNT_BLOCKDEV  </TD> <TD PORT="block"> $SATA_DEV</TD></TR>
+              <TR><TD PORT="mpv"><BR ALIGN="left"/> MOUNT_POINT  </TD> <TD PORT="mount"> $SATA_MP</TD></TR>
+              </TABLE>
+              >]
+        
+              prolog [shape=none, rank=sink,
+                      pos="0,1000", 
+                      label=<
+                      <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+                      <TR><TD PORT="prologhead">prolog.sh</TD></TR>
+                      <TR><TD>...</TD></TR>
+                      <TR><TD PORT="bonnie_bd">BENCHMARK_BONNIE_MOUNT_BLOCKDEV=$SATA_DEV</TD></TR>
+                      <TR><TD PORT="bonnie_mp">BENCHMARK_BONNIE_MOUNT_POINT=$SATA_MP</TD></TR>
+                      
+                      </TABLE>>]
+
+        satatp:tp_test -> bonniespec:name [color="red"]
+        satatp:tp_spec -> bonniespec:spec [color="red"]
+
+        prolog:bonnie_bd -> bonniespec:mbv
+        prolog:bonnie_mp -> bonniespec:mpv
+
+        testplan_var:tpf -> satatp:tph [color="blue", style="dashed"]
+
+        bonniespec  -> prolog [style="invis"]
+}
+

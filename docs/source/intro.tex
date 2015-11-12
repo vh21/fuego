@@ -1,0 +1,25 @@
+\section{Introduction}
+\label{sec:intro}
+
+Testing evaluation boards (and final products based on them) is not easy. There are is a number of software products made for that very purpose, the most eminent of which is \href{https://wiki.linaro.org/Platform/LAVA}{Lava}.
+
+From our point of view, LAVA is harder to extend both in terms of engine and frontend. On the other hand, JTA core is based on shell scripts that can be trivially extended and uses Jenkins which is well tested and has lots of various plugins.
+
+JTA framework was designed to provide a core meeting a few points:
+
+\begin{itemize}
+\item It is usable out of the box: 60+ prepackaged tests, benchmark statistics, plotting and reports generation.
+\item It is highly custmizable from front-end side (thanks to Jenkins that have tons of plugins) and from backend side, that relies on simple core written in bash, so that allows it to be easily customized;
+\item It allows for flexible test configuration using such notions as \textit{test specification} and \textit{test plan} \ref{sec:testplans};
+\item It allows to run a batch of tests and generate report \ref{sec:reports});
+\item It does not impose any demands on boards on distributions;
+\item It allows easy, yet flexible board setup. All you need is just to define some environment variables (block devices/mount points, IP addr etc) in board config file.
+\end{itemize}
+
+
+As you can see, our goal is to provide flexible framework with seemless customization and out of box experience.
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "jta-guide"
+%%% End: 

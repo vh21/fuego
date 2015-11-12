@@ -1,0 +1,17 @@
+<j:jelly xmlns:j="jelly:core" 
+				 xmlns:st="jelly:stapler"
+				 xmlns:d="jelly:define"
+				 xmlns:l="/lib/layout"
+				 xmlns:t="/lib/hudson"
+				 xmlns:f="/lib/form"
+				 xmlns:i="jelly:fmt"
+				 xmlns:p="/lib/hudson/project">  
+				 
+  <j:if test = "${from.showPlot()}"> 
+		<div>
+      <!-- TODO:It is needed to get PLATFORM parameter somehow from job log or parameters -->
+    	<img src="${rootURL}/plugin/plots/${it.getName()}/586-atom/plot.png" />
+		</div>
+	</j:if>
+
+</j:jelly>

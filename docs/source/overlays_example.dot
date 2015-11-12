@@ -1,0 +1,60 @@
+digraph Overlay {
+        graph[nodesep=2,ordering=in, // splines=ortho
+              rank=same
+              ]
+
+              subgraph ovs {
+        base [shape=none, fontname="Nimbus Mono", rankdir=LR,
+              label=<
+              <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+              <TR><TD PORT="bd">base-distrib.jtaclass</TD></TR>
+              <TR><TD PORT="ofn"><BR ALIGN="left"/>OF.NAME="base-distrib"</TD></TR>
+<TR><TD PORT="func">
+<BR ALIGN="left"/> <B> function </B> ov_rootfs_logread() {
+<BR ALIGN="left"/>    echo "logger func"
+<BR ALIGN="left"/> } <BR ALIGN="left"/>
+</TD> </TR>
+<TR> <TD PORT="lv"><BR ALIGN="left"/>LOGGER_VAR="baseval" </TD> </TR>
+<TR> <TD PORT="bv"><BR ALIGN="left"/>BASE_VAR="baseval" </TD> </TR>
+</TABLE>>]
+
+        overlay [shape=none, fontname="Nimbus Mono", rankdir=LR,
+                 label=<
+                 <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+                <TR><TD PORT="noh">nologger.dist</TD></TR>
+                <TR><TD PORT="inh"><BR ALIGN="left"/>inherit "base-distrib"</TD></TR>
+                <TR><TD PORT="ovf">
+<BR ALIGN="left"/> <B> override-func </B> ov_rootfs_logread() {
+<BR ALIGN="left"/>    echo "new logger func"
+<BR ALIGN="left"/> } <BR ALIGN="left"/>
+</TD> </TR>
+<TR> <TD PORT="olv"><BR ALIGN="left"/>override LOGGER_VAR="override val" </TD> </TR>
+</TABLE>>]
+              }
+
+
+        prolog [shape=none,label=< <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+                <TR><TD PORT="prologhead">prolog.sh</TD></TR>
+                <TR><TD PORT="pfn">
+<BR ALIGN="left"/> <B> override-func </B> ov_rootfs_logread() {
+<BR ALIGN="left"/>    echo "new logger func"
+<BR ALIGN="left"/> } <BR ALIGN="left"/>
+</TD> </TR>
+<TR> <TD PORT="plv"><BR ALIGN="left"/>LOGGER_VAR="override val" </TD> </TR>
+<TR> <TD PORT="pbv"><BR ALIGN="left"/>BASE_VAR="basevar" </TD> </TR>
+</TABLE>>]
+                                 
+
+overlay:inh -> base:bd
+edge [color="red"]
+        prolog:pfn -> overlay:ovf
+        overlay:ovf -> base:func
+        
+
+        edge [color="blue"]
+
+        overlay:olv -> base:lv
+
+        prolog:plv -> overlay:olv
+        prolog:pbv -> base:bv
+}

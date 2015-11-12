@@ -1,0 +1,104 @@
+\section{Adding a sample test}
+\label{sec:adding-tests}
+
+This section describes how to integrate tests to OSV.
+We will add a simple test that calls bc computing a value passed through spec parameter.
+
+\subsection{Adding Test Plan files}
+\label{sec:test-add-testplan}
+Create \texttt{JTA\_ENGINE\_PATH/overlays/testplans/testplan\_bc\_exp1.json}[L. \ref{testplan-bc-exp1}] and \texttt{testplan\_bc\_exp2.json}[L. \ref{testplan-bc-exp2}] files.
+
+As you can see we've created two testplan files which reference two specs. Testplan can reference multiple specs for different tests, so for example we could run all filesystem tests with specific block device.
+
+\subsection{Adding spec file}
+\label{sec:test-add-spec}
+
+Create \texttt{JTA\_ENGINE\_PATH/overlays/test\_specs/Benchmark.bc.spec}[L. \ref{spec-bc}] file.
+
+This spec file contatins two cases: \texttt{bc-exp1} that generates \texttt{EXPR1}, \texttt{EXPR2} variable and assignes it \texttt{``2*2''}, \texttt{``3*3''} values \footnote{Any variable defined in board config file[\ref{sec:jtaclass}] or in (inherited) base file[\ref{sec:board_config}] can be used. For example \texttt{\$MINNOW\_SATA\_DEV}}
+and \texttt{bc-spec-exp2} that does the same but with \texttt{``2+2''} and \texttt{``3+3''} values. These variables is inteded to be used inside test script for controlling different test cases. And we will use it as a parameter to \texttt{bc-device.sh} script.
+
+You don't usually need more than one spec files, because all different cases can be listed in one file. 
+
+\subsection{Adding test script}
+\label{sec:test-add-script}
+
+Test script is the bash file that runs when test is executed on target. Create it[L. \ref{bc-script}] with the path \texttt{JTA\_ENGINE\_PATH/tests/Benchmark.bc/bc-script.sh}. This file should meet a strict format with following definitions:
+\begin{description}
+\item[\texttt{tarball}] name of the tarball;
+\item[\texttt{test\_build}]  should contain test build commands;
+\item[\texttt{test\_deploy}]  should contain  commands that deploy test to device; \\
+\textit{put} command is usually used;
+\item[\texttt{test\_run}] should contain all steps for actual test execution.
+\item Generic benchmark/test script can be sourced if test meets common patterns. In this particular example \texttt{benchmark.sh} is sourced that will execute these steps (and some other like overlay prolog file and reports generation).
+\end{description}
+
+For testing purposes we will use a simple script that is executed on device. It accepts two parameters, calls \textit{bc} with them and produces an output. Create \texttt{bc-script.tar.gz} tarball containing a folder with \texttt{bc-device.sh}[L. \ref{bc-device}] file.
+
+When benchmark is finished results parsing phase is started. \textbf{Each}  benchmark (not Functional test) should provide a special python parsing script called \texttt{parser.py} that defines how to parse results. All you should do is to fill a \texttt{cur\_dict} dictionary with \texttt{\{subtest: value\}} pairs and call \texttt{plib.process\_ data} with respecitve arguments:
+\begin{description}
+\item[\texttt{ref\_section\_pat}]: regexp that describes the format of threshold expressions
+\item[\texttt{cur\_dict}:]: dictionary containing \texttt{\{subtest: value\}} pairs with test results;
+\item[\texttt{m}:] plot type. 's' - single, 'm' - multiple
+\item[\texttt{label}:] axis label
+\end{description}
+
+See [L. \ref{bc-parser}] for a simple script that parses two \textit{bc} outputs. 
+
+Core script \texttt{common.py} checks the values to agree with \textit{reference values} that should be in \texttt{reference.log} file in the directory where main test script resides. See [L. \ref{bc-reference}] for sample \texttt{reference.log} file asserts both results must be greater that 0. 
+
+Test integration is complete. Now you should be able to locate test under \textit{Benchmarks} tab in main page.
+
+\subsection{Adding test to frontend}
+\label{sec:test-add-frontend}
+
+The simpliest way to add a benchmark in frontend is using one as a template.
+\begin{enumerate}
+\item From main page click on \textit{New Test};
+\item Fill in \textit{Test name} input field;
+\item Choose \textit{Copy existing Test} combo box;
+\item Enter test name to the \textit{Copy from} text field. For example, \textit{Benchmark.bonnie};
+\item Press \textit{OK} button.
+\end{enumerate}
+
+You will be forwarded to the test configuration page. There are a lot of parameters there, but you only need to set up a few of them:
+
+\begin{description}
+\item[Description:] Textual description of the test;
+\item[TESTPLAN:] (a string parameter) path to the test plan. Not mandatory. But we will use one for that sake of demonstration.
+  Put \texttt{testplans/testplan\_bc\_exp1.json} there.
+\item[Execute shell:] bash script that will be executed when test is run. \\
+  Put \texttt{source ../tests/\$JOB\_NAME/bc-script.sh} there.
+\end{description}
+
+
+\subsubsection{Adding plot paramters to \texttt{tests.info}}
+\label{sec:edit-tst-info}
+Plot plugin needs to know which parameters it should display. It uses \texttt{tests.info}
+file for that purpose.
+Open \texttt{JTA\_ENGINE\_PATH/logs/tests.info} and add the following line:
+\texttt{"bc":["result1","result2"]}. Make sure you meet json syntax this file uses.
+
+This line says to draw \textit{result1} and \textit{result2} values on the plot.
+
+\subsection{Conclusion}
+\label{sec:conslusion}
+
+So, below is the list of all components our benchmark uses.
+
+\begin{description}
+
+\item[spec file] \texttt{Benchmark.bc.spec}[L. \ref{spec-bc}] that contain list of various options that generate variables for testing;
+\item[testplan files] \texttt{testplan\_bc\_exp\{1,2\}.json} [L. \ref{testplan-bc-exp1}], [L. \ref{testplan-bc-exp2}] that contain lists of specifications should be used for test(s);
+\item[test script] \texttt{bc-script.sh}[L. \ref{bc-script}] that runs all top-level commands;
+\item[tarball] with \texttt{bc-device.sh}[L. \ref{bc-device}] file that does actual testing on device;
+\item[parser.py] [L. \ref{bc-parser}] that parses the results and gives them to core parsing component that prepares data for plots and reports;
+\item[reference.log] [L. \ref{bc-reference}] that contains reference values then benchmark results are checked against;
+\item[tests.info] should be modified to include values should be drawn on plot.
+
+\end{description}
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "jta-guide"
+%%% End: 

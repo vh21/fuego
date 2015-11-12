@@ -1,0 +1,109 @@
+\section{Base classes and overlays }
+\label{sec:overlays}
+This section describes base classes and overlays concept, how to write ones and mechanism implementing them.
+
+\subsection{Base class format}
+
+\label{subsec:jtaclass_fmt}
+Base class is a special file similar to shell script with definitions of basic parameters.
+It has special fields \texttt{OF.NAME} and \texttt{OF.DESCRIPTION} that set base class name and description respectively.
+You can have as many base classes as you want. We provide base classes for \emph{boards} and \emph{distributions}.
+
+\subsection{Overlay format}
+\label{subsec:overlay_fmt}
+Overlay file has simple format, similar to that of the bash shell.
+It has two extra syntactic constructs:
+\begin{description}
+\item[\texttt{inherit}] is used to read and inherit the base class config file.  \\Example:  \texttt{inherit ``base-file''}. It is possible to override functions and variables of base class.
+\item[\texttt{include}] is used to include all contents of base class config file. No variables and functions overriding is permited.
+\item[\texttt{override} \texttt{override-func}] are used for overriding base variables and functions.\\Syntax:
+\begin{verbatim}
+override-func ov_rootfs_logread() {
+    # commands
+}
+
+override VARIABLE new_value
+\end{verbatim}
+\end{description}
+
+\subsection{Overlay and class relationship example}
+\label{sec:ov_class_example}
+
+Simple class and overlay relationship is shown in [F. \ref{fig:base_ov_example}].
+\textit{base-distrib} class defines a function
+\begin{description}
+\item \texttt{ov\_rootfs\_logread}
+\end{description}
+
+and two variables:
+\begin{description}
+\item \texttt{LOGGER\_VAR},
+\item \texttt{BASE\_VAR}.
+\end{description}
+
+\textit{nologger.dist} overlay redefines \texttt{ov\_rootfs\_logread} function and \texttt{LOGGER\_VAR} variable. In the end \textit{prolog.sh} contains overriedden function, overridden \texttt{LOGGER\_VAR} variable and vanilla \texttt{BASE\_VAR} variable.
+
+
+\begin{figure}[H]
+  \includegraphics*[width=16cm]{overlays_example.png}
+  \caption{Simple base class and overlay example}
+  \label{fig:base_ov_example}
+\end{figure}
+
+
+\subsection{JTA classes and overlays organization}
+\label{sec:jta_class_ov}
+
+\texttt{ovgen.py} script takes a number of base class and overlay files and produces \texttt{prolog.sh} script file that
+is executed before each test is run.
+There are two conceptes implemented using the scheme:
+\begin{enumerate}
+\item Distribution - defines commands for basic actions on device
+\item Board - specifies how to communicate with the device
+\end{enumerate}
+[F. \ref{fig:base_ovs_toplevel}] displays this scheme from top-level perspective.
+\begin{figure}[H]
+  \includegraphics*[width=16cm]{overlays_toplevel.png}
+  \caption{JTA Base classes and overlays from toplevel perspective}
+  \label{fig:base_ovs_toplevel}
+\end{figure}
+
+\subsubsection{Base distribution class}
+\textit{base-distrib} is the base class (See \ref{subsec:jtaclass_fmt}) that defines functions necessary for working with system. It is located in \texttt{overlays/base/base-distrib.jtaclass} file.
+
+It defines the following functions:
+
+\begin{description}
+\item[\texttt{ov\_get\_firmware:}] get kernel version;
+\item[\texttt{ov\_rootfs\_reboot:}] reboot system;
+\item[\texttt{ov\_rootfs\_state:}] get uptime, memory usage, mounetd devices, etc;
+\item[\texttt{ov\_logger:}] put string to syslog;
+\item[\texttt{ov\_rootfs\_sync:}] sync filesystem;
+\item[\texttt{ov\_rootfs\_drop\_caches:}] drop FS caches;
+\item[\texttt{ov\_rootfs\_oom:}] adjust oom;
+\item[\texttt{ov\_rootfs\_kill:}] kill specified processes;
+\item[\texttt{ov\_rootfs\_logread:}] get syslogs.
+\end{description}
+
+You can redefine these functions in your distib overlay file that inherits \textit{base-distrib} class. Default distrib overlay \texttt{base.dist} just inherits base class with no modifications.
+
+\subsubsection{Base board class}
+\textit{base-board} is the base class that defines functions necessary for working with system. It is located in \texttt{overlays/base/base-distrib.jtaclass} file.
+
+\begin{description}
+\item[\texttt{ov\_transport\_get:}] get specified file from board;
+\item[\texttt{ov\_transport\_put:}] copy specified file to the board;
+\item[\texttt{ov\_transport\_cmd:}] run command on board;
+\end{description}
+
+You can redefine these in your board overlay for non-standard methods for communicating with device.
+
+
+
+
+
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "jta-guide"
+%%% End: 

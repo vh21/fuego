@@ -1,0 +1,4 @@
+hudson.plugins.git.Branch
+hudson.plugins.git.GitObject
+hudson.plugins.git.Revision
+hudson.plugins.git.Tag
