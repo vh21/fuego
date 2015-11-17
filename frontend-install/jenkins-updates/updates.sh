@@ -9,18 +9,13 @@ fi
 
 source ./constants.sh
 
-output_errors_only
-
+# output_errors_only
+echo "Jenkins cache is $JENKINS_CACHE"
 
 fix_permissions ${JENKINS_INST}
 fix_permissions ${JENKINS_CACHE}
 
-# # install UI plugins (CSS & locale)
-# cd ../..
-# wget -nv ${JEN_URL}/jnlpJars/jenkins-cli.jar -O jenkins-cli.jar 
-# ls -1 plugins/*.hpi | xargs -n1 -t java -jar jenkins-cli.jar -s $JEN_URL install-plugin
-# rm jenkins-cli.jar
-
+sync_fetch_jenkins_cli
 cd $LANG
 
 # main page and other configs
@@ -37,8 +32,8 @@ done
 fix_permissions $JENKINS_INST/plugins
 
 # add resources
-cp -r ./css $JENKINS_CACHE
-cp -r ./images $JENKINS_CACHE
+cp -vr ./css $JENKINS_CACHE
+cp -vr ./images $JENKINS_CACHE
 fix_permissions $JENKINS_CACHE/css
 fix_permissions $JENKINS_CACHE/images
 
@@ -49,6 +44,7 @@ jar xf $JENKINS_WAR_FILE $JENKINS_CORE_NAME
 jar uf $JENKINS_CORE_NAME hudson/*
 jar uf $JENKINS_CORE_NAME jenkins/*
 jar uf $JENKINS_CORE_NAME lib/*
+echo "copying $JENKINS_CORE_NAME -> $JENKINS_CACHE/$JENKINS_CORE_NAME"
 cp $JENKINS_CORE_NAME $JENKINS_CACHE/$JENKINS_CORE_NAME
 fix_permissions $JENKINS_CACHE/$JENKINS_CORE_NAME
 fix_permissions $JENKINS_CACHE
@@ -56,10 +52,13 @@ rm $JENKINS_CORE_NAME
 
 # install UI plugins (CSS & locale)
 cd ../..
-wget -nv ${JEN_URL}/jnlpJars/jenkins-cli.jar -O jenkins-cli.jar 
+
+service jenkins restart
+sync_fetch_jenkins_cli
+
 ls -1 plugins/*.hpi | xargs -n1 -t java -jar jenkins-cli.jar -s $JEN_URL install-plugin
 rm jenkins-cli.jar
 
-default_output
+# default_output
 
-sudo service jenkins restart
+true
