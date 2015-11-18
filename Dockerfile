@@ -15,7 +15,7 @@ WORKDIR /jta-install
 
 RUN dpkg --add-architecture i386
 RUN echo deb http://ftp.us.debian.org/debian jessie main non-free >> /etc/apt/sources.list
-RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get -yV install apt-utils daemon gcc make python-paramiko python-lxml python-simplejson python-matplotlib libtool xmlstarlet autoconf automake rsync openjdk-7-jre openjdk-7-jdk iperf netperf netpipe-tcp texlive-latex-base sshpass wget git sudo net-tools vim openssh-server
+RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get -yV install apt-utils daemon gcc make python-paramiko python-lxml python-simplejson python-matplotlib libtool xmlstarlet autoconf automake rsync openjdk-7-jre openjdk-7-jdk iperf netperf netpipe-tcp texlive-latex-base sshpass wget git sudo net-tools vim openssh-server curl
 RUN /bin/bash -c 'echo "dash dash/sh boolean false" | debconf-set-selections ; DEBIAN_FRONTEND=noninteractive dpkg-reconfigure dash'
 COPY frontend-install/jenkins_1.509.2_all.deb /jta-install/
 RUN dpkg -i /jta-install/jenkins_1.509.2_all.deb
@@ -23,16 +23,24 @@ RUN /bin/bash -c 'wget -nv "http://downloads.sourceforge.net/project/getfo/texml
 RUN echo "PermitRootLogin yes" >> /etc/ssh/sshd_config
 
 # ==============================================================================
+# Install debian armhf cross toolchain
+# ==============================================================================
+
+COPY install-arm-linux-gnueabihf-toolchain.sh /jta-install/
+RUN bash /jta-install/install-arm-linux-gnueabihf-toolchain.sh
+
+# ==============================================================================
 # get JTA core via git
 # ==============================================================================
+
 RUN mkdir -p /home/jenkins
-RUN echo lsls
-RUN git clone https://cogentembedded@bitbucket.org/cogentembedded/jta-core.git $INST_JTA_ENGINE_PATH/jta
+ENV INST_JTA_CORE_GIT_REVISION b420413f5180c8346705991eee32758cb43801fb
+RUN git clone https://cogentembedded@bitbucket.org/cogentembedded/jta-core.git $INST_JTA_ENGINE_PATH/jta && cd $INST_JTA_ENGINE_PATH/jta && git reset --hard $INST_JTA_CORE_GIT_REVISION && cd /jta-install
 RUN ln -s $INST_JTA_ENGINE_PATH/jta/engine/* $INST_JTA_ENGINE_PATH/
 RUN ln -s $INST_JTA_ENGINE_PATH/jta/jobs $INST_JTA_FRONTEND_PATH/jobs
 
 COPY frontend-install/jenkins.cfg /etc/default/jenkins
-COPY docs/jta-docs.pdf $INST_JTA_FRONTEND_PATH/jta-docs.pdf
+COPY docs/jta-docs.pdf $INST_JTA_FRONTEND_PATH/userContent/jta-docs.pdf
 
 # ==============================================================================
 # init userdata
@@ -49,6 +57,13 @@ RUN ln -s /userdata/conf/tools.sh $INST_JTA_ENGINE_PATH/scripts/tools.sh
 #RUN mkdir $INST_JTA_ENGINE_PATH/logs/logruns
 
 # ==============================================================================
+# Initialize Jenkins plugin configs
+# ==============================================================================
+
+RUN ln -s $INST_JTA_ENGINE_PATH/jta/plugins-conf/scriptler $INST_JTA_FRONTEND_PATH/
+RUN ln -s $INST_JTA_ENGINE_PATH/jta/plugins-conf/sidebar-link.xml $INST_JTA_FRONTEND_PATH/
+
+# ==============================================================================
 # Install Jenkins UI updates
 # ==============================================================================
 
@@ -58,5 +73,5 @@ COPY frontend-install/jenkins-updates /jta-install/jenkins-updates
 WORKDIR /jta-install/jenkins-updates
 RUN echo "installing custom UI updates"
 RUN /etc/init.d/jenkins start && ./updates.sh
-
 RUN ln -s $INST_JTA_ENGINE_PATH/logs $INST_JTA_FRONTEND_PATH/userContent/jta.logs
+
