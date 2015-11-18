@@ -54,21 +54,28 @@ then
         ORIG_PATH=$PATH
         PREFIX=arm-osv-linux-gnueabi
         source $JTA_ENGINE_PATH/tools/renesas-arm/environment-setup-cortexa15hf-vfp-neon-osv-linux-gnueabi
-
+	
         HOST=arm-osv-linux-gnueabi
         
         unset PYTHONHOME
         env -u PYTHONHOME
-elif [ "${PLATFORM}" = "qemu-arm" ];
+elif [ "${PLATFORM}" = "qemu-armv7hf" ];
 then
-        SDKROOT=$JTA_ENGINE_PATH/tools/qemu-arm/sysroots/armv5te-osv-linux-gnueabi
-        # environment script changes PATH in the way that python uses libs from sysroot which is not what we want, so save it and use later
-        ORIG_PATH=$PATH
-        PREFIX=arm-osv-linux-gnueabi
-        source $JTA_ENGINE_PATH/tools/qemu-arm/environment-setup-armv5te-osv-linux-gnueabi
+    export CC=arm-linux-gnueabihf-gcc
+    export CXX=arm-linux-gnueabihf-g++
+    export CXX=arm-linux-gnueabihf-g++
+    export CONFIGURE_FLAGS="--target=arm-linux-gnueabihf --host=arm-linux-gnueabihf --build=x86_64-linux"
+    export AS=arm-linux-gnueabihf-as
+    export LD=arm-linux-gnueabihf-ld
+    export ARCH=arm
+    export CROSS_COMPILE=arm-linux-gnueabihf-
+    export PREFIX=arm-linux-gnueabihf-
 
-        HOST=arm-osv-linux-gnueabi
+    # environment script changes PATH in the way that python uses libs from sysroot which is not what we want, so save it and use later
 
-        unset PYTHONHOME
-        env -u PYTHONHOME
+    ORIG_PATH=$PATH
+    HOST=arm-linux
+
+    unset PYTHONHOME
+    env -u PYTHONHOME
 fi
