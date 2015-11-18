@@ -111,7 +111,7 @@
       <userId>anonymous</userId>
     </slave>
     <slave>
-      <name>qemu-arm</name>
+      <name>qemu-test-arm</name>
       <description></description>
       <remoteFS>/tmp/dev-slave1</remoteFS>
       <numExecutors>1</numExecutors>
@@ -129,11 +129,13 @@
               <default>
                 <comparator class="hudson.util.CaseInsensitiveComparator"/>
               </default>
-              <int>2</int>
+              <int>3</int>
               <string>BOARD_OVERLAY</string>
               <string>boards/qemu-arm.board</string>
               <string>DISTRIB</string>
               <string>distribs/nologger.dist</string>
+              <string>SSH_PORT</string>
+              <string>5555</string>
             </tree-map>
           </envVars>
         </hudson.slaves.EnvironmentVariablesNodeProperty>
@@ -314,11 +316,17 @@
         <unserializable-parents/>
         <tree-map>
           <default>
-            <comparator class="hudson.util.CaseInsensitiveComparator"/>
+            <comparator class="hudson.util.CaseInsensitiveComparator" reference="../../../../../../slaves/slave[4]/nodeProperties/hudson.slaves.EnvironmentVariablesNodeProperty/envVars/tree-map/default/comparator"/>
           </default>
-          <int>1</int>
+          <int>4</int>
           <string>JTA_ENGINE_PATH</string>
           <string>/home/jenkins</string>
+          <string>JTA_LOGS_PATH</string>
+          <string>/home/jenkins/logs</string>
+          <string>JTA_SCRIPTS_PATH</string>
+          <string>/home/jenkins/scripts</string>
+          <string>JTA_TESTS_PATH</string>
+          <string>/home/jenkins/tests</string>
         </tree-map>
       </envVars>
     </hudson.slaves.EnvironmentVariablesNodeProperty>
