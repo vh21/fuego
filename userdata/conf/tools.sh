@@ -69,12 +69,12 @@ then
     export LD=arm-linux-gnueabihf-ld
     export ARCH=arm
     export CROSS_COMPILE=arm-linux-gnueabihf-
-    export PREFIX=arm-linux-gnueabihf-
+    export PREFIX=arm-linux-gnueabihf
+    HOST=arm-linux
 
     # environment script changes PATH in the way that python uses libs from sysroot which is not what we want, so save it and use later
 
     ORIG_PATH=$PATH
-    HOST=arm-linux
 
     unset PYTHONHOME
     env -u PYTHONHOME
