@@ -26,7 +26,7 @@ RUN echo "PermitRootLogin yes" >> /etc/ssh/sshd_config
 # Install debian armhf cross toolchain
 # ==============================================================================
 
-COPY install-arm-linux-gnueabihf-toolchain.sh /jta-install/
+COPY jta-scripts/install-arm-linux-gnueabihf-toolchain.sh /jta-install/
 RUN bash /jta-install/install-arm-linux-gnueabihf-toolchain.sh
 
 # ==============================================================================
@@ -40,7 +40,7 @@ RUN ln -s $INST_JTA_ENGINE_PATH/jta/engine/* $INST_JTA_ENGINE_PATH/
 RUN ln -s $INST_JTA_ENGINE_PATH/jta/jobs $INST_JTA_FRONTEND_PATH/jobs
 
 COPY frontend-install/jenkins.cfg /etc/default/jenkins
-COPY docs/jta-docs.pdf $INST_JTA_FRONTEND_PATH/userContent/jta-docs.pdf
+COPY docs $INST_JTA_FRONTEND_PATH/userContent/docs/
 
 # ==============================================================================
 # init userdata
@@ -74,4 +74,14 @@ WORKDIR /jta-install/jenkins-updates
 RUN echo "installing custom UI updates"
 RUN /etc/init.d/jenkins start && ./updates.sh
 RUN ln -s $INST_JTA_ENGINE_PATH/logs $INST_JTA_FRONTEND_PATH/userContent/jta.logs
+
+WORKDIR /home/jenkins
+RUN rm -rf /jta-install
+
+# ==============================================================================
+# Setup startup command
+# ==============================================================================
+
+COPY jta-scripts/jta-start-cmd.sh /etc/
+CMD /etc/jta-start-cmd.sh
 
