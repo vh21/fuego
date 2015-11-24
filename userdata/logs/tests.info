@@ -19,7 +19,7 @@
 	"Java":["DaCapo","SciMark"],
 	"linpack":["linpack"],
 	"nbench-byte":["INDEX","TEST_GROUP1","TEST_GROUP2"],
-	"netperf":["TCP_MAERTS","TCP_STREAM"],
+	"netperf":["MIGRATED_TCP_MAERTS","MIGRATED_TCP_STREAM"],
 	"reboot":["time", "mem", "disk"],
 	"Stream":["Add","Copy","Scale","Triad"],
 	"unixbench":["System_Index","Test"],
