@@ -10,4 +10,15 @@ Running
 
 sudo jta-host-scripts/docker-create-containter.sh &&  jta-host-scripts/docker-start-container.sh
 
+================================================================================
+Updating
+================================================================================
 
+While inside docker container go to /home/jenkins/jta and issue ``git pull''.
+This will update the following components:
+- JTA engine
+- tests
+- overlays
+- jenkins jobs
+
+Boards configuration and toolchain setup will not be touched since these are located in external docker volume that is mounted to /userdata
