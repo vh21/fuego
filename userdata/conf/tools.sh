@@ -34,29 +34,16 @@ function export_tools () {
     #LDFLAGS="--sysroot ${SDKROOT} -lm"
 }
 
-if [ "${PLATFORM}" = "intel-minnow" ];
+if [ "${PLATFORM}" = "lager" ];
 then
-        SDKROOT=$JTA_ENGINE_PATH/tools/intel-minnow/sysroots/core2-32-osv-linux/
+        SDKROOT=/userdata/toolchains/lager-poky-toolchain/sysroots/cortexa15hf-vfp-neon-poky-linux-gnueabi
         # environment script changes PATH in the way that python uses libs from sysroot which is not what we want, so save it and use later
         ORIG_PATH=$PATH
-        PREFIX=i586-osv-linux
-        source $JTA_ENGINE_PATH/tools/intel-minnow/environment-setup-core2-32-osv-linux
 
-        HOST=arm-osv-linux-gnueabi
-        
-        unset PYTHONHOME
-        env -u PYTHONHOME
+        PREFIX=arm-poky-linux-gnueabi/tools/lager
+        source /userdata/toolchains/lager-poky-toolchain/environment-setup-cortexa15hf-vfp-neon-poky-linux-gnueabi
+        HOST=arm-poky-linux-gnueabi
 
-elif [ "${PLATFORM}" = "renesas-arm" ];
-then
-        SDKROOT=$JTA_ENGINE_PATH/tools/renesas-arm/sysroots/cortexa15hf-vfp-neon-osv-linux-gnueabi
-        # environment script changes PATH in the way that python uses libs from sysroot which is not what we want, so save it and use later
-        ORIG_PATH=$PATH
-        PREFIX=arm-osv-linux-gnueabi
-        source $JTA_ENGINE_PATH/tools/renesas-arm/environment-setup-cortexa15hf-vfp-neon-osv-linux-gnueabi
-	
-        HOST=arm-osv-linux-gnueabi
-        
         unset PYTHONHOME
         env -u PYTHONHOME
 elif [ "${PLATFORM}" = "qemu-armv7hf" ];
