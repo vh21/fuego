@@ -21,66 +21,6 @@
   <clouds/>
   <slaves>
     <slave>
-      <name>minnow</name>
-      <description></description>
-      <remoteFS>/tmp/dev-slave1</remoteFS>
-      <numExecutors>1</numExecutors>
-      <mode>NORMAL</mode>
-      <retentionStrategy class="hudson.slaves.RetentionStrategy$Always"/>
-      <launcher class="hudson.slaves.CommandLauncher">
-        <agentCommand>java -jar /home/jenkins/slave.jar</agentCommand>
-      </launcher>
-      <label></label>
-      <nodeProperties>
-        <hudson.slaves.EnvironmentVariablesNodeProperty>
-          <envVars serialization="custom">
-            <unserializable-parents/>
-            <tree-map>
-              <default>
-                <comparator class="hudson.util.CaseInsensitiveComparator"/>
-              </default>
-              <int>2</int>
-              <string>BOARD_OVERLAY</string>
-              <string>boards/minnow-jta.board</string>
-              <string>DISTRIB</string>
-              <string>distribs/nologger.dist</string>
-            </tree-map>
-          </envVars>
-        </hudson.slaves.EnvironmentVariablesNodeProperty>
-      </nodeProperties>
-      <userId>anonymous</userId>
-    </slave>
-    <slave>
-      <name>koelsch</name>
-      <description></description>
-      <remoteFS>/tmp/dev-slave1</remoteFS>
-      <numExecutors>1</numExecutors>
-      <mode>NORMAL</mode>
-      <retentionStrategy class="hudson.slaves.RetentionStrategy$Always"/>
-      <launcher class="hudson.slaves.CommandLauncher">
-        <agentCommand>java -jar /home/jenkins/slave.jar</agentCommand>
-      </launcher>
-      <label></label>
-      <nodeProperties>
-        <hudson.slaves.EnvironmentVariablesNodeProperty>
-          <envVars serialization="custom">
-            <unserializable-parents/>
-            <tree-map>
-              <default>
-                <comparator class="hudson.util.CaseInsensitiveComparator" reference="../../../../../../../slave/nodeProperties/hudson.slaves.EnvironmentVariablesNodeProperty/envVars/tree-map/default/comparator"/>
-              </default>
-              <int>2</int>
-              <string>BOARD_OVERLAY</string>
-              <string>boards/renesas.board</string>
-              <string>DISTRIB</string>
-              <string>distribs/nologger.dist</string>
-            </tree-map>
-          </envVars>
-        </hudson.slaves.EnvironmentVariablesNodeProperty>
-      </nodeProperties>
-      <userId>anonymous</userId>
-    </slave>
-    <slave>
       <name>template-dev</name>
       <description></description>
       <remoteFS>/tmp/dev-slave1</remoteFS>
@@ -97,7 +37,7 @@
             <unserializable-parents/>
             <tree-map>
               <default>
-                <comparator class="hudson.util.CaseInsensitiveComparator" reference="../../../../../../../slave/nodeProperties/hudson.slaves.EnvironmentVariablesNodeProperty/envVars/tree-map/default/comparator"/>
+                <comparator class="hudson.util.CaseInsensitiveComparator"/>
               </default>
               <int>2</int>
               <string>BOARD_OVERLAY</string>
@@ -136,6 +76,66 @@
               <string>distribs/nologger.dist</string>
               <string>SSH_PORT</string>
               <string>5555</string>
+            </tree-map>
+          </envVars>
+        </hudson.slaves.EnvironmentVariablesNodeProperty>
+      </nodeProperties>
+      <userId>anonymous</userId>
+    </slave>
+    <slave>
+      <name>lager</name>
+      <description></description>
+      <remoteFS>/tmp/dev-slave1</remoteFS>
+      <numExecutors>1</numExecutors>
+      <mode>NORMAL</mode>
+      <retentionStrategy class="hudson.slaves.RetentionStrategy$Always"/>
+      <launcher class="hudson.slaves.CommandLauncher">
+        <agentCommand>java -jar /home/jenkins/slave.jar</agentCommand>
+      </launcher>
+      <label></label>
+      <nodeProperties>
+        <hudson.slaves.EnvironmentVariablesNodeProperty>
+          <envVars serialization="custom">
+            <unserializable-parents/>
+            <tree-map>
+              <default>
+                <comparator class="hudson.util.CaseInsensitiveComparator"/>
+              </default>
+              <int>2</int>
+              <string>BOARD_OVERLAY</string>
+              <string>boards/lager.board</string>
+              <string>DISTRIB</string>
+              <string>distribs/nologger.dist</string>
+            </tree-map>
+          </envVars>
+        </hudson.slaves.EnvironmentVariablesNodeProperty>
+      </nodeProperties>
+      <userId>anonymous</userId>
+    </slave>
+    <slave>
+      <name>lager2</name>
+      <description></description>
+      <remoteFS>/tmp/dev-slave1</remoteFS>
+      <numExecutors>1</numExecutors>
+      <mode>NORMAL</mode>
+      <retentionStrategy class="hudson.slaves.RetentionStrategy$Always"/>
+      <launcher class="hudson.slaves.CommandLauncher">
+        <agentCommand>java -jar /home/jenkins/slave.jar</agentCommand>
+      </launcher>
+      <label></label>
+      <nodeProperties>
+        <hudson.slaves.EnvironmentVariablesNodeProperty>
+          <envVars serialization="custom">
+            <unserializable-parents/>
+            <tree-map>
+              <default>
+                <comparator class="hudson.util.CaseInsensitiveComparator" reference="../../../../../../../slave[3]/nodeProperties/hudson.slaves.EnvironmentVariablesNodeProperty/envVars/tree-map/default/comparator"/>
+              </default>
+              <int>2</int>
+              <string>BOARD_OVERLAY</string>
+              <string>boards/lager2.board</string>
+              <string>DISTRIB</string>
+              <string>distribs/nologger.dist</string>
             </tree-map>
           </envVars>
         </hudson.slaves.EnvironmentVariablesNodeProperty>
@@ -316,7 +316,7 @@
         <unserializable-parents/>
         <tree-map>
           <default>
-            <comparator class="hudson.util.CaseInsensitiveComparator" reference="../../../../../../slaves/slave[4]/nodeProperties/hudson.slaves.EnvironmentVariablesNodeProperty/envVars/tree-map/default/comparator"/>
+            <comparator class="hudson.util.CaseInsensitiveComparator" reference="../../../../../../slaves/slave[2]/nodeProperties/hudson.slaves.EnvironmentVariablesNodeProperty/envVars/tree-map/default/comparator"/>
           </default>
           <int>4</int>
           <string>JTA_ENGINE_PATH</string>
