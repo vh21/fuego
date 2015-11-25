@@ -40,7 +40,7 @@ then
         # environment script changes PATH in the way that python uses libs from sysroot which is not what we want, so save it and use later
         ORIG_PATH=$PATH
 
-        PREFIX=arm-poky-linux-gnueabi/tools/lager
+        PREFIX=arm-poky-linux-gnueabi
         source /userdata/toolchains/lager-poky-toolchain/environment-setup-cortexa15hf-vfp-neon-poky-linux-gnueabi
         HOST=arm-poky-linux-gnueabi
 
