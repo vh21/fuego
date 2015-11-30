@@ -43,7 +43,7 @@ COPY frontend-install/jenkins.cfg /etc/default/jenkins
 COPY docs $INST_JTA_FRONTEND_PATH/userContent/docs/
 
 # ==============================================================================
-# init userdata
+# Init userdata
 # ==============================================================================
 
 RUN ln -s /userdata/buildzone $INST_JTA_ENGINE_PATH/buildzone
