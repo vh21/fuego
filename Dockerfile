@@ -7,7 +7,7 @@ MAINTAINER dmitrii.cherkasov@cogentembedded.com
 
 ENV INST_JTA_ENGINE_PATH /home/jenkins
 ENV INST_JTA_FRONTEND_PATH /var/lib/jenkins
-ENV INST_JTA_CORE_GIT_REVISION 900a374e046ea7820d5faab5d3a32384cd230b01
+ENV INST_JTA_CORE_GIT_REVISION 5905f4c773c5ca972bb21e7f8cfb838eeec91528
 
 # ==============================================================================
 # Prepare basic image
