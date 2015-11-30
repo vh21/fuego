@@ -5,45 +5,33 @@
 \label{sec:prereq}
 
 \begin{itemize}
-\item Debian \textbf{Wheezy}\footnote{Other Debian releases (Jessie, Sid) should work as well as other distributives, though they are not as thoroughly tested} for \textbf{AMD64} architecture.  \\ It can be fetched from
-  \href{``http://cdimage.debian.org/cdimage/jessie_di_alpha_1/amd64/iso-cd/debian-jessie-DI-a1-amd64-netinst.iso''}{here};
+\item Any 64-bit Linux with \href{https://www.docker.com/}{Docker} version 1.8.3 or above.
 \item Web browser with \textbf{javascript} and \textbf{CSS} support.
 \end{itemize}
 \subsection{Running install script}
 \label{sec:inst-steps}
 
+Simply run install.sh script. It will create a docker image with JTA installed. When it's done you should create and start a docker container running the following commands from top directory: 
 \begin{itemize}
-\item Get JTA release via git:
-  \\ 
-  \texttt{git clone https://cogentembedded@bitbucket.org/cogentembedded/jta-public.git}
-\item Run install script under root: \texttt{./debian\_install.sh}\footnote{During the proecess script will call dpkg-reconfigure dash, asking a question about using dash. You must answer ``no'' to the dialogue.}
-
+\item \texttt{jta-host-scripts/docker-create-containter.sh}.
+\item \texttt{jta-host-scripts/docker-start-containter.sh}.
 \end{itemize}
 
+When container is started, JTA web interface will be available on local machine at port \href{http://localhost:8080}{8080}.
 
-When script finishes, JTA web interface will be available on local machine at port \href{http://localhost:8080}{8080}.
+Please note that board configuration, jenkins \texttt{config.xml} file, build logs and toolchains are stored under \textit{userdata} catalogue that is mounted as external volume to docker container under /userdata path. This allows to preserve all configuration when creating a new docker container. 
+
+In the rest of the document \texttt{/userdata/...} paths denote paths inside docker container.
+
+Some files and catalogues under \texttt{/userdata/...} are symlinked inside JTA engine and Jenkins paths. Please see \textit{Init Userdata} section in \texttt{Dockerfile} for more details.
 
 \subsection{Installing toolchains and sysroots}
 You need toolchains and sysroots to build tests for different platforms. 
 \label{sec:toolchain-install}
 \subsubsection{Using meta-jta OE layer for generating toolchain}
-We ship toolchains for koelsch and minnow boards that we build from poky from our \href{https://bitbucket.org/cogentembedded/meta-jta/}{custom layer}. If you already use OpenEmbedded from building rootfs for your system yoy can use our layer to generate toolchain and sysroot (using \texttt{bitbake meta-toolchain}) with all libraries and headers needed from building tests. See Poky \href{http://www.yoctoproject.org/docs/1.6/adt-manual/adt-manual.html}{Documentation} for more information.
+For convenience we provide a yocto layer that includes necessary software for target system: \href{https://bitbucket.org/cogentembedded/meta-jta/}{custom layer}. You can use this layer to generate toolchain and sysroot (using \texttt{bitbake meta-toolchain}) with all libraries and headers needed for building tests. See Poky \href{http://www.yoctoproject.org/docs/1.6/adt-manual/adt-manual.html}{Documentation} for more information.
 
-% \subsubsection{Using custom toolchain}
-
-% \begin{itemize}
-% \item \href{https://launchpad.net/gcc-linaro/+milestone/4.7-2014.01}{Linaro ARM toolchain}
-
-% \item  \href{http://www.mentor.com/embedded-software/sourcery-tools/sourcery-codebench/editions/lite-edition/request?id=478dff82-62bc-44b2-afe2-4684d83b19b9\&downloadlite=scblite2012\&fmpath=/embedded-software/sourcery-tools/sourcery-codebench/editions/lite-edition/form}{Mentor
-%     graphics ARM toolchain}
-
-% \item \href{https://sourcery.mentor.com/GNUToolchain/subscription10027lite=IA32?lite=ia32}{Mentor
-%     Graphics x86 toolchain}
-
-% \item  \href{https://sourcery.mentor.com/GNUToolchain/subscription3130?lite=MIPS}{Mentor Graphics MIPS toolchain}
-% \end{itemize}
-
-Toolchains and sysroots are usually stored in \texttt{JTA\_ENGINE\_PATH/tools} folder.
+Toolchains and sysroots should generally be stored in \texttt{/userdata/toolchains} and installed from within docker container.
 
 \subsection{Configuring tools.sh file}
 \texttt{JTA\_ENGINE\_PATH/scripts/tools.sh} file is used to setup paths and compile flags for each platform.

@@ -1,33 +1,39 @@
 \section{Boards configuration}
 In this document we will use such notions as \textit{targets} and \textit{boards}. Here is what they mean:
 \begin{description}
-\item[Target or Node] is denoted as a front-end Jenkins entity. Jenkins jobs are run on targets.
-\item[Board] is denoted as a back-end entity. Board is defined by it's \texttt{.board} file with necessary variable definitions for running tests.
+\item[Target or Node] denotes a front-end Jenkins entity. Jenkins jobs are run on targets.
+\item[Board] denotes a back-end entity, such as a physical board (specifically, the board or device to run tests on).
 \end{description}
 
-Board configuration is done in \texttt{JTA\_ENGINE\_PATH/overlays/boards/<boardname>.board}, where \texttt{<boardname>} is the respective name of the target.
+Board configuration is stored in \texttt{JTA\_ENGINE\_PATH/overlays/boards/<boardname>.board}, 
+where \texttt{<boardname>} is the respective name of the target.
 
-\subsection{Adding a target in frontend}
+\subsection{Adding a target in Jenkins interface}
 \label{sec:target-add}
-The simplest method is to copy from existing one. We provide \textit{template-dev} board for that purpose.
+The simplest method of adding a new target is to copy from an existing one. 
+We provide \textit{template-dev} board for that purpose.
 \begin{enumerate}
-\item Click \href{http://localhost:8080/computer/}{Target status}
-\item Click \href{http://localhost:8080/computer/new}{New node}
-\item Fill in the \textit{Node name} input field.
-\item Choose \textit{Copy Existing Node}. And enter name of source node, namely, \textit{Generic}
-\item You will be forwarded to node configuration page. Locate \textit{Environment variables} section in \textit{Node Properties}. Specify path to board config file [\ref{sec:board_config}] using the variable \textbf{BOARD\_OVERLAY}.
+\item Open a browser window to the \href{http://localhost:8080/}{JTA web interface}
+\item Click on \textbf{Target status}
+\item Click on \textbf{New node}
+\item Fill in the \textit{Node name} input field witht he name of the new board
+\item Choose \textit{Copy Existing Node}. And enter name of the source node, namely, \textit{template-dev}
+\item You will be forwarded to node configuration page.
+Locate the \textit{Environment variables} section in \textit{Node Properties}.
+Specify the path to board config file [\ref{sec:board_config}] using the variable \textbf{BOARD\_OVERLAY}.
 \end{enumerate}
 
-\subsection{Writing board config overlay}
+\subsection{Writing the board config overlay}
 \label{sec:board_config}
 Board config file is an overlay (See \ref{subsec:overlay_fmt}) that must inherit \texttt{base-board} and include \texttt{base-params} base classes (in that order).
 
-The following is the step-by-step description of all mandatory environment variables should be set:
+The following is the step-by-step description of all mandatory environment variables that should be set by this file:
 
 \begin{description}
 \item[\texttt{TRANSPORT}:] defines how JTA should communicate with the board. 
   Currently only \texttt{ssh} is supported;
 \item[\texttt{IPADDR}:]  IP address or host name of board;
+\item[\texttt{SSH\_PORT}:]  ssh port number of board;
 \item[\texttt{LOGIN}:]  user name for ssh login;
 \item[\texttt{PASSWORD}:] password for ssh login;
 \item[\texttt{JTA\_HOME}:] path to the directory on device the tests will run from;
