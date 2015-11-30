@@ -7,6 +7,7 @@ MAINTAINER dmitrii.cherkasov@cogentembedded.com
 
 ENV INST_JTA_ENGINE_PATH /home/jenkins
 ENV INST_JTA_FRONTEND_PATH /var/lib/jenkins
+ENV INST_JTA_CORE_GIT_REVISION 900a374e046ea7820d5faab5d3a32384cd230b01
 
 # ==============================================================================
 # Prepare basic image
@@ -34,7 +35,6 @@ RUN bash /jta-install/install-arm-linux-gnueabihf-toolchain.sh
 # ==============================================================================
 
 RUN mkdir -p /home/jenkins
-ENV INST_JTA_CORE_GIT_REVISION 6749964a6281c1b90cdc6151866748d0a2100ac4
 RUN git clone https://cogentembedded@bitbucket.org/cogentembedded/jta-core.git $INST_JTA_ENGINE_PATH/jta && cd $INST_JTA_ENGINE_PATH/jta && git reset --hard $INST_JTA_CORE_GIT_REVISION && cd /jta-install
 RUN ln -s $INST_JTA_ENGINE_PATH/jta/engine/* $INST_JTA_ENGINE_PATH/
 RUN ln -s $INST_JTA_ENGINE_PATH/jta/jobs $INST_JTA_FRONTEND_PATH/jobs
