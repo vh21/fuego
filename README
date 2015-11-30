@@ -1,19 +1,31 @@
-================================================================================
+Jenkins Test Automation
+=======================
+
 Installing JTA to docker container
-================================================================================
+--------------------------------------------------------------------------------
+Run install.sh from top directory. This will launch ``docker build'' command.
+Please modify Dockerfile to suit your needs.
 
-Run install.sh. It basically runs ``docker build''
-
-================================================================================
 Running
-================================================================================
+--------------------------------------------------------------------------------
+Issue the following commands from top directory:
 
-sudo jta-host-scripts/docker-create-containter.sh &&  jta-host-scripts/docker-start-container.sh
+jta-host-scripts/docker-create-containter.sh
+jta-host-scripts/docker-start-container.sh
 
-================================================================================
+Web interface will be available at http://localhost:8080
+
+Configuration
+--------------------------------------------------------------------------------
+Please see manual (docs/jta-docs.pdf) for configuration and using.
+
+docker-create-containter.sh configures Docker to use host network (--net="host" option).
+Please see Docker manual for different network setup.
+
+Container is configured to run ssh server at 2222 port. Modify container-cfg/sshd_config file if you need to configure ssh server differently.
+
 Updating
-================================================================================
-
+--------------------------------------------------------------------------------
 While inside docker container go to /home/jenkins/jta and issue ``git pull''.
 This will update the following components:
 - JTA engine
@@ -21,4 +33,4 @@ This will update the following components:
 - overlays
 - jenkins jobs
 
-Boards configuration and toolchain setup will not be touched since these are located in external docker volume that is mounted to /userdata
+Boards configuration, toolchain setup and Jenkins' config.xml will not be touched since these are located in external docker volume that is mounted to /userdata inside container.
