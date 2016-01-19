@@ -10,7 +10,7 @@ Running
 --------------------------------------------------------------------------------
 Issue the following commands from top directory:
 
-jta-host-scripts/docker-create-containter.sh
+jta-host-scripts/docker-create-container.sh
 jta-host-scripts/docker-start-container.sh
 
 Web interface will be available at http://localhost:8080
