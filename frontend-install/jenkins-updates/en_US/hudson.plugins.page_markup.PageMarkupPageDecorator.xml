@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <hudson.plugins.page__markup.PageMarkupPageDecorator plugin="page-markup@0.3">
-  <headerHtmlFragment>&lt;link rel=&quot;stylesheet&quot; href=&quot;/css/style2.css&quot; type=&quot;text/css&quot; /&gt;
+  <headerHtmlFragment>&lt;link rel=&quot;stylesheet&quot; href=&quot;WEBROOT_PREFIX_PLACEHOLDER/css/style2.css&quot; type=&quot;text/css&quot; /&gt;
 
 
 &lt;table id=&quot;header&quot; width=&quot;100%&quot; cellspacing=&quot;0&quot; cellpadding=&quot;0&quot; border=&quot;0&quot;&gt;
@@ -12,22 +12,22 @@
 					&lt;tr height=85&gt;
 						&lt;td width=&quot;2%&quot;/&gt;
 						&lt;td style=&quot;font-weight:bold; font-size: 2em; vertical-align:middle;&quot; align=&quot;center&quot; width=&quot;18%&quot;&gt;
-							&lt;a href=&quot;http://www.cogentembedded.com&quot;&gt;&lt;img alt=&quot;title&quot; src=&quot;/images/cogent-embedded.png&quot; style=max-width:100%&quot;&gt;&lt;/a&gt;
+							&lt;a href=&quot;http://www.cogentembedded.com&quot;&gt;&lt;img alt=&quot;title&quot; src=&quot;WEBROOT_PREFIX_PLACEHOLDER/images/cogent-embedded.png&quot; style=max-width:100%&quot;&gt;&lt;/a&gt;
 						&lt;/td&gt;
 
 						&lt;td width=&quot;4%&quot;&gt; &lt;td&gt;
 						&lt;td style=&quot;font-weight:bold; font-size: 2em; vertical-align:middle;&quot; align=&quot;center&quot; width=&quot;16%&quot;&gt;
-							&lt;a href=&quot;http://www.linuxfoundation.org&quot;&gt;&lt;img alt=&quot;title&quot; src=&quot;/images/LinuxFoundation.png&quot; style=max-width:100%&quot;&gt;&lt;/a&gt;
+							&lt;a href=&quot;http://www.linuxfoundation.org&quot;&gt;&lt;img alt=&quot;title&quot; src=&quot;WEBROOT_PREFIX_PLACEHOLDER/images/LinuxFoundation.png&quot; style=max-width:100%&quot;&gt;&lt;/a&gt;
 						&lt;/td&gt;
 
 						&lt;td width=&quot;4%&quot;&gt; &lt;td&gt;
 						&lt;td style=&quot;font-weight:bold; font-size: 2em; vertical-align:middle;&quot; align=&quot;center&quot; width=&quot;16%&quot;&gt;
-							&lt;a href=&quot;http://http://ltsi.linuxfoundation.org&quot;&gt;&lt;img alt=&quot;title&quot; src=&quot;/images/LTSI.png&quot; style=max-width:100%&quot;&gt;&lt;/a&gt;
+							&lt;a href=&quot;http://http://ltsi.linuxfoundation.org&quot;&gt;&lt;img alt=&quot;title&quot; src=&quot;WEBROOT_PREFIX_PLACEHOLDER/images/LTSI.png&quot; style=max-width:100%&quot;&gt;&lt;/a&gt;
 						&lt;/td&gt;
 
 						&lt;td width=&quot;4%&quot;&gt; &lt;td&gt;
 						&lt;td style=&quot;font-weight:bold; font-size: 2em; vertical-align:middle;&quot; align=&quot;center&quot; width=&quot;16%&quot;&gt;
-							&lt;a href=&quot;http://renesas.com&quot;&gt;&lt;img alt=&quot;title&quot; src=&quot;/images/Renesas.png&quot; style=max-width:100%&quot;&gt;&lt;/a&gt;
+							&lt;a href=&quot;http://renesas.com&quot;&gt;&lt;img alt=&quot;title&quot; src=&quot;WEBROOT_PREFIX_PLACEHOLDER/images/Renesas.png&quot; style=max-width:100%&quot;&gt;&lt;/a&gt;
 						&lt;/td&gt;
 
 						&lt;td width=&quot;2%&quot;&gt; &lt;td&gt;
@@ -37,7 +37,7 @@
 								&lt;div id=&quot;search-box-sizer&quot; style=&quot;font-family: Verdana,Helvetica,sans serif; font-size: 11px; font-style: normal; font-weight: 400;&quot;&gt;search&lt;/div&gt;
 								&lt;div id=&quot;searchform&quot; class=&quot;yui-ac&quot;&gt;
 									&lt;input class=&quot;has-default-text defaulted yui-ac-input&quot; value=&quot;search&quot; name=&quot;q&quot; id=&quot;search-box&quot; autocomplete=&quot;off&quot; style=&quot;width: 225px;&quot;&gt;&amp;nbsp;
-									&lt;a href=&quot;http://wiki.jenkins-ci.org/display/JENKINS/Search+Box&quot;&gt;&lt;img width=&quot;16&quot; height=&quot;16&quot; src=&quot;/images/16x16/help.png&quot; alt=&quot;help for search&quot;&gt;&lt;/a&gt;
+									&lt;a href=&quot;http://wiki.jenkins-ci.org/display/JENKINS/Search+Box&quot;&gt;&lt;img width=&quot;16&quot; height=&quot;16&quot; src=&quot;WEBROOT_PREFIX_PLACEHOLDER/images/16x16/help.png&quot; alt=&quot;help for search&quot;&gt;&lt;/a&gt;
 									&lt;div id=&quot;search-box-completion&quot; class=&quot;yui-ac-container&quot; style=&quot;width: 225px; left: 1608px; top: 25px;&quot;&gt;&lt;/div&gt;
 									&lt;script&gt;createSearchBox(&quot;/search/&quot;);&lt;/script&gt;
 								&lt;/div&gt;

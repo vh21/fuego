@@ -1,7 +1,7 @@
 LANG=en_US
 JENKINS_USER_PASS="j3nkins"
 
-JEN_URL=http://localhost:8080
+JEN_URL=http://localhost:8080$URL_PREFIX
 JENKINS_INST=/var/lib/jenkins
 JENKINS_WAR_FILE=/usr/share/jenkins/jenkins.war
 JENKINS_CORE_NAME=`jar tf $JENKINS_WAR_FILE | grep jenkins-core`

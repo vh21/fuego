@@ -39,7 +39,7 @@ RUN git clone https://cogentembedded@bitbucket.org/cogentembedded/jta-core.git $
 RUN ln -s $INST_JTA_ENGINE_PATH/jta/engine/* $INST_JTA_ENGINE_PATH/
 RUN ln -s $INST_JTA_ENGINE_PATH/jta/jobs $INST_JTA_FRONTEND_PATH/jobs
 
-COPY frontend-install/jenkins.cfg /etc/default/jenkins
+
 COPY docs $INST_JTA_FRONTEND_PATH/userContent/docs/
 
 # ==============================================================================
@@ -64,14 +64,26 @@ RUN ln -s $INST_JTA_ENGINE_PATH/jta/plugins-conf/scriptler $INST_JTA_FRONTEND_PA
 RUN ln -s $INST_JTA_ENGINE_PATH/jta/plugins-conf/sidebar-link.xml $INST_JTA_FRONTEND_PATH/
 
 # ==============================================================================
+# Set Jenkins URL --prefix
+# ==============================================================================
+# no trailing "/" at the end!
+
+ENV URL_PREFIX /foobar
+COPY frontend-install/jenkins.cfg /etc/default/jenkins
+COPY jta-scripts/subsitute_jen_url_prefix.sh /jta-install/
+RUN /jta-install/subsitute_jen_url_prefix.sh /etc/default/jenkins
+
+# ==============================================================================
 # Install Jenkins UI updates
 # ==============================================================================
 
 RUN chown -R jenkins  $INST_JTA_ENGINE_PATH $INST_JTA_FRONTEND_PATH /var/cache/jenkins /etc/default/jenkins
 COPY frontend-install/plugins $INST_JTA_FRONTEND_PATH/
 COPY frontend-install/jenkins-updates /jta-install/jenkins-updates
+RUN /jta-install/subsitute_jen_url_prefix.sh /jta-install/jenkins-updates
 WORKDIR /jta-install/jenkins-updates
 RUN echo "installing custom UI updates"
+RUN /bin/bash
 RUN /etc/init.d/jenkins start && ./updates.sh
 RUN ln -s $INST_JTA_ENGINE_PATH/logs $INST_JTA_FRONTEND_PATH/userContent/jta.logs
 
