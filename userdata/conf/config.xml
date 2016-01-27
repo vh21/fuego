@@ -42,7 +42,7 @@
               <int>2</int>
               <string>BOARD_OVERLAY</string>
               <string>boards/template-dev.board</string>
-              <string>DISTR</string>
+              <string>DISTRIB</string>
               <string>distribs/nologger.dist</string>
             </tree-map>
           </envVars>
