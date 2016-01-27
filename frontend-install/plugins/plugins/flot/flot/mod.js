@@ -22,9 +22,20 @@
 
 jQuery.noConflict();
 jQuery(document).ready(function () {
-  var localurl = jQuery(location).attr('href').split("/"),
-      jenurl = 'http://'+location['host']+'/userContent/jta.logs/',
-      testname = localurl[localurl.length - 2],
+
+    var localurl = jQuery(location).attr('href').split("/");
+    var prefix="";
+    var oft = 4;
+    urlToken = localurl[localurl.length - oft];
+    while (urlToken != location['host']) {
+    	prefix = urlToken + prefix;
+    	oft++;
+	urlToken = localurl[localurl.length - oft];
+    }
+
+    var jenurl = 'http://'+'/'+location['host'] + '/' + prefix +'/userContent/jta.logs/';
+
+    var testname = localurl[localurl.length - 2],
       testsuite = testname.split(".")[1],
       testinfo = [],
       tests = [],
