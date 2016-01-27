@@ -83,18 +83,18 @@ COPY frontend-install/jenkins-updates /jta-install/jenkins-updates
 RUN /jta-install/subsitute_jen_url_prefix.sh /jta-install/jenkins-updates
 WORKDIR /jta-install/jenkins-updates
 RUN echo "installing custom UI updates"
-RUN /bin/bash
 RUN /etc/init.d/jenkins start && ./updates.sh
 RUN ln -s $INST_JTA_ENGINE_PATH/logs $INST_JTA_FRONTEND_PATH/userContent/jta.logs
 
 RUN ln -s $INST_JTA_ENGINE_PATH/jta/jobs/tests.info $INST_JTA_FRONTEND_PATH/userContent/tests.info
-
 
 # ==============================================================================
 # Setup daemons config
 # ==============================================================================
 
 COPY container-cfg/sshd_config /etc/ssh/sshd_config
+COPY jta-scripts/user-setup.sh /jta-install/
+RUN /jta-install/user-setup.sh
 
 # ==============================================================================
 # Clear workspace
