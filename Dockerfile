@@ -5,9 +5,15 @@
 FROM debian:jessie
 MAINTAINER dmitrii.cherkasov@cogentembedded.com
 
+# ==============================================================================
+# Influential environment variables
+# ==============================================================================
+
 ENV INST_JTA_ENGINE_PATH /home/jenkins
 ENV INST_JTA_FRONTEND_PATH /var/lib/jenkins
 ENV INST_JTA_CORE_GIT_REVISION 5905f4c773c5ca972bb21e7f8cfb838eeec91528
+# URL_PREFIX sets Jenkins URL --prefix note: no trailing "/" at the end!
+ENV URL_PREFIX /jta 
 
 # ==============================================================================
 # Prepare basic image
@@ -63,12 +69,7 @@ RUN ln -s /userdata/conf/tools.sh $INST_JTA_ENGINE_PATH/scripts/tools.sh
 RUN ln -s $INST_JTA_ENGINE_PATH/jta/plugins-conf/scriptler $INST_JTA_FRONTEND_PATH/
 RUN ln -s $INST_JTA_ENGINE_PATH/jta/plugins-conf/sidebar-link.xml $INST_JTA_FRONTEND_PATH/
 
-# ==============================================================================
-# Set Jenkins URL --prefix
-# ==============================================================================
-# no trailing "/" at the end!
 
-ENV URL_PREFIX /foobar
 COPY frontend-install/jenkins.cfg /etc/default/jenkins
 COPY jta-scripts/subsitute_jen_url_prefix.sh /jta-install/
 RUN /jta-install/subsitute_jen_url_prefix.sh /etc/default/jenkins
