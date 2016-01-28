@@ -11,9 +11,9 @@ MAINTAINER dmitrii.cherkasov@cogentembedded.com
 
 ENV INST_JTA_ENGINE_PATH /home/jenkins
 ENV INST_JTA_FRONTEND_PATH /var/lib/jenkins
-ENV INST_JTA_CORE_GIT_REVISION 5905f4c773c5ca972bb21e7f8cfb838eeec91528
+ENV INST_JTA_CORE_GIT_REVISION 3042b1593443adba281a2909f4c472f72990a4f0
 # URL_PREFIX sets Jenkins URL --prefix note: no trailing "/" at the end!
-ENV URL_PREFIX /jta 
+ENV URL_PREFIX /jta
 
 # ==============================================================================
 # Prepare basic image
@@ -68,7 +68,6 @@ RUN ln -s /userdata/conf/tools.sh $INST_JTA_ENGINE_PATH/scripts/tools.sh
 
 RUN ln -s $INST_JTA_ENGINE_PATH/jta/plugins-conf/scriptler $INST_JTA_FRONTEND_PATH/
 RUN ln -s $INST_JTA_ENGINE_PATH/jta/plugins-conf/sidebar-link.xml $INST_JTA_FRONTEND_PATH/
-
 
 COPY frontend-install/jenkins.cfg /etc/default/jenkins
 COPY jta-scripts/subsitute_jen_url_prefix.sh /jta-install/
