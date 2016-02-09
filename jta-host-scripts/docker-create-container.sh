@@ -7,4 +7,7 @@ while [ -h "$SOURCE" ]; do # resolve $SOURCE until the file is no longer a symli
 done
 DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
 
-sudo docker create -it -v $DIR/../userdata:/userdata --net="host" jta
+CONTAINER_ID=`sudo docker create -it -v $DIR/../userdata:/userdata --net="host" jta`
+CONTAINER_ID_FILE="$DIR/../last_jta_container.id"
+echo "Created JTA container $CONTAINER_ID"
+echo $CONTAINER_ID > $DIR/../last_jta_container.id
