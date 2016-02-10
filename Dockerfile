@@ -8,10 +8,9 @@ MAINTAINER dmitrii.cherkasov@cogentembedded.com
 # ==============================================================================
 # Influential environment variables
 # ==============================================================================
-
 ENV INST_JTA_ENGINE_PATH /home/jenkins
 ENV INST_JTA_FRONTEND_PATH /var/lib/jenkins
-ENV INST_JTA_CORE_GIT_REVISION 3042b1593443adba281a2909f4c472f72990a4f0
+ENV INST_JTA_CORE_GIT_REVISION 500e8e1289f98f0905d09ac3afbcf4f50d9a9b13
 # URL_PREFIX sets Jenkins URL --prefix note: no trailing "/" at the end!
 ENV URL_PREFIX /jta
 
@@ -19,7 +18,6 @@ ENV URL_PREFIX /jta
 # Prepare basic image
 # ==============================================================================
 WORKDIR /jta-install
-
 RUN dpkg --add-architecture i386
 RUN echo deb http://ftp.us.debian.org/debian jessie main non-free >> /etc/apt/sources.list
 RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get -yV install apt-utils daemon gcc make python-paramiko python-lxml python-simplejson python-matplotlib libtool xmlstarlet autoconf automake rsync openjdk-7-jre openjdk-7-jdk iperf netperf netpipe-tcp texlive-latex-base sshpass wget git sudo net-tools vim openssh-server curl
