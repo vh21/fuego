@@ -22,9 +22,20 @@
 
 jQuery.noConflict();
 jQuery(document).ready(function () {
-  var localurl = jQuery(location).attr('href').split("/"),
-      jenurl = 'http://'+location['host']+'/userContent/jta.logs/',
-      testname = localurl[localurl.length - 2],
+
+    var localurl = jQuery(location).attr('href').split("/");
+    var pathname = jQuery(location).attr('pathname').split("/");
+
+    var prefix = pathname[1];
+    var i = 2;
+    while (pathname[i] != "view" && pathname[i] != "job") {
+    	prefix = prefix + '/' + pathname[i];
+    	i++;
+    }
+
+    var jenurl = 'http://'+'/'+location['host'] + '/' + prefix +'/userContent/jta.logs/';
+
+    var testname = localurl[localurl.length - 2],
       testsuite = testname.split(".")[1],
       testinfo = [],
       tests = [],
@@ -57,15 +68,22 @@ jQuery(document).ready(function () {
   };
 
 function getSuitesInfo(series) {
-  testinfo = series[testsuite]
-  for (var i=0;i<testinfo.length;i++) {
-  jQuery('.plots').append('<div class="container"><div class="area_header">'+testsuite+' / '+testinfo[i]+'</div>'+
-  '<div class="cont2"><div style="width:800px;height:200px;" id="ph'+i+'"></div><p></p><div style="width:800px;height:70px" id="phf'+i+'"></div></div>'+
-  '<div class="cont3">Legend:<div id="phl'+i+'"></div><br/>'+
-  '<div class="devices"><input type="checkbox" name="all_dev" checked="checked" id="all_dev_'+i+'"><label for="all_dev">All devices:</label><br/><div id="pht'+i+'"></div></div>'+
-  '<div class="firmware"><input type="checkbox" name="all_fw" checked="checked" id="all_fw_'+i+'"><label for="all_fw">All firmware:</label><br/><div id="phfw'+i+'"></div>'+
-  '</div></div>');
-  }
+    if (testsuite in series) {
+	testinfo = series[testsuite];
+	for (var i=0;i<testinfo.length;i++) {
+	    jQuery('.plots').append('<div class="container"><div class="area_header">'+testsuite+' / '+testinfo[i]+'</div>'+
+				    '<div class="cont2"><div style="width:800px;height:200px;" id="ph'+i+'"></div><p></p><div style="width:800px;height:70px" id="phf'+i+'"></div></div>'+
+				    '<div class="cont3">Legend:<div id="phl'+i+'"></div><br/>'+
+				    '<div class="devices"><input type="checkbox" name="all_dev" checked="checked" id="all_dev_'+i+'"><label for="all_dev">All devices:</label><br/><div id="pht'+i+'"></div></div>'+
+				    '<div class="firmware"><input type="checkbox" name="all_fw" checked="checked" id="all_fw_'+i+'"><label for="all_fw">All firmware:</label><br/><div id="phfw'+i+'"></div>'+
+				    '</div></div>');
+	}
+    }
+    else {
+	jQuery('.plots').append('<div class="container"><div class="area_header">'+testsuite+':'+ 'No data' +'</div>'
+				+'</div></div>');
+	
+    }
 }
 
 function getBuildsInfo(series) {

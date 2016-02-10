@@ -5,15 +5,19 @@
 FROM debian:jessie
 MAINTAINER dmitrii.cherkasov@cogentembedded.com
 
+# ==============================================================================
+# Influential environment variables
+# ==============================================================================
 ENV INST_JTA_ENGINE_PATH /home/jenkins
 ENV INST_JTA_FRONTEND_PATH /var/lib/jenkins
-ENV INST_JTA_CORE_GIT_REVISION 5905f4c773c5ca972bb21e7f8cfb838eeec91528
+ENV INST_JTA_CORE_GIT_REVISION 500e8e1289f98f0905d09ac3afbcf4f50d9a9b13
+# URL_PREFIX sets Jenkins URL --prefix note: no trailing "/" at the end!
+ENV URL_PREFIX /jta
 
 # ==============================================================================
 # Prepare basic image
 # ==============================================================================
 WORKDIR /jta-install
-
 RUN dpkg --add-architecture i386
 RUN echo deb http://ftp.us.debian.org/debian jessie main non-free >> /etc/apt/sources.list
 RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get -yV install apt-utils daemon gcc make python-paramiko python-lxml python-simplejson python-matplotlib libtool xmlstarlet autoconf automake rsync openjdk-7-jre openjdk-7-jdk iperf netperf netpipe-tcp texlive-latex-base sshpass wget git sudo net-tools vim openssh-server curl
@@ -39,7 +43,7 @@ RUN git clone https://cogentembedded@bitbucket.org/cogentembedded/jta-core.git $
 RUN ln -s $INST_JTA_ENGINE_PATH/jta/engine/* $INST_JTA_ENGINE_PATH/
 RUN ln -s $INST_JTA_ENGINE_PATH/jta/jobs $INST_JTA_FRONTEND_PATH/jobs
 
-COPY frontend-install/jenkins.cfg /etc/default/jenkins
+
 COPY docs $INST_JTA_FRONTEND_PATH/userContent/docs/
 
 # ==============================================================================
@@ -63,6 +67,10 @@ RUN ln -s /userdata/conf/tools.sh $INST_JTA_ENGINE_PATH/scripts/tools.sh
 RUN ln -s $INST_JTA_ENGINE_PATH/jta/plugins-conf/scriptler $INST_JTA_FRONTEND_PATH/
 RUN ln -s $INST_JTA_ENGINE_PATH/jta/plugins-conf/sidebar-link.xml $INST_JTA_FRONTEND_PATH/
 
+COPY frontend-install/jenkins.cfg /etc/default/jenkins
+COPY jta-scripts/subsitute_jen_url_prefix.sh /jta-install/
+RUN /jta-install/subsitute_jen_url_prefix.sh /etc/default/jenkins
+
 # ==============================================================================
 # Install Jenkins UI updates
 # ==============================================================================
@@ -70,6 +78,7 @@ RUN ln -s $INST_JTA_ENGINE_PATH/jta/plugins-conf/sidebar-link.xml $INST_JTA_FRON
 RUN chown -R jenkins  $INST_JTA_ENGINE_PATH $INST_JTA_FRONTEND_PATH /var/cache/jenkins /etc/default/jenkins
 COPY frontend-install/plugins $INST_JTA_FRONTEND_PATH/
 COPY frontend-install/jenkins-updates /jta-install/jenkins-updates
+RUN /jta-install/subsitute_jen_url_prefix.sh /jta-install/jenkins-updates
 WORKDIR /jta-install/jenkins-updates
 RUN echo "installing custom UI updates"
 RUN /etc/init.d/jenkins start && ./updates.sh
@@ -77,12 +86,13 @@ RUN ln -s $INST_JTA_ENGINE_PATH/logs $INST_JTA_FRONTEND_PATH/userContent/jta.log
 
 RUN ln -s $INST_JTA_ENGINE_PATH/jta/jobs/tests.info $INST_JTA_FRONTEND_PATH/userContent/tests.info
 
-
 # ==============================================================================
 # Setup daemons config
 # ==============================================================================
 
 COPY container-cfg/sshd_config /etc/ssh/sshd_config
+COPY jta-scripts/user-setup.sh /jta-install/
+RUN /jta-install/user-setup.sh
 
 # ==============================================================================
 # Clear workspace
