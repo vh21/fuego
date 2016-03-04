@@ -54,6 +54,7 @@ then
     export CONFIGURE_FLAGS="--target=arm-linux-gnueabihf --host=arm-linux-gnueabihf --build=x86_64-linux"
     export AS=arm-linux-gnueabihf-as
     export LD=arm-linux-gnueabihf-ld
+    export AR=arm-linux-gnueabihf-ar
     export ARCH=arm
     export CROSS_COMPILE=arm-linux-gnueabihf-
     export PREFIX=arm-linux-gnueabihf
