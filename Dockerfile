@@ -20,7 +20,7 @@ ENV URL_PREFIX /jta
 WORKDIR /jta-install
 RUN dpkg --add-architecture i386
 RUN echo deb http://ftp.us.debian.org/debian jessie main non-free >> /etc/apt/sources.list
-RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get -yV install apt-utils daemon gcc make python-paramiko python-lxml python-simplejson python-matplotlib libtool xmlstarlet autoconf automake rsync openjdk-7-jre openjdk-7-jdk iperf netperf netpipe-tcp texlive-latex-base sshpass wget git sudo net-tools vim openssh-server curl
+RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get -yV install apt-utils daemon gcc make python-paramiko python-lxml python-simplejson python-matplotlib libtool xmlstarlet autoconf automake rsync openjdk-7-jre openjdk-7-jdk iperf netperf netpipe-tcp texlive-latex-base sshpass wget git sudo net-tools vim openssh-server curl inotify-tools
 RUN /bin/bash -c 'echo "dash dash/sh boolean false" | debconf-set-selections ; DEBIAN_FRONTEND=noninteractive dpkg-reconfigure dash'
 COPY frontend-install/jenkins_1.509.2_all.deb /jta-install/
 RUN dpkg -i /jta-install/jenkins_1.509.2_all.deb
@@ -45,6 +45,11 @@ RUN ln -s $INST_JTA_ENGINE_PATH/jta/jobs $INST_JTA_FRONTEND_PATH/jobs
 
 
 COPY docs $INST_JTA_FRONTEND_PATH/userContent/docs/
+
+# ==============================================================================
+# copy a miscelaneous JTA script
+# ==============================================================================
+COPY jta-scripts/maintain_config_link.sh /usr/local/bin/
 
 # ==============================================================================
 # Init userdata
