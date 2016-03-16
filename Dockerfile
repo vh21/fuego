@@ -10,7 +10,7 @@ MAINTAINER dmitrii.cherkasov@cogentembedded.com
 # ==============================================================================
 ENV INST_JTA_ENGINE_PATH /home/jenkins
 ENV INST_JTA_FRONTEND_PATH /var/lib/jenkins
-ENV INST_JTA_CORE_GIT_REVISION 500e8e1289f98f0905d09ac3afbcf4f50d9a9b13
+ENV INST_JTA_CORE_GIT_REVISION 1601cb59f0b62546c447694bbb819418a7841c95
 # URL_PREFIX sets Jenkins URL --prefix note: no trailing "/" at the end!
 ENV URL_PREFIX /jta
 
