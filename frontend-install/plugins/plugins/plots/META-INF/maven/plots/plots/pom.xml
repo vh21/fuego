@@ -9,7 +9,7 @@
   <groupId>plots</groupId>
   <artifactId>plots</artifactId>
   <version>0.2-SNAPSHOT</version>
-  <name>JTA Benchmark show plot plugin.</name>
+  <name>Fuego Benchmark show plot plugin.</name>
   <packaging>hpi</packaging>
   
   <developers>

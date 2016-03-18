@@ -5,7 +5,7 @@ In this document we will use such notions as \textit{targets} and \textit{boards
 \item[Board] denotes a back-end entity, such as a physical board (specifically, the board or device to run tests on).
 \end{description}
 
-Board configuration is stored in \texttt{JTA\_ENGINE\_PATH/overlays/boards/<boardname>.board}, 
+Board configuration is stored in \texttt{FUEGO\_ENGINE\_PATH/overlays/boards/<boardname>.board}, 
 where \texttt{<boardname>} is the respective name of the target.
 
 \subsection{Adding a target in Jenkins interface}
@@ -13,7 +13,7 @@ where \texttt{<boardname>} is the respective name of the target.
 The simplest method of adding a new target is to copy from an existing one. 
 We provide \textit{template-dev} board for that purpose.
 \begin{enumerate}
-\item Open a browser window to the \href{http://localhost:8080/}{JTA web interface}
+\item Open a browser window to the \href{http://localhost:8080/}{Fuego web interface}
 \item Click on \textbf{Target status}
 \item Click on \textbf{New node}
 \item Fill in the \textit{Node name} input field witht he name of the new board
@@ -30,13 +30,13 @@ Board config file is an overlay (See \ref{subsec:overlay_fmt}) that must inherit
 The following is the step-by-step description of all mandatory environment variables that should be set by this file:
 
 \begin{description}
-\item[\texttt{TRANSPORT}:] defines how JTA should communicate with the board. 
+\item[\texttt{TRANSPORT}:] defines how Fuego should communicate with the board. 
   Currently only \texttt{ssh} is supported;
 \item[\texttt{IPADDR}:]  IP address or host name of board;
 \item[\texttt{SSH\_PORT}:]  ssh port number of board;
 \item[\texttt{LOGIN}:]  user name for ssh login;
 \item[\texttt{PASSWORD}:] password for ssh login;
-\item[\texttt{JTA\_HOME}:] path to the directory on device the tests will run from;
+\item[\texttt{FUEGO\_HOME}:] path to the directory on device the tests will run from;
 \item[\texttt{PLATFORM}:] architecture of the board. 
   Currently \texttt{ia32}, \texttt{arm} and \texttt{mips} are supported. Used by some of tests during compilation.
 \end{description}
@@ -49,5 +49,5 @@ file system tests: \texttt{SATA\_DEV, SATA\_MP, USB\_DEV, USB\_MP, MMC\_DEV, MMC
 
 %%% Local Variables: 
 %%% mode: latex
-%%% TeX-master: "jta-guide"
+%%% TeX-master: "fuego-guide"
 %%% End: 

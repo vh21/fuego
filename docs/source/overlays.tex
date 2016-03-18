@@ -4,7 +4,7 @@ This section describes base classes and overlays concept, how to write ones and 
 
 \subsection{Base class format}
 
-\label{subsec:jtaclass_fmt}
+\label{subsec:fuegoclass_fmt}
 Base class is a special file similar to shell script with definitions of basic parameters.
 It has special fields \texttt{OF.NAME} and \texttt{OF.DESCRIPTION} that set base class name and description respectively.
 You can have as many base classes as you want. We provide base classes for \emph{boards} and \emph{distributions}.
@@ -51,8 +51,8 @@ and two variables:
 \end{figure}
 
 
-\subsection{JTA classes and overlays organization}
-\label{sec:jta_class_ov}
+\subsection{Fuego classes and overlays organization}
+\label{sec:fuego_class_ov}
 
 \texttt{ovgen.py} script takes a number of base class and overlay files and produces \texttt{prolog.sh} script file that
 is executed before each test is run.
@@ -64,12 +64,12 @@ There are two conceptes implemented using the scheme:
 [F. \ref{fig:base_ovs_toplevel}] displays this scheme from top-level perspective.
 \begin{figure}[H]
   \includegraphics*[width=16cm]{overlays_toplevel.png}
-  \caption{JTA Base classes and overlays from toplevel perspective}
+  \caption{Fuego Base classes and overlays from toplevel perspective}
   \label{fig:base_ovs_toplevel}
 \end{figure}
 
 \subsubsection{Base distribution class}
-\textit{base-distrib} is the base class (See \ref{subsec:jtaclass_fmt}) that defines functions necessary for working with system. It is located in \texttt{overlays/base/base-distrib.jtaclass} file.
+\textit{base-distrib} is the base class (See \ref{subsec:fuegoclass_fmt}) that defines functions necessary for working with system. It is located in \texttt{overlays/base/base-distrib.fuegoclass} file.
 
 It defines the following functions:
 
@@ -88,7 +88,7 @@ It defines the following functions:
 You can redefine these functions in your distib overlay file that inherits \textit{base-distrib} class. Default distrib overlay \texttt{base.dist} just inherits base class with no modifications.
 
 \subsubsection{Base board class}
-\textit{base-board} is the base class that defines functions necessary for working with system. It is located in \texttt{overlays/base/base-distrib.jtaclass} file.
+\textit{base-board} is the base class that defines functions necessary for working with system. It is located in \texttt{overlays/base/base-distrib.fuegoclass} file.
 
 \begin{description}
 \item[\texttt{ov\_transport\_get:}] get specified file from board;
@@ -105,5 +105,5 @@ You can redefine these in your board overlay for non-standard methods for commun
 
 %%% Local Variables: 
 %%% mode: latex
-%%% TeX-master: "jta-guide"
+%%% TeX-master: "fuego-guide"
 %%% End: 

@@ -1,7 +1,7 @@
 Jenkins Test Automation
 =======================
 
-Installing JTA to docker container
+Installing Fuego to docker container
 --------------------------------------------------------------------------------
 Run install.sh from top directory. This will launch ``docker build'' command.
 Please modify Dockerfile to suit your needs.
@@ -10,14 +10,14 @@ Running
 --------------------------------------------------------------------------------
 Issue the following commands from top directory:
 
-jta-host-scripts/docker-create-container.sh
-jta-host-scripts/docker-start-container.sh
+fuego-host-scripts/docker-create-container.sh
+fuego-host-scripts/docker-start-container.sh
 
 Web interface will be available at http://localhost:8080
 
 Configuration
 --------------------------------------------------------------------------------
-Please see manual (docs/jta-docs.pdf) for configuration and using.
+Please see manual (docs/fuego-docs.pdf) for configuration and using.
 
 docker-create-containter.sh configures Docker to use host network (--net="host" option).
 Please see Docker manual for different network setup.
@@ -26,9 +26,9 @@ Container is configured to run ssh server at 2222 port. Modify container-cfg/ssh
 
 Updating
 --------------------------------------------------------------------------------
-While inside docker container go to /home/jenkins/jta and issue ``git pull''.
+While inside docker container go to /home/jenkins/fuego and issue ``git pull''.
 This will update the following components:
-- JTA engine
+- Fuego engine
 - tests
 - overlays
 - jenkins jobs

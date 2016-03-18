@@ -27,11 +27,11 @@
 \begin{lstlisting}[label=intel-minnow-tools,caption=\texttt{intel minnow tools} section]
 if [ "${PLATFORM}" = "intel-minnow" ];
 then
-        SDKROOT=$JTA_ENGINE_PATH/tools/intel-minnow/sysroots/core2-32-osv-linux/
+        SDKROOT=$FUEGO_ENGINE_PATH/tools/intel-minnow/sysroots/core2-32-osv-linux/
         # environment script changes PATH in the way that python uses libs from sysroot which is not what we want, so save it and use later
         ORIG_PATH=$PATH
         PREFIX=i586-osv-linux
-        source $JTA_ENGINE_PATH/tools/intel-minnow/environment-setup-core2-32-osv-linux
+        source $FUEGO_ENGINE_PATH/tools/intel-minnow/environment-setup-core2-32-osv-linux
 
         HOST=arm-osv-linux-gnueabi
         
@@ -68,13 +68,13 @@ function test_build {
 }
 
 function test_deploy {
-	put bc-device.sh  $JTA_HOME/jta.$TESTDIR/
+	put bc-device.sh  $FUEGO_HOME/fuego.$TESTDIR/
 }
 
 function test_run {
     assert_define BENCHMARK_BC_EXPR1
     assert_define BENCHMARK_BC_EXPR2
-    report "cd $JTA_HOME/jta.$TESTDIR; ./bc-device.sh $BENCHMARK_BC_EXPR1 $BENCHMARK_BC_EXPR1"  
+    report "cd $FUEGO_HOME/fuego.$TESTDIR; ./bc-device.sh $BENCHMARK_BC_EXPR1 $BENCHMARK_BC_EXPR1"  
 }
 . ../scripts/benchmark.sh
 \end{lstlisting}
@@ -125,5 +125,5 @@ sys.exit(plib.process_data(ref_section_pat, cur_dict, 's', 'value'))
 
 %%% Local Variables: 
 %%% mode: latex
-%%% TeX-master: "jta-guide"
+%%% TeX-master: "fuego-guide"
 %%% End: 

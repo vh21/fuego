@@ -1,4 +1,4 @@
-// JTA Plotting Script 
+// Fuego Plotting Script 
 
 // Copyright (c) 2014 Cogent Embedded, Inc.
 
@@ -33,7 +33,7 @@ jQuery(document).ready(function () {
     	i++;
     }
 
-    var jenurl = 'http://'+'/'+location['host'] + '/' + prefix +'/userContent/jta.logs/';
+    var jenurl = 'http://'+'/'+location['host'] + '/' + prefix +'/userContent/fuego.logs/';
 
     var testname = localurl[localurl.length - 2],
       testsuite = testname.split(".")[1],

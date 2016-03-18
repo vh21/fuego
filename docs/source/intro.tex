@@ -3,12 +3,12 @@
 
 Testing evaluation boards (and final products based on them) is not easy. There is a number of software products made for that very purpose, the most eminent of which is \href{https://wiki.linaro.org/Platform/LAVA}{Lava}.
 
-From our point of view, LAVA is hard to extend both in terms of the engine and its frontend. On the other hand, the core of JTA is based on shell scripts that can be trivially extended and uses Jenkins which is well tested and has lots of available plugins to extend the framework with additional features (e.g. e-mail notification of test results).
+From our point of view, LAVA is hard to extend both in terms of the engine and its frontend. On the other hand, the core of Fuego is based on shell scripts that can be trivially extended and uses Jenkins which is well tested and has lots of available plugins to extend the framework with additional features (e.g. e-mail notification of test results).
 
-The JTA framework was designed to provide a core meeting a few points:
+The Fuego framework was designed to provide a core meeting a few points:
 
 \begin{itemize}
-\item It is usable out of the box: JTA includes 60+ prepackaged tests, including benchmark statistics, plotting and reports generation.
+\item It is usable out of the box: Fuego includes 60+ prepackaged tests, including benchmark statistics, plotting and reports generation.
 \item It is highly custmizable on the front-end side (thanks to the availability of tons of plugins for Jenkins) and also on the backend side, which relies on a simple core written in bash;
 \item It allows for flexible test configuration using such notions as \textit{test specifications} and \textit{test plans} \ref{sec:testplans};
 \item It supports running groups of tests in a batch and generating reports \ref{sec:reports});
@@ -21,5 +21,5 @@ As you can see, our goal is to provide a flexible framework with seemless custom
 
 %%% Local Variables: 
 %%% mode: latex
-%%% TeX-master: "jta-guide"
+%%% TeX-master: "fuego-guide"
 %%% End: 

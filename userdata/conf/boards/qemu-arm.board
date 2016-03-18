@@ -1,10 +1,10 @@
 inherit "base-board"
 include "base-params"
 
-IPADDR="172.17.42.1"
+IPADDR="172.17.0.1"
 SSH_PORT=5555
 LOGIN="root"
-JTA_HOME="/home/a"
+FUEGO_HOME="/home/a"
 PASSWORD="adm"
 PLATFORM="qemu-armv7hf"
 TRANSPORT="ssh"

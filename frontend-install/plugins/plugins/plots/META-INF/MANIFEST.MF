@@ -9,7 +9,7 @@ Implementation-Version: 0.2-SNAPSHOT
 Plugin-Class: hudson.plugins.plots.PlotsPlugin
 Group-Id: plots
 Short-Name: plots
-Long-Name: JTA Benchmark show plot plugin.
+Long-Name: Fuego Benchmark show plot plugin.
 Url: http://jenkins-ci.org/plugin/plots/
 Plugin-Version: 0.2-SNAPSHOT (private-07/26/2011 18:58-konstantinbelov)
 Hudson-Version: 1.399

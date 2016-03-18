@@ -7,7 +7,7 @@ digraph Overlay {
         base [shape=none, fontname="Nimbus Mono", rankdir=LR,
               label=<
               <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
-              <TR><TD PORT="bd">base-distrib.jtaclass</TD></TR>
+              <TR><TD PORT="bd">base-distrib.fuegoclass</TD></TR>
               <TR><TD PORT="ofn"><BR ALIGN="left"/>OF.NAME="base-distrib"</TD></TR>
 <TR><TD PORT="func">
 <BR ALIGN="left"/> <B> function </B> ov_rootfs_logread() {

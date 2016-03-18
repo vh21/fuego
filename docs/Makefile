@@ -1,7 +1,7 @@
 GUIDE_SOURCE_FILES=
 
-.PHONY: jta-guide.pdf
-jta-guide.pdf: 
+.PHONY: fuego-guide.pdf
+fuego-guide.pdf: 
 	make -C source $@
 
 schemes:

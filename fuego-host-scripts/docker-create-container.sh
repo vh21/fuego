@@ -7,13 +7,7 @@ while [ -h "$SOURCE" ]; do # resolve $SOURCE until the file is no longer a symli
 done
 DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
 
-CONTAINER_ID_FILE="$DIR/../last_jta_container.id"
-
-if [[ -f "$CONTAINER_ID_FILE" ]]
-then
-    CONTAINER_ID=`cat $CONTAINER_ID_FILE`
-    echo "Starting JTA container $CONTAINER_ID"
-    sudo docker start --interactive=true --attach=true $CONTAINER_ID
-else
-    echo "Please create JTA docker container via docker-create-container.sh script"
-fi
+CONTAINER_ID=`sudo docker create -it -v $DIR/../userdata:/userdata --net="host" fuego`
+CONTAINER_ID_FILE="$DIR/../last_fuego_container.id"
+echo "Created Fuego container $CONTAINER_ID"
+echo $CONTAINER_ID > $DIR/../last_fuego_container.id

@@ -11,30 +11,30 @@
 \subsection{Running install script}
 \label{sec:inst-steps}
 
-Simply run install.sh script. It will create a docker image with JTA installed. When it's done you should create and start a docker container running the following commands from top directory: 
+Simply run install.sh script. It will create a docker image with Fuego installed. When it's done you should create and start a docker container running the following commands from top directory: 
 \begin{itemize}
-\item \texttt{jta-host-scripts/docker-create-container.sh}.
-\item \texttt{jta-host-scripts/docker-start-container.sh}.
+\item \texttt{fuego-host-scripts/docker-create-container.sh}.
+\item \texttt{fuego-host-scripts/docker-start-container.sh}.
 \end{itemize}
 
-When container is started, JTA web interface will be available on local machine at port \href{http://localhost:8080}{8080}.
+When container is started, Fuego web interface will be available on local machine at port \href{http://localhost:8080}{8080}.
 
 Please note that board configuration, jenkins \texttt{config.xml} file, build logs and toolchains are stored under \textit{userdata} catalogue that is mounted as external volume to docker container under /userdata path. This allows to preserve all configuration when creating a new docker container. 
 
 In the rest of the document \texttt{/userdata/...} paths denote paths inside docker container.
 
-Some files and catalogues under \texttt{/userdata/...} are symlinked inside JTA engine and Jenkins paths. Please see \textit{Init Userdata} section in \texttt{Dockerfile} for more details.
+Some files and catalogues under \texttt{/userdata/...} are symlinked inside Fuego engine and Jenkins paths. Please see \textit{Init Userdata} section in \texttt{Dockerfile} for more details.
 
 \subsection{Installing toolchains and sysroots}
 You need toolchains and sysroots to build tests for different platforms. 
 \label{sec:toolchain-install}
-\subsubsection{Using meta-jta OE layer for generating toolchain}
-For convenience we provide a yocto layer that includes necessary software for target system: \href{https://bitbucket.org/cogentembedded/meta-jta/}{custom layer}. You can use this layer to generate toolchain and sysroot (using \texttt{bitbake meta-toolchain}) with all libraries and headers needed for building tests. See Poky \href{http://www.yoctoproject.org/docs/1.6/adt-manual/adt-manual.html}{Documentation} for more information.
+\subsubsection{Using meta-fuego OE layer for generating toolchain}
+For convenience we provide a yocto layer that includes necessary software for target system: \href{https://bitbucket.org/cogentembedded/meta-fuego/}{custom layer}. You can use this layer to generate toolchain and sysroot (using \texttt{bitbake meta-toolchain}) with all libraries and headers needed for building tests. See Poky \href{http://www.yoctoproject.org/docs/1.6/adt-manual/adt-manual.html}{Documentation} for more information.
 
 Toolchains and sysroots should generally be stored in \texttt{/userdata/toolchains} and installed from within docker container.
 
 \subsection{Configuring tools.sh file}
-\texttt{JTA\_ENGINE\_PATH/scripts/tools.sh} file is used to setup paths and compile flags for each platform.
+\texttt{FUEGO\_ENGINE\_PATH/scripts/tools.sh} file is used to setup paths and compile flags for each platform.
 
 For poky-generated toolchains one should source envirnoment file and set the following variables:
 \begin{itemize}
@@ -56,5 +56,5 @@ You can use \texttt{environment-setup-core2-32-osv-linux} script as reference.
 
 %%% Local Variables: 
 %%% mode: latex
-%%% TeX-master: "jta-guide"
+%%% TeX-master: "fuego-guide"
 %%% End: 

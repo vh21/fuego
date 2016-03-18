@@ -319,13 +319,13 @@
             <comparator class="hudson.util.CaseInsensitiveComparator" reference="../../../../../../slaves/slave[2]/nodeProperties/hudson.slaves.EnvironmentVariablesNodeProperty/envVars/tree-map/default/comparator"/>
           </default>
           <int>4</int>
-          <string>JTA_ENGINE_PATH</string>
+          <string>FUEGO_ENGINE_PATH</string>
           <string>/home/jenkins</string>
-          <string>JTA_LOGS_PATH</string>
+          <string>FUEGO_LOGS_PATH</string>
           <string>/home/jenkins/logs</string>
-          <string>JTA_SCRIPTS_PATH</string>
+          <string>FUEGO_SCRIPTS_PATH</string>
           <string>/home/jenkins/scripts</string>
-          <string>JTA_TESTS_PATH</string>
+          <string>FUEGO_TESTS_PATH</string>
           <string>/home/jenkins/tests</string>
         </tree-map>
       </envVars>

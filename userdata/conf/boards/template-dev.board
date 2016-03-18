@@ -3,7 +3,7 @@ include "base-params"
 
 IPADDR="set_ip_here"
 LOGIN="root"
-JTA_HOME="/home/a"
+FUEGO_HOME="/home/a"
 PASSWORD=""
 PLATFORM="set platform here (see tools.sh)"
 TRANSPORT="ssh"

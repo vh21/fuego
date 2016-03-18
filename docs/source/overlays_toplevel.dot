@@ -4,7 +4,7 @@ digraph OVT {
               ]
 
         	subgraph cluster_1 {
-                        basedist [shape=folder, label="class: base-distrib.jtaclass"];
+                        basedist [shape=folder, label="class: base-distrib.fuegoclass"];
                         nologger [shape=rectangle, label="overlay: nologger.dist"];
                         edge [label="inherit", style="dashed", arrowhead="vee"]
                         nologger -> basedist
@@ -13,8 +13,8 @@ digraph OVT {
 	}
 
               subgraph cluster_2 {
-              baseboard [shape=folder, label="class: base-board.jtaclass"]
-              baseparams [shape=folder, label="class: base-params.jtaclass"]
+              baseboard [shape=folder, label="class: base-board.fuegoclass"]
+              baseparams [shape=folder, label="class: base-params.fuegoclass"]
               minnow [shape=rectangle, label="overlay: minnow.board"]
               label = "board";
 	      color = red;

@@ -6,16 +6,16 @@ We will add a simple test that calls bc computing a value passed through spec pa
 
 \subsection{Adding Test Plan files}
 \label{sec:test-add-testplan}
-Create \texttt{JTA\_ENGINE\_PATH/overlays/testplans/testplan\_bc\_exp1.json}[L. \ref{testplan-bc-exp1}] and \texttt{testplan\_bc\_exp2.json}[L. \ref{testplan-bc-exp2}] files.
+Create \texttt{FUEGO\_ENGINE\_PATH/overlays/testplans/testplan\_bc\_exp1.json}[L. \ref{testplan-bc-exp1}] and \texttt{testplan\_bc\_exp2.json}[L. \ref{testplan-bc-exp2}] files.
 
 As you can see we've created two testplan files which reference two specs. Testplan can reference multiple specs for different tests, so for example we could run all filesystem tests with specific block device.
 
 \subsection{Adding spec file}
 \label{sec:test-add-spec}
 
-Create \texttt{JTA\_ENGINE\_PATH/overlays/test\_specs/Benchmark.bc.spec}[L. \ref{spec-bc}] file.
+Create \texttt{FUEGO\_ENGINE\_PATH/overlays/test\_specs/Benchmark.bc.spec}[L. \ref{spec-bc}] file.
 
-This spec file contatins two cases: \texttt{bc-exp1} that generates \texttt{EXPR1}, \texttt{EXPR2} variable and assignes it \texttt{``2*2''}, \texttt{``3*3''} values \footnote{Any variable defined in board config file[\ref{sec:jtaclass}] or in (inherited) base file[\ref{sec:board_config}] can be used. For example \texttt{\$MINNOW\_SATA\_DEV}}
+This spec file contatins two cases: \texttt{bc-exp1} that generates \texttt{EXPR1}, \texttt{EXPR2} variable and assignes it \texttt{``2*2''}, \texttt{``3*3''} values \footnote{Any variable defined in board config file[\ref{sec:fuegoclass}] or in (inherited) base file[\ref{sec:board_config}] can be used. For example \texttt{\$MINNOW\_SATA\_DEV}}
 and \texttt{bc-spec-exp2} that does the same but with \texttt{``2+2''} and \texttt{``3+3''} values. These variables is inteded to be used inside test script for controlling different test cases. And we will use it as a parameter to \texttt{bc-device.sh} script.
 
 You don't usually need more than one spec files, because all different cases can be listed in one file. 
@@ -23,7 +23,7 @@ You don't usually need more than one spec files, because all different cases can
 \subsection{Adding test script}
 \label{sec:test-add-script}
 
-Test script is the bash file that runs when test is executed on target. Create it[L. \ref{bc-script}] with the path \texttt{JTA\_ENGINE\_PATH/tests/Benchmark.bc/bc-script.sh}. This file should meet a strict format with following definitions:
+Test script is the bash file that runs when test is executed on target. Create it[L. \ref{bc-script}] with the path \texttt{FUEGO\_ENGINE\_PATH/tests/Benchmark.bc/bc-script.sh}. This file should meet a strict format with following definitions:
 \begin{description}
 \item[\texttt{tarball}] name of the tarball;
 \item[\texttt{test\_build}]  should contain test build commands;
@@ -76,7 +76,7 @@ You will be forwarded to the test configuration page. There are a lot of paramet
 \label{sec:edit-tst-info}
 Plot plugin needs to know which parameters it should display. It uses \texttt{tests.info}
 file for that purpose.
-Open \texttt{JTA\_ENGINE\_PATH/logs/tests.info} and add the following line:
+Open \texttt{FUEGO\_ENGINE\_PATH/logs/tests.info} and add the following line:
 \texttt{"bc":["result1","result2"]}. Make sure you meet json syntax this file uses.
 
 This line says to draw \textit{result1} and \textit{result2} values on the plot.
@@ -100,5 +100,5 @@ So, below is the list of all components our benchmark uses.
 
 %%% Local Variables: 
 %%% mode: latex
-%%% TeX-master: "jta-guide"
+%%% TeX-master: "fuego-guide"
 %%% End: 
