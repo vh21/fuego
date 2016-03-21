@@ -1,7 +1,7 @@
 GUIDE_SOURCE_FILES=
 
-.PHONY: fuego-guide.pdf
-fuego-guide.pdf: 
+.PHONY: fuego-docs.pdf
+fuego-docs.pdf:
 	make -C source $@
 
 schemes:
