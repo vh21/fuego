@@ -39,7 +39,7 @@ RUN bash /fuego-install/install-arm-linux-gnueabihf-toolchain.sh
 # ==============================================================================
 
 RUN mkdir -p /home/jenkins
-RUN git clone https://cogentembedded@bitbucket.org/cogentembedded/jta-core.git $INST_FUEGO_ENGINE_PATH/fuego && cd $INST_FUEGO_ENGINE_PATH/fuego && git reset --hard $INST_FUEGO_CORE_GIT_REVISION && cd /fuego-install
+RUN git clone https://cogentembedded@bitbucket.org/cogentembedded/fuego-core.git $INST_FUEGO_ENGINE_PATH/fuego && cd $INST_FUEGO_ENGINE_PATH/fuego && git reset --hard $INST_FUEGO_CORE_GIT_REVISION && cd /fuego-install
 RUN ln -s $INST_FUEGO_ENGINE_PATH/fuego/engine/* $INST_FUEGO_ENGINE_PATH/
 RUN ln -s $INST_FUEGO_ENGINE_PATH/fuego/jobs $INST_FUEGO_FRONTEND_PATH/jobs
 
