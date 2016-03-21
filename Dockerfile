@@ -10,7 +10,6 @@ MAINTAINER dmitrii.cherkasov@cogentembedded.com
 # ==============================================================================
 ENV INST_FUEGO_ENGINE_PATH /home/jenkins
 ENV INST_FUEGO_FRONTEND_PATH /var/lib/jenkins
-ENV INST_FUEGO_CORE_GIT_REVISION c71e42e2d000cd16b7181af4e2b020800479f654
 # URL_PREFIX sets Jenkins URL --prefix note: no trailing "/" at the end!
 ENV URL_PREFIX /fuego
 
@@ -37,12 +36,12 @@ RUN bash /fuego-install/install-arm-linux-gnueabihf-toolchain.sh
 # ==============================================================================
 # get Fuego core via git
 # ==============================================================================
+ENV INST_FUEGO_CORE_GIT_REVISION ab2aee1c9266e6553c57b68699246f394d31062a
 
 RUN mkdir -p /home/jenkins
 RUN git clone https://cogentembedded@bitbucket.org/cogentembedded/fuego-core.git $INST_FUEGO_ENGINE_PATH/fuego && cd $INST_FUEGO_ENGINE_PATH/fuego && git reset --hard $INST_FUEGO_CORE_GIT_REVISION && cd /fuego-install
 RUN ln -s $INST_FUEGO_ENGINE_PATH/fuego/engine/* $INST_FUEGO_ENGINE_PATH/
 RUN ln -s $INST_FUEGO_ENGINE_PATH/fuego/jobs $INST_FUEGO_FRONTEND_PATH/jobs
-
 
 COPY docs $INST_FUEGO_FRONTEND_PATH/userContent/docs/
 

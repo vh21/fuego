@@ -13,7 +13,7 @@ Issue the following commands from top directory:
 fuego-host-scripts/docker-create-container.sh
 fuego-host-scripts/docker-start-container.sh
 
-Web interface will be available at http://localhost:8080
+Web interface will be available at http://localhost:8080/fuego
 
 Configuration
 --------------------------------------------------------------------------------
