@@ -1,36 +1,48 @@
 Fuego
 =======================
 
-Installing Fuego to docker container
---------------------------------------------------------------------------------
-Run install.sh from top directory. This will launch ``docker build'' command.
-Please modify Dockerfile to suit your needs.
+Installing Fuego to a docker container
+-------------------------------------------------------------------------------
+Run install.sh from the top directory. This will launch the ``docker build''
+command.  You can modify the Dockerfile to suit your needs.
 
 Running
---------------------------------------------------------------------------------
-Issue the following commands from top directory:
+-------------------------------------------------------------------------------
+Issue the following commands from the top directory:
 
-fuego-host-scripts/docker-create-container.sh
-fuego-host-scripts/docker-start-container.sh
+  fuego-host-scripts/docker-create-container.sh
+  fuego-host-scripts/docker-start-container.sh
 
-Web interface will be available at http://localhost:8080/fuego
+Once the container is started, a web interface to the test system will
+be available at: http://localhost:8080/fuego
+
+The shell used to start the container will enter a shell inside the
+container.  If you exit that shell, the container will stop, and you
+will be returned to the host shell.
 
 Configuration
---------------------------------------------------------------------------------
-Please see manual (docs/fuego-docs.pdf) for configuration and using.
+-------------------------------------------------------------------------------
+Please see the manual (docs/fuego-docs.pdf) for configuration and usage.
 
-docker-create-containter.sh configures Docker to use host network (--net="host" option).
-Please see Docker manual for different network setup.
+docker-create-containter.sh configures Docker to use the host network
+(using the --net="host" option).
+Please see the Docker manual for different network setup options.
 
-Container is configured to run ssh server at 2222 port. Modify container-cfg/sshd_config file if you need to configure ssh server differently.
+The container is configured to run an ssh server at 2222 port. Modify
+the file container-cfg/sshd_config if you need to configure the ssh
+server differently.
 
 Updating
---------------------------------------------------------------------------------
-While inside docker container go to /home/jenkins/fuego and issue ``git pull''.
+-------------------------------------------------------------------------------
+While inside the docker container go to /home/jenkins/fuego and issue
+``git pull''.
+
 This will update the following components:
 - Fuego engine
 - tests
 - overlays
 - jenkins jobs
 
-Boards configuration, toolchain setup and Jenkins' config.xml will not be touched since these are located in external docker volume that is mounted to /userdata inside container.
+Board configurations, toolchain setup and Jenkins' config.xml will not be
+touched since these are located in an external docker volume that is
+mounted at /userdata inside container.
