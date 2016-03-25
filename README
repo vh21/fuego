@@ -46,3 +46,8 @@ This will update the following components:
 Board configurations, toolchain setup and Jenkins' config.xml will not be
 touched since these are located in an external docker volume that is
 mounted at /userdata inside container.
+
+License
+-------------------------------------------------------------------------------
+Fuego is licensed under 3-clause BSD license. Please refer to LICENSE for details.
+Jenkins is licensed under the MIT license.
