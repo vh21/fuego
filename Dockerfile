@@ -3,7 +3,7 @@
 # ==============================================================================
 
 FROM debian:jessie
-MAINTAINER dmitrii.cherkasov@cogentembedded.com
+MAINTAINER tim.bird@am.sony.com
 
 # ==============================================================================
 # Influential environment variables
@@ -39,7 +39,7 @@ RUN bash /fuego-install/install-arm-linux-gnueabihf-toolchain.sh
 ENV INST_FUEGO_CORE_GIT_REVISION ab2aee1c9266e6553c57b68699246f394d31062a
 
 RUN mkdir -p /home/jenkins
-RUN git clone https://cogentembedded@bitbucket.org/cogentembedded/fuego-core.git $INST_FUEGO_ENGINE_PATH/fuego && cd $INST_FUEGO_ENGINE_PATH/fuego && git reset --hard $INST_FUEGO_CORE_GIT_REVISION && cd /fuego-install
+RUN git clone https://bitbucket.org/tbird20d/fuego-core.git $INST_FUEGO_ENGINE_PATH/fuego && cd $INST_FUEGO_ENGINE_PATH/fuego && git reset --hard $INST_FUEGO_CORE_GIT_REVISION && cd /fuego-install
 RUN ln -s $INST_FUEGO_ENGINE_PATH/fuego/engine/* $INST_FUEGO_ENGINE_PATH/
 RUN ln -s $INST_FUEGO_ENGINE_PATH/fuego/jobs $INST_FUEGO_FRONTEND_PATH/jobs
 
