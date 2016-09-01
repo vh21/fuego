@@ -19,7 +19,7 @@ ENV URL_PREFIX /fuego
 WORKDIR /fuego-install
 RUN dpkg --add-architecture i386
 RUN echo deb http://ftp.us.debian.org/debian jessie main non-free >> /etc/apt/sources.list
-RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get -yV install apt-utils daemon gcc make python-paramiko python-lxml python-simplejson python-matplotlib libtool xmlstarlet autoconf automake rsync openjdk-7-jre openjdk-7-jdk iperf netperf netpipe-tcp texlive-latex-base sshpass wget git sudo net-tools vim openssh-server curl inotify-tools
+RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get -yV install apt-utils daemon gcc make python-paramiko python-lxml python-simplejson python-matplotlib libtool xmlstarlet autoconf automake rsync openjdk-7-jre openjdk-7-jdk iperf netperf netpipe-tcp texlive-latex-base sshpass wget git diffstat sudo net-tools vim openssh-server curl inotify-tools
 RUN /bin/bash -c 'echo "dash dash/sh boolean false" | debconf-set-selections ; DEBIAN_FRONTEND=noninteractive dpkg-reconfigure dash'
 COPY frontend-install/jenkins_1.509.2_all.deb /fuego-install/
 RUN dpkg -i /fuego-install/jenkins_1.509.2_all.deb
