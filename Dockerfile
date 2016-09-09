@@ -36,7 +36,7 @@ RUN bash /fuego-install/install-arm-linux-gnueabihf-toolchain.sh
 # ==============================================================================
 # get Fuego core via git
 # ==============================================================================
-ENV INST_FUEGO_CORE_GIT_REVISION ab2aee1c9266e6553c57b68699246f394d31062a
+ENV INST_FUEGO_CORE_GIT_REVISION 6b6412d7aa6093ae441e440eb0e3115e886cd2d9
 
 RUN mkdir -p /home/jenkins
 RUN git clone https://bitbucket.org/tbird20d/fuego-core.git $INST_FUEGO_ENGINE_PATH/fuego && cd $INST_FUEGO_ENGINE_PATH/fuego && git reset --hard $INST_FUEGO_CORE_GIT_REVISION && cd /fuego-install
