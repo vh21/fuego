@@ -1,1 +1,2 @@
-This catalogue contains toolchains necessary for building tests.
+This directory contains toolchains and toolchain setup scripts
+necessary for building tests.

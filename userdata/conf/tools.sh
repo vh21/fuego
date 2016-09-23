@@ -21,49 +21,10 @@
 # DESCRIPTION
 # This script defines (or calls env. setup script) build variables for ${PLATFORM}
 
-
-function export_tools () {
-    AS=$PREFIX-as
-    CC=$PREFIX-gcc
-    AR=$PREFIX-ar
-    RANLIB=$PREFIX-ranlib
-    CXX=$PREFIX-g++
-    CPP=$PREFIX-cpp
-    CXXCPP=$PREFIX-cpp
-    LD=$PREFIX-ld
-    #LDFLAGS="--sysroot ${SDKROOT} -lm"
-}
-
-if [ "${PLATFORM}" = "lager" ];
+# scan the toolchains directory for a matching $PLATFORM-tools.sh file
+if [ -f "/userdata/toolchains/${PLATFORM}-tools.sh" ];
 then
-        SDKROOT=/userdata/toolchains/lager-poky-toolchain/sysroots/cortexa15hf-vfp-neon-poky-linux-gnueabi
-        # environment script changes PATH in the way that python uses libs from sysroot which is not what we want, so save it and use later
-        ORIG_PATH=$PATH
-
-        PREFIX=arm-poky-linux-gnueabi
-        source /userdata/toolchains/lager-poky-toolchain/environment-setup-cortexa15hf-vfp-neon-poky-linux-gnueabi
-        HOST=arm-poky-linux-gnueabi
-
-        unset PYTHONHOME
-        env -u PYTHONHOME
-elif [ "${PLATFORM}" = "qemu-armv7hf" ];
-then
-    export CC=arm-linux-gnueabihf-gcc
-    export CXX=arm-linux-gnueabihf-g++
-    export CXX=arm-linux-gnueabihf-g++
-    export CONFIGURE_FLAGS="--target=arm-linux-gnueabihf --host=arm-linux-gnueabihf --build=x86_64-linux"
-    export AS=arm-linux-gnueabihf-as
-    export LD=arm-linux-gnueabihf-ld
-    export AR=arm-linux-gnueabihf-ar
-    export ARCH=arm
-    export CROSS_COMPILE=arm-linux-gnueabihf-
-    export PREFIX=arm-linux-gnueabihf
-    HOST=arm-linux
-
-    # environment script changes PATH in the way that python uses libs from sysroot which is not what we want, so save it and use later
-
-    ORIG_PATH=$PATH
-
-    unset PYTHONHOME
-    env -u PYTHONHOME
+	source /userdata/toolchains/${PLATFORM}-tools.sh
+else
+	abort_job "Missing toolchain setup script /userdata/toolchains/${PLATFORM}-tools.sh"
 fi
