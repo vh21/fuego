@@ -36,7 +36,8 @@ RUN bash /fuego-install/install-arm-linux-gnueabihf-toolchain.sh
 # ==============================================================================
 # get Fuego core via git
 # ==============================================================================
-ENV INST_FUEGO_CORE_GIT_REVISION 6b6412d7aa6093ae441e440eb0e3115e886cd2d9
+#ENV INST_FUEGO_CORE_GIT_REVISION 6b6412d7aa6093ae441e440eb0e3115e886cd2d9
+ENV INST_FUEGO_CORE_GIT_REVISION f9aa8025
 
 RUN mkdir -p /home/jenkins
 RUN git clone https://bitbucket.org/tbird20d/fuego-core.git $INST_FUEGO_ENGINE_PATH/fuego && cd $INST_FUEGO_ENGINE_PATH/fuego && git reset --hard $INST_FUEGO_CORE_GIT_REVISION && cd /fuego-install
@@ -44,6 +45,8 @@ RUN ln -s $INST_FUEGO_ENGINE_PATH/fuego/engine/* $INST_FUEGO_ENGINE_PATH/
 RUN ln -s $INST_FUEGO_ENGINE_PATH/fuego/jobs $INST_FUEGO_FRONTEND_PATH/jobs
 
 COPY docs $INST_FUEGO_FRONTEND_PATH/userContent/docs/
+
+ln -s $INST_FUEGO_ENGINE_PATH/fuego/engine/scripts/ftc /usr/local/bin/
 
 # ==============================================================================
 # copy a miscelaneous Fuego script
