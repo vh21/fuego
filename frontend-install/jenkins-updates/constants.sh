@@ -14,7 +14,7 @@ RSYNC_ARGS="-ahq --stats"
 
 # $1 - path to fix recursively
 fix_permissions() {
-  chown -fRH jenkins "$1" 
+  chown -fRH jenkins "$1"
 }
 
 output_errors_only() {
@@ -28,9 +28,10 @@ default_output() {
 }
 
 sync_fetch_jenkins_cli() {
-    until wget -nv ${JEN_URL}/jnlpJars/jenkins-cli.jar -O jenkins-cli.jar
+    until wget -v --no-proxy ${JEN_URL}/jnlpJars/jenkins-cli.jar -O jenkins-cli.jar
     do
-        echo "Retrying wget -nv ${JEN_URL}/jnlpJars/jenkins-cli.jar -O jenkins-cli.jar"
-        sleep 1
+        echo "Retrying wget -v --no-proxy ${JEN_URL}/jnlpJars/jenkins-cli.jar -O jenkins-cli.jar"
+        service jenkins restart
+        sleep 10
     done
 }
