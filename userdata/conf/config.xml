@@ -43,7 +43,7 @@
               <string>BOARD_OVERLAY</string>
               <string>boards/template-dev.board</string>
               <string>DISTRIB</string>
-              <string>distribs/nologger.dist</string>
+              <string>distribs/nologread.dist</string>
             </tree-map>
           </envVars>
         </hudson.slaves.EnvironmentVariablesNodeProperty>
@@ -73,7 +73,7 @@
               <string>BOARD_OVERLAY</string>
               <string>boards/qemu-arm.board</string>
               <string>DISTRIB</string>
-              <string>distribs/nologger.dist</string>
+              <string>distribs/nologread.dist</string>
               <string>SSH_PORT</string>
               <string>5555</string>
             </tree-map>
@@ -105,7 +105,7 @@
               <string>BOARD_OVERLAY</string>
               <string>boards/lager.board</string>
               <string>DISTRIB</string>
-              <string>distribs/nologger.dist</string>
+              <string>distribs/nologread.dist</string>
             </tree-map>
           </envVars>
         </hudson.slaves.EnvironmentVariablesNodeProperty>
@@ -135,7 +135,7 @@
               <string>BOARD_OVERLAY</string>
               <string>boards/lager2.board</string>
               <string>DISTRIB</string>
-              <string>distribs/nologger.dist</string>
+              <string>distribs/nologread.dist</string>
             </tree-map>
           </envVars>
         </hudson.slaves.EnvironmentVariablesNodeProperty>

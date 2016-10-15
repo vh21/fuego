@@ -5,9 +5,9 @@ digraph OVT {
 
         	subgraph cluster_1 {
                         basedist [shape=folder, label="class: base-distrib.fuegoclass"];
-                        nologger [shape=rectangle, label="overlay: nologger.dist"];
+                        nologread [shape=rectangle, label="overlay: nologread.dist"];
                         edge [label="inherit", style="dashed", arrowhead="vee"]
-                        nologger -> basedist
+                        nologread -> basedist
 		        label = "distribution";
 		        color=blue
 	}
@@ -26,7 +26,7 @@ digraph OVT {
               }
 
               minnow -> ovgen
-              nologger -> ovgen
+              nologread -> ovgen
               
               ovgen -> prolog
 
