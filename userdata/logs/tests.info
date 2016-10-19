@@ -20,7 +20,7 @@
 	"linpack":["linpack"],
 	"nbench-byte":["INDEX","TEST_GROUP1","TEST_GROUP2"],
 	"netperf":["MIGRATED_TCP_MAERTS","MIGRATED_TCP_STREAM"],
-	"reboot":["time", "mem", "disk"],
+	"reboot":["time"],
 	"Stream":["Add","Copy","Scale","Triad"],
 	"unixbench":["System_Index","Test"],
 	"Whetstone":["Whetstone"],
