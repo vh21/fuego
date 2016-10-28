@@ -8,6 +8,7 @@ MAINTAINER tim.bird@am.sony.com
 # ==============================================================================
 # Influential environment variables
 # ==============================================================================
+
 ENV INST_FUEGO_ENGINE_PATH /home/jenkins
 ENV INST_FUEGO_FRONTEND_PATH /var/lib/jenkins
 # URL_PREFIX sets Jenkins URL --prefix note: no trailing "/" at the end!
@@ -16,6 +17,7 @@ ENV URL_PREFIX /fuego
 # ==============================================================================
 # Prepare basic image
 # ==============================================================================
+
 WORKDIR /fuego-install
 RUN dpkg --add-architecture i386
 RUN echo deb http://ftp.us.debian.org/debian jessie main non-free >> /etc/apt/sources.list
@@ -36,7 +38,7 @@ RUN bash /fuego-install/install-arm-linux-gnueabihf-toolchain.sh
 # ==============================================================================
 # get Fuego core via git
 # ==============================================================================
-#ENV INST_FUEGO_CORE_GIT_REVISION 6b6412d7aa6093ae441e440eb0e3115e886cd2d9
+
 ENV INST_FUEGO_CORE_GIT_REVISION f9aa8025
 
 RUN mkdir -p /home/jenkins
@@ -51,6 +53,7 @@ ln -s $INST_FUEGO_ENGINE_PATH/fuego/engine/scripts/ftc /usr/local/bin/
 # ==============================================================================
 # copy a miscelaneous Fuego script
 # ==============================================================================
+
 COPY fuego-scripts/maintain_config_link.sh /usr/local/bin/
 
 # ==============================================================================
@@ -107,10 +110,10 @@ RUN /fuego-install/user-setup.sh
 
 WORKDIR /home/jenkins
 
-
 # ==============================================================================
 # Setup startup command
 # ==============================================================================
+
 COPY fuego-scripts /
 COPY fuego-scripts/fuego-start-cmd.sh /etc/
 CMD /etc/fuego-start-cmd.sh
