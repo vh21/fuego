@@ -49,5 +49,5 @@ mounted at /userdata inside container.
 
 License
 -------------------------------------------------------------------------------
-Fuego is licensed under 3-clause BSD license. Please refer to LICENSE for details.
-Jenkins is licensed under the MIT license.
+Fuego is licensed under the 3-clause BSD license. Please refer to LICENSE
+for details.  Jenkins is licensed under the MIT license.
