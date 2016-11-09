@@ -1,0 +1,31 @@
+This is the CHANGELOG file for the Fuego test framework
+
+This file is in tbwiki markdown format, based on the Changelog format
+described at: http://keepachangelog.com/
+
+This file is for human-readable, high-level changes (not just a 
+git log dump), with the intent to help people decide when they
+want to upgrade Fuego versions.
+
+Note that Fuego is distributed as two repositories, one with docker
+and Jenkins stuff, and one with the fuego tests and script system.
+This file serves as the common changelog for both repositories.
+
+== [1.0.0] - 2016-11-08 ==
+ * Add support for building the docker container behind a proxy
+ * Add support for creating a container that can see USB changes
+ * Change reboot test to only report boot time (not other stats)
+ * Fix some other issues with the reboot test
+ * Change name of nologger function and distribution file to 'nologread'
+   * WARNING: this will break the Jenkins configuration for targets
+   that referenced nologger.dist
+     * the DISTRIB environment variable should be changed from
+     'distribs/nologger.dist' to 'distribs/nologread.dist' in the target
+     configuration for these boards
+ * Add .gitignore files to make repository management easier
+ * Add code to create the FUEGO_HOME directory if not already present
+ * Change bzip2 test to support busybox version of bzip2
+ * Add VERSION and CHANGELOG files
+ * status:
+   * This version of Fuego uses Jenkins 1.509.2
+   * This verison of Fuego includes ftc version 0.3.0
