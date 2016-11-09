@@ -45,12 +45,12 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get -yV install crossbuild-essential-armh
 # get Fuego core via git
 # ==============================================================================
 
-ENV INST_FUEGO_CORE_GIT_REVISION c333230
+ENV INST_FUEGO_CORE_GIT_REVISION c2ddbab
 
 RUN mkdir -p /home/jenkins
 RUN if [ -n "$HTTP_PROXY" ]; then git config --global http.proxy $HTTP_PROXY; fi
-#RUN git clone https://bitbucket.org/tbird20d/fuego-core.git $INST_FUEGO_ENGINE_PATH/fuego && cd $INST_FUEGO_ENGINE_PATH/fuego && git reset --hard $INST_FUEGO_CORE_NEXT_GIT_REVISION && cd /fuego-install
-RUN git clone -b next https://bitbucket.org/tbird20d/fuego-core.git $INST_FUEGO_ENGINE_PATH/fuego && cd $INST_FUEGO_ENGINE_PATH/fuego && cd /fuego-install
+RUN git clone https://bitbucket.org/tbird20d/fuego-core.git $INST_FUEGO_ENGINE_PATH/fuego && cd $INST_FUEGO_ENGINE_PATH/fuego && git reset --hard $INST_FUEGO_CORE_NEXT_GIT_REVISION && cd /fuego-install
+#RUN git clone -b next https://bitbucket.org/tbird20d/fuego-core.git $INST_FUEGO_ENGINE_PATH/fuego && cd $INST_FUEGO_ENGINE_PATH/fuego && cd /fuego-install
 RUN ln -s $INST_FUEGO_ENGINE_PATH/fuego/engine/* $INST_FUEGO_ENGINE_PATH/
 RUN ln -s $INST_FUEGO_ENGINE_PATH/fuego/jobs $INST_FUEGO_FRONTEND_PATH/jobs
 
