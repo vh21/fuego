@@ -1,3 +1,7 @@
 This catalogue will contain test log files.
 
-Also it contains tests.info file that specifies what benchmark metrics should be plotted in graphs.
+Also it contains tests.info file that specifies what benchmark
+metrics should be plotted in graphs.
+
+Note that tests.info is deprecated (as of Nov, 2016), in favor
+of test-specific 'metrics.json' files.
