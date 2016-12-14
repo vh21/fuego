@@ -23,7 +23,7 @@ WORKDIR /fuego-install
 RUN dpkg --add-architecture i386
 RUN echo deb http://ftp.us.debian.org/debian jessie main non-free >> /etc/apt/sources.list
 RUN if [ -n "$HTTP_PROXY" ]; then echo 'Acquire::http::proxy "'$HTTP_PROXY'";' > /etc/apt/apt.conf.d/80proxy; fi
-RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get -yV install apt-utils daemon gcc make python-paramiko python-lxml python-simplejson python-matplotlib libtool xmlstarlet autoconf automake rsync openjdk-7-jre openjdk-7-jdk iperf netperf netpipe-tcp texlive-latex-base sshpass wget git diffstat sudo net-tools vim openssh-server curl inotify-tools
+RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get -yV install apt-utils daemon gcc make python-paramiko python-lxml python-simplejson python-matplotlib libtool xmlstarlet autoconf automake rsync openjdk-7-jre openjdk-7-jdk iperf netperf netpipe-tcp texlive-latex-base sshpass wget git diffstat sudo net-tools vim openssh-server curl inotify-tools minicom lzop
 RUN /bin/bash -c 'echo "dash dash/sh boolean false" | debconf-set-selections ; DEBIAN_FRONTEND=noninteractive dpkg-reconfigure dash'
 COPY frontend-install/jenkins_1.509.2_all.deb /fuego-install/
 RUN dpkg -i /fuego-install/jenkins_1.509.2_all.deb
@@ -63,6 +63,13 @@ RUN ln -s $INST_FUEGO_ENGINE_PATH/fuego/engine/scripts/ftc /usr/local/bin/
 # ==============================================================================
 
 COPY fuego-scripts/maintain_config_link.sh /usr/local/bin/
+
+# ==============================================================================
+# get ttc script and helpers
+# ==============================================================================
+RUN git clone https://github.com/tbird20d/ttc.git $INST_FUEGO_ENGINE_PATH/ttc
+RUN $INST_FUEGO_ENGINE_PATH/ttc/install.sh /usr/local/bin
+RUN perl -p -i -e "s#config_dir = \"/etc\"#config_dir = \"/userdata/conf\"#" /usr/local/bin/ttc
 
 # ==============================================================================
 # Init userdata
