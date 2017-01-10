@@ -7,7 +7,14 @@ while [ -h "$SOURCE" ]; do # resolve $SOURCE until the file is no longer a symli
 done
 DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
 
-CONTAINER_ID=`sudo docker create -it -v $DIR/../userdata:/userdata --net="host" fuego`
-CONTAINER_ID_FILE="$DIR/../last_fuego_container.id"
-echo "Created Fuego container $CONTAINER_ID"
-echo $CONTAINER_ID > $DIR/../last_fuego_container.id
+if [ ! -d $DIR/../../fuego-core ]; then
+   echo "You need to clone fuego-core at $DIR/../../fuego-core"
+   exit 1
+fi
+
+sudo docker create -it --name fuego-container \
+    -v $DIR/../fuego-rw:/fuego-rw \
+    -v $DIR/../fuego-ro:/fuego-ro:ro \
+    -v $DIR/../../fuego-core:/fuego-core:ro \
+    --net="host" fuego || \
+    echo "Could not create fuego-container. See error messages."

@@ -23,7 +23,7 @@ This file serves as the common changelog for both repositories.
      'distribs/nologger.dist' to 'distribs/nologread.dist' in the target
      configuration for these boards
  * Add .gitignore files to make repository management easier
- * Add code to create the FUEGO_HOME directory if not already present
+ * Add code to create the BOARD_TESTDIR directory if not already present
  * Change bzip2 test to support busybox version of bzip2
  * Add VERSION and CHANGELOG files
  * status:

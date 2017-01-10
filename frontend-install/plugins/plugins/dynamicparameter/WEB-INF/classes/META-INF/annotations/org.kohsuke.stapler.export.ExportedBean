@@ -1,7 +1,0 @@
-com.seitenbau.jenkins.plugins.dynamicparameter.BaseParameterDefinition
-com.seitenbau.jenkins.plugins.dynamicparameter.ChoiceParameterDefinition
-com.seitenbau.jenkins.plugins.dynamicparameter.ScriptParameterDefinition
-com.seitenbau.jenkins.plugins.dynamicparameter.StringParameterDefinition
-com.seitenbau.jenkins.plugins.dynamicparameter.scriptler.ScriptlerChoiceParameterDefinition
-com.seitenbau.jenkins.plugins.dynamicparameter.scriptler.ScriptlerParameterDefinition
-com.seitenbau.jenkins.plugins.dynamicparameter.scriptler.ScriptlerStringParameterDefinition

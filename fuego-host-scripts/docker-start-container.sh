@@ -7,13 +7,6 @@ while [ -h "$SOURCE" ]; do # resolve $SOURCE until the file is no longer a symli
 done
 DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
 
-CONTAINER_ID_FILE="$DIR/../last_fuego_container.id"
-
-if [[ -f "$CONTAINER_ID_FILE" ]]
-then
-    CONTAINER_ID=`cat $CONTAINER_ID_FILE`
-    echo "Starting Fuego container $CONTAINER_ID"
-    sudo docker start --interactive=true --attach=true $CONTAINER_ID
-else
-    echo "Please create Fuego docker container via docker-create-container.sh script"
-fi
+echo "Starting Fuego container (fuego-container)"
+sudo docker start --interactive=true --attach=true fuego-container || \
+  echo "Please create Fuego docker container via docker-create-container.sh script"

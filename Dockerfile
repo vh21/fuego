@@ -1,132 +1,94 @@
 # ==============================================================================
-# WARNING: containter created from this image should be run with userdata mounted at /userdata inside docker fs
+# WARNING: this Dockerfile assumes that the container will be created with
+# several volume bind mounts (see docker-create-container.sh)
 # ==============================================================================
 
 FROM debian:jessie
 MAINTAINER tim.bird@am.sony.com
 
 # ==============================================================================
-# Influential environment variables
+# Proxy variables
 # ==============================================================================
 
 ARG HTTP_PROXY
-ENV INST_FUEGO_ENGINE_PATH /home/jenkins
-ENV INST_FUEGO_FRONTEND_PATH /var/lib/jenkins
-# URL_PREFIX sets Jenkins URL --prefix note: no trailing "/" at the end!
-ENV URL_PREFIX /fuego
+ENV http_proxy ${HTTP_PROXY}
+ENV https_proxy ${HTTP_PROXY}
 
 # ==============================================================================
 # Prepare basic image
 # ==============================================================================
 
-WORKDIR /fuego-install
-RUN dpkg --add-architecture i386
-RUN echo deb http://ftp.us.debian.org/debian jessie main non-free >> /etc/apt/sources.list
+WORKDIR /
+RUN echo deb http://httpredir.debian.org/debian jessie main non-free > /etc/apt/sources.list
+RUN echo deb http://httpredir.debian.org/debian jessie-updates main non-free >> /etc/apt/sources.list
 RUN if [ -n "$HTTP_PROXY" ]; then echo 'Acquire::http::proxy "'$HTTP_PROXY'";' > /etc/apt/apt.conf.d/80proxy; fi
-RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get -yV install apt-utils daemon gcc make python-paramiko python-lxml python-simplejson python-matplotlib libtool xmlstarlet autoconf automake rsync openjdk-7-jre openjdk-7-jdk iperf netperf netpipe-tcp texlive-latex-base sshpass wget git diffstat sudo net-tools vim openssh-server curl inotify-tools minicom lzop
+RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get -yV install \
+	apt-utils daemon gcc make python-paramiko python-lxml python-simplejson \
+	python-matplotlib libtool xmlstarlet autoconf automake rsync openjdk-7-jre \
+	openjdk-7-jdk iperf netperf netpipe-tcp sshpass wget git \
+	diffstat sudo net-tools vim curl inotify-tools python-openpyxl \
+	g++ bzip2 bc libaio-dev gettext pkg-config libglib2.0-dev
 RUN /bin/bash -c 'echo "dash dash/sh boolean false" | debconf-set-selections ; DEBIAN_FRONTEND=noninteractive dpkg-reconfigure dash'
-COPY frontend-install/jenkins_1.509.2_all.deb /fuego-install/
-RUN dpkg -i /fuego-install/jenkins_1.509.2_all.deb
-RUN if [ -n "$HTTP_PROXY" ]; then echo "use_proxy = on" >> /etc/wgetrc && echo 'http_proxy =' $HTTP_PROXY >> /etc/wgetrc; fi
-RUN /bin/bash -c 'wget -nv "http://downloads.sourceforge.net/project/getfo/texml/texml-2.0.2/texml-2.0.2.tar.gz?r=http%3A%2F%2Fsourceforge.net%2Fprojects%2Fgetfo%2F&ts=1398789654&use_mirror=jaist" -O texml.tar.gz ; tar xvf texml.tar.gz; cd texml-2.0.2 ; python setup.py install; cd -' 
-RUN echo "PermitRootLogin yes" >> /etc/ssh/sshd_config
+RUN if [ -n "$HTTP_PROXY" ]; then echo "use_proxy = on" >> /etc/wgetrc; fi
 
 # ==============================================================================
-# Install debian armhf cross toolchain
+# Install Jenkins with the same UID/GID as the host user
 # ==============================================================================
 
-RUN echo deb http://emdebian.org/tools/debian/ jessie main > /etc/apt/sources.list.d/crosstools.list
-RUN dpkg --add-architecture armhf
-RUN if [ -n "$HTTP_PROXY" ]; then curl --proxy $HTTP_PROXY http://emdebian.org/tools/debian/emdebian-toolchain-archive.key | sudo apt-key add -; else curl http://emdebian.org/tools/debian/emdebian-toolchain-archive.key | sudo apt-key add -; fi
-RUN DEBIAN_FRONTEND=noninteractive apt-get update
-RUN DEBIAN_FRONTEND=noninteractive apt-get -yV install crossbuild-essential-armhf
+ARG user=jenkins
+ARG group=jenkins
+ARG uid=1000
+ARG gid=${uid}
+ARG JENKINS_VERSION=2.32.1
+ARG JENKINS_SHA=bfc226aabe2bb089623772950c4cc13aee613af1
+ARG JENKINS_URL=https://pkg.jenkins.io/debian-stable/binary/jenkins_${JENKINS_VERSION}_all.deb
+ENV JENKINS_HOME=/var/lib/jenkins
+
+RUN groupadd -g ${gid} ${group} \
+	&& useradd -m -d "${JENKINS_HOME}" -u ${uid} -g ${gid} -G sudo -s /bin/bash ${user}
+RUN wget -nv ${JENKINS_URL}
+RUN echo "${JENKINS_SHA} jenkins_${JENKINS_VERSION}_all.deb" | sha1sum -c -
+RUN dpkg -i jenkins_${JENKINS_VERSION}_all.deb
+RUN rm jenkins_${JENKINS_VERSION}_all.deb
 
 # ==============================================================================
-# get Fuego core via git
+# Post installation
 # ==============================================================================
 
-ENV INST_FUEGO_CORE_GIT_REVISION c2ddbab
+RUN source /etc/default/jenkins && \
+	JENKINS_ARGS="$JENKINS_ARGS --prefix=/fuego" && \
+	sed -i -e "s#JENKINS_ARGS.*#JENKINS_ARGS\=\"${JENKINS_ARGS}\"#g" /etc/default/jenkins
 
-RUN mkdir -p /home/jenkins
-RUN if [ -n "$HTTP_PROXY" ]; then git config --global http.proxy $HTTP_PROXY; fi
-#RUN git clone https://bitbucket.org/tbird20d/fuego-core.git $INST_FUEGO_ENGINE_PATH/fuego && cd $INST_FUEGO_ENGINE_PATH/fuego && git reset --hard $INST_FUEGO_CORE_NEXT_GIT_REVISION && cd /fuego-install
-RUN git clone -b next https://bitbucket.org/tbird20d/fuego-core.git $INST_FUEGO_ENGINE_PATH/fuego && cd $INST_FUEGO_ENGINE_PATH/fuego && cd /fuego-install
-RUN ln -s $INST_FUEGO_ENGINE_PATH/fuego/engine/* $INST_FUEGO_ENGINE_PATH/
-RUN ln -s $INST_FUEGO_ENGINE_PATH/fuego/jobs $INST_FUEGO_FRONTEND_PATH/jobs
+RUN source /etc/default/jenkins && \
+	JAVA_ARGS="$JAVA_ARGS -Djenkins.install.runSetupWizard=false" && \
+	if [ -n "$HTTP_PROXY" ]; then \
+		PROXYSERVER=$(echo $http_proxy | sed -E 's/^http://' | sed -E 's/\///g' | sed -E 's/(.*):(.*)/\1/') && \
+		PROXYPORT=$(echo $http_proxy | sed -E 's/^http://' | sed -E 's/\///g' | sed -E 's/(.*):(.*)/\2/') && \
+		JAVA_ARGS="$JAVA_ARGS -Dhttp.proxyHost="${PROXYSERVER}" -Dhttp.proxyPort="${PROXYPORT}" -Dhttps.proxyHost="${PROXYSERVER}" -Dhttps.proxyPort="${PROXYPORT}; \
+	fi && \
+	sed -i -e "s#^JAVA_ARGS.*#JAVA_ARGS\=\"${JAVA_ARGS}\"#g" /etc/default/jenkins;
 
-COPY docs $INST_FUEGO_FRONTEND_PATH/userContent/docs/
+RUN service jenkins start && \
+	sleep 30 && \
+	sudo -u jenkins java -jar /var/cache/jenkins/war/WEB-INF/jenkins-cli.jar -s http://localhost:8080/fuego install-plugin description-setter && \
+	sudo -u jenkins java -jar /var/cache/jenkins/war/WEB-INF/jenkins-cli.jar -s http://localhost:8080/fuego install-plugin pegdown-formatter
 
-RUN ln -s $INST_FUEGO_ENGINE_PATH/fuego/engine/scripts/ftc /usr/local/bin/
+RUN ln -s /fuego-rw/logs $JENKINS_HOME/userContent/fuego.logs
+COPY frontend-install/plugins/flot-plotter-plugin/tests.info $JENKINS_HOME/userContent/fuego.logs/
+COPY frontend-install/plugins/flot-plotter-plugin/flot.hpi $JENKINS_HOME/plugins/
+COPY docs/fuego-docs.pdf $JENKINS_HOME/userContent/docs/fuego-docs.pdf
 
-# ==============================================================================
-# copy a miscelaneous Fuego script
-# ==============================================================================
+RUN ln -s /fuego-core/engine/scripts/ftc /usr/local/bin/
+RUN ln -s /fuego-ro/scripts/nodes/fuego-create-node /usr/local/bin/
+RUN ln -s /fuego-ro/scripts/nodes/fuego-delete-node /usr/local/bin/
+RUN ln -s /fuego-ro/scripts/jobs/fuego-create-jobs /usr/local/bin/
+RUN ln -s /fuego-ro/scripts/jobs/fuego-delete-jobs /usr/local/bin/
+COPY frontend-install/config.xml $JENKINS_HOME/config.xml
 
-COPY fuego-scripts/maintain_config_link.sh /usr/local/bin/
-
-# ==============================================================================
-# get ttc script and helpers
-# ==============================================================================
-RUN git clone https://github.com/tbird20d/ttc.git $INST_FUEGO_ENGINE_PATH/ttc
-RUN $INST_FUEGO_ENGINE_PATH/ttc/install.sh /usr/local/bin
-RUN perl -p -i -e "s#config_dir = \"/etc\"#config_dir = \"/userdata/conf\"#" /usr/local/bin/ttc
-
-# ==============================================================================
-# Init userdata
-# ==============================================================================
-
-RUN ln -s /userdata/buildzone $INST_FUEGO_ENGINE_PATH/buildzone
-RUN ln -s /userdata/work $INST_FUEGO_ENGINE_PATH/work
-RUN ln -s /userdata/logs $INST_FUEGO_ENGINE_PATH/logs
-RUN ln -s /userdata/logs $INST_FUEGO_FRONTEND_PATH/logs
-RUN ln -s /userdata/conf/boards $INST_FUEGO_ENGINE_PATH/overlays/boards
-RUN ln -s /userdata/conf/config.xml $INST_FUEGO_FRONTEND_PATH/config.xml
-RUN ln -s /userdata/conf/tools.sh $INST_FUEGO_ENGINE_PATH/scripts/tools.sh
-#RUN mkdir $INST_FUEGO_ENGINE_PATH/logs/logruns
-
-# ==============================================================================
-# Initialize Jenkins plugin configs
-# ==============================================================================
-
-RUN ln -s $INST_FUEGO_ENGINE_PATH/fuego/plugins-conf/scriptler $INST_FUEGO_FRONTEND_PATH/
-RUN ln -s $INST_FUEGO_ENGINE_PATH/fuego/plugins-conf/sidebar-link.xml $INST_FUEGO_FRONTEND_PATH/
-
-COPY frontend-install/jenkins.cfg /etc/default/jenkins
-COPY fuego-scripts/subsitute_jen_url_prefix.sh /fuego-install/
-RUN /fuego-install/subsitute_jen_url_prefix.sh /etc/default/jenkins
-
-# ==============================================================================
-# Install Jenkins UI updates
-# ==============================================================================
-
-RUN chown -R jenkins  $INST_FUEGO_ENGINE_PATH $INST_FUEGO_FRONTEND_PATH /var/cache/jenkins /etc/default/jenkins
-COPY frontend-install/plugins $INST_FUEGO_FRONTEND_PATH/
-COPY frontend-install/jenkins-updates /fuego-install/jenkins-updates
-RUN /fuego-install/subsitute_jen_url_prefix.sh /fuego-install/jenkins-updates
-WORKDIR /fuego-install/jenkins-updates
-RUN echo "installing custom UI updates"
-RUN /etc/init.d/jenkins start && ./updates.sh
-RUN ln -s $INST_FUEGO_ENGINE_PATH/logs $INST_FUEGO_FRONTEND_PATH/userContent/fuego.logs
-
-# ==============================================================================
-# Setup daemons config
-# ==============================================================================
-
-COPY container-cfg/sshd_config /etc/ssh/sshd_config
-COPY fuego-scripts/user-setup.sh /fuego-install/
-RUN /fuego-install/user-setup.sh
-
-# ==============================================================================
-# Clear workspace
-# ==============================================================================
-
-WORKDIR /home/jenkins
+RUN chown -R jenkins:jenkins $JENKINS_HOME/
 
 # ==============================================================================
 # Setup startup command
 # ==============================================================================
 
-COPY fuego-scripts /
-COPY fuego-scripts/fuego-start-cmd.sh /etc/
-CMD /etc/fuego-start-cmd.sh
-
+ENTRYPOINT service jenkins start && /bin/bash

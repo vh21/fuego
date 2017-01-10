@@ -28,26 +28,64 @@ docker-create-containter.sh configures Docker to use the host network
 (using the --net="host" option).
 Please see the Docker manual for different network setup options.
 
-The container is configured to run an ssh server at 2222 port. Modify
-the file container-cfg/sshd_config if you need to configure the ssh
-server differently.
-
-Updating
+Updating fuego-core and fuego
 -------------------------------------------------------------------------------
-While inside the docker container go to /home/jenkins/fuego and issue
-``git pull''.
-
-This will update the following components:
+The repository fuego-core is mounted as a external docker volume. All you
+need to do is to issue a ``git pull'' from the host directory. This will
+update the following components:
 - Fuego engine
 - tests
 - overlays
 - jenkins jobs
 
-Board configurations, toolchain setup and Jenkins' config.xml will not be
-touched since these are located in an external docker volume that is
-mounted at /userdata inside container.
+Board configurations and toolchain setup can be updated by doing ``git pull''
+from within the fuego host directory.
+
+Updating the Jenkins version
+-------------------------------------------------------------------------------
+
+Modify the version and checksum
+    $ vi Dockerfile
+        ARG JENKINS_VERSION=2.32.1
+        ARG JENKINS_SHA=3cbe9b6d4d82c975642ea4409e21e087
+
+Re-build the flot plugin
+    $ sudo apt-get install maven
+    $ vi pom.xml
+        -> change the jenkins version
+    $ mvn install
+    $ cp target/flot.hpi
+
+Re-build Jenkins' config.xml (if necessary):
+    + Install fuego as usual with the new Jenkins version
+    + Manual configuration (click on 'Manage jenkins')
+        - configure system
+            + environment variables
+                FUEGO_CORE /fuego-core
+                FUEGO_RW /fuego-rw
+                FUEGO_RO /fuego-ro
+        - Configure global security
+            + plain text => safe html
+    + Copy the new config.xml (/var/lib/jenkins/config.xml) to frontend-install
+
+Rewrite Jobs config.xml (if necessary):
+    + Configure the job manually and save it
+    + Get the xml file
+         java -jar /var/cache/jenkins/war/WEB-INF/jenkins-cli.jar -s http://localhost:8080/fuego get-job docker.testplan_docker.Benchmark.Dhrystone
+    + Modify fuego-create-jobs as necessary
+
+Initial test
+------------
+You can use the docker container as a fuego target in order to confirm that
+the installation was successful.
+
+# fuego-create-node --board docker
+# fuego-create-jobs --board docker --testplan testplan_docker --distrib nosyslogd.dist
+
+Build the job "docker.testplan_docker.batch", it will trigger the rest of
+the jobs. Use fuego-delete-jobs to remove all jobs.
 
 License
 -------------------------------------------------------------------------------
 Fuego is licensed under the 3-clause BSD license. Please refer to LICENSE
-for details.  Jenkins is licensed under the MIT license.
+for details. Jenkins is licensed under the MIT license.

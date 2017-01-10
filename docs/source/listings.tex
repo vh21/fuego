@@ -68,13 +68,13 @@ function test_build {
 }
 
 function test_deploy {
-	put bc-device.sh  $FUEGO_HOME/fuego.$TESTDIR/
+	put bc-device.sh  $BOARD_TESTDIR/fuego.$TESTDIR/
 }
 
 function test_run {
     assert_define BENCHMARK_BC_EXPR1
     assert_define BENCHMARK_BC_EXPR2
-    report "cd $FUEGO_HOME/fuego.$TESTDIR; ./bc-device.sh $BENCHMARK_BC_EXPR1 $BENCHMARK_BC_EXPR1"  
+    report "cd $BOARD_TESTDIR/fuego.$TESTDIR; ./bc-device.sh $BENCHMARK_BC_EXPR1 $BENCHMARK_BC_EXPR1"  
 }
 . ../scripts/benchmark.sh
 \end{lstlisting}
@@ -96,7 +96,7 @@ echo "$BC1,$BC2"
 
 import os, re, sys, json
 
-sys.path.insert(0, '/home/jenkins/scripts/parser') 
+sys.path.insert(0, '$FUEGO_CORE/engine/scripts/parser') 
 import common as plib
 
 cur_dict = {}
