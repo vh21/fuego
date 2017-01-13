@@ -140,7 +140,10 @@ def parse_testplan(testplan):
         plan = json.load(f)
         for test in plan['tests']:
             alltests.append(test['testName'])
-            alltimeouts.append(test['timeout'])
+            if 'timeout' in test:
+                alltimeouts.append(test['timeout'])
+            else:
+                alltimeouts.append('20m')
             if 'extralinks' in test:
                 allextralinks.append(test['extralinks'])
             else:
