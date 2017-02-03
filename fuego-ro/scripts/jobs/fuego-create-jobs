@@ -160,10 +160,21 @@ if __name__=="__main__":
     parser.add_argument('-b', '--board', type=str, help='board name (e.g.: bbb for bbb.board)', required=True)
     parser.add_argument('-t', '--testplan', default='testplan_default', type=str, help='testplan (e.g.: testplan_docker for testplan_docker.json)')
     parser.add_argument('-d', '--distrib', default='nosyslogd.dist', type=str, help='DISTRIB file (e.g.: nosyslogd.dist)')
+    parser.add_argument('-c', '--testcase', default='Benchmark.Dhrystone', type=str, help='Testcase (e.g.: Benchmark.Dhrystone)')
     args = parser.parse_args()
 
     alltests, alltimeouts, allextralinks = parse_testplan(args.testplan)
-    for test, timeout, jobextralinks in zip(alltests, alltimeouts, allextralinks):
-        create_job(test, timeout, jobextralinks, args)
 
-    create_batch_job(alltests, args)
+    if args.testcase is not None:
+        try:
+            i = alltests.index(args.testcase)
+        except Exception as e:
+            print(e)
+            print("ERROR: " + args.testcase + " not in " + args.testplan)
+            print(alltests)
+            sys.exit(1)
+        create_job(alltests[i], alltimeouts[i], allextralinks[i], args)
+    else:
+        for test, timeout, jobextralinks in zip(alltests, alltimeouts, allextralinks):
+            create_job(test, timeout, jobextralinks, args)
+        create_batch_job(alltests, args)
