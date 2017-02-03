@@ -63,6 +63,11 @@ export TESTPLAN="{testplan}"
 timeout --signal=9 {timeout} /bin/bash $FUEGO_CORE/engine/tests/${{TESTDIR}}/${{TESTNAME}}.sh
 </command>
     </hudson.tasks.Shell>
+   <hudson.tasks.Shell>
+      <command>source $FUEGO_CORE/engine/scripts/functions.sh
+export TESTDIR={testdir}
+post_test $TESTDIR</command>
+    </hudson.tasks.Shell>
     </builders>
     <publishers>
     {flot_link}
