@@ -160,7 +160,7 @@ if __name__=="__main__":
     parser.add_argument('-b', '--board', type=str, help='board name (e.g.: bbb for bbb.board)', required=True)
     parser.add_argument('-t', '--testplan', default='testplan_default', type=str, help='testplan (e.g.: testplan_docker for testplan_docker.json)')
     parser.add_argument('-d', '--distrib', default='nosyslogd.dist', type=str, help='DISTRIB file (e.g.: nosyslogd.dist)')
-    parser.add_argument('-c', '--testcase', default='Benchmark.Dhrystone', type=str, help='Testcase (e.g.: Benchmark.Dhrystone)')
+    parser.add_argument('-c', '--testcase', type=str, help='Testcase (e.g.: Benchmark.Dhrystone)')
     args = parser.parse_args()
 
     alltests, alltimeouts, allextralinks = parse_testplan(args.testplan)
