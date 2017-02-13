@@ -21,7 +21,7 @@ import sys
 import argparse
 import json
 
-def create_job(test, timeout, jobextralinks, args):
+def create_job(test, timeout, reboot, rebuild, precleanup, postcleanup, jobextralinks, args):
     # flot only necessary for Benchmarks
     if str(test).split('.')[0] == 'Benchmark':
         flot_link = '<flotile.FlotPublisher plugin="flot@1.0-SNAPSHOT"/>'
@@ -53,20 +53,16 @@ def create_job(test, timeout, jobextralinks, args):
     <customWorkspace>$FUEGO_RW/buildzone</customWorkspace>
     <builders>
     <hudson.tasks.Shell>
-        <command>export Reboot=false
-export Rebuild=true
-export Target_Cleanup=true
+        <command>export Reboot={reboot}
+export Rebuild={rebuild}
+export Target_PreCleanup={precleanup}
+export Target_PostCleanup={postcleanup}
 export TESTDIR={testdir}
 export TESTNAME={testname}
 export DISTRIB="{distrib}"
 export TESTPLAN="{testplan}"
 timeout --signal=9 {timeout} /bin/bash $FUEGO_CORE/engine/tests/${{TESTDIR}}/${{TESTNAME}}.sh
 </command>
-    </hudson.tasks.Shell>
-   <hudson.tasks.Shell>
-      <command>source $FUEGO_CORE/engine/scripts/functions.sh
-export TESTDIR={testdir}
-post_test $TESTDIR</command>
     </hudson.tasks.Shell>
     </builders>
     <publishers>
@@ -80,7 +76,9 @@ post_test $TESTDIR</command>
     </publishers>
     <buildWrappers/>
 </project>
-""".format(board=args.board, distrib=args.distrib, testdir=str(test), testname=str(test).split('.')[1], testplan=args.testplan, timeout=timeout, flot_link=flot_link, html_links=html_links))
+""".format(board=args.board, reboot=str(reboot), rebuild=str(rebuild), precleanup=str(precleanup), postcleanup=str(postcleanup),
+        distrib=args.distrib, testdir=str(test), testname=str(test).split('.')[1],
+        testplan=args.testplan, timeout=timeout, flot_link=flot_link, html_links=html_links))
     fd.close()
 
     print("Creating job " + test)
@@ -141,6 +139,11 @@ def parse_testplan(testplan):
     alltests = []
     alltimeouts = []
     allextralinks = []
+    allreboots = []
+    allrebuilds = []
+    allprecleanups = []
+    allpostcleanups = []
+
     with open(abspath, "r") as f:
         plan = json.load(f)
         for test in plan['tests']:
@@ -149,11 +152,27 @@ def parse_testplan(testplan):
                 alltimeouts.append(test['timeout'])
             else:
                 alltimeouts.append('20m')
+            if 'reboot' in test:
+                allreboots.append(test['reboot'])
+            else:
+                allreboots.append('false')
+            if 'rebuild' in test:
+                allrebuilds.append(test['rebuild'])
+            else:
+                allrebuilds.append('true')
+            if 'precleanup' in test:
+                allprecleanups.append(test['precleanup'])
+            else:
+                allprecleanups.append('true')
+            if 'postcleanup' in test:
+                allpostcleanups.append(test['postcleanup'])
+            else:
+                allpostcleanups.append('true')
             if 'extralinks' in test:
                 allextralinks.append(test['extralinks'])
             else:
                 allextralinks.append('None')
-    return alltests, alltimeouts, allextralinks
+    return alltests, alltimeouts, allreboots, allrebuilds, allprecleanups, allpostcleanups, allextralinks
 
 if __name__=="__main__":
     parser = argparse.ArgumentParser(description='Create a fuego jobs for a node')
@@ -163,7 +182,7 @@ if __name__=="__main__":
     parser.add_argument('-c', '--testcase', type=str, help='Testcase (e.g.: Benchmark.Dhrystone)')
     args = parser.parse_args()
 
-    alltests, alltimeouts, allextralinks = parse_testplan(args.testplan)
+    alltests, alltimeouts, allreboots, allrebuilds, allprecleanups, allpostcleanups, allextralinks = parse_testplan(args.testplan)
 
     if args.testcase is not None:
         try:
@@ -173,8 +192,8 @@ if __name__=="__main__":
             print("ERROR: " + args.testcase + " not in " + args.testplan)
             print(alltests)
             sys.exit(1)
-        create_job(alltests[i], alltimeouts[i], allextralinks[i], args)
+        create_job(alltests[i], alltimeouts[i], allreboots[i], allrebuilds[i], allprecleanups[i], allpostcleanups[i], allextralinks[i], args)
     else:
-        for test, timeout, jobextralinks in zip(alltests, alltimeouts, allextralinks):
-            create_job(test, timeout, jobextralinks, args)
+        for test, timeout, reboot, rebuild, precleanup, postcleanup, jobextralinks in zip(alltests, alltimeouts, allreboots, allrebuilds, allprecleanups, allpostcleanups, allextralinks):
+            create_job(test, timeout, reboot, rebuild, precleanup, postcleanup, jobextralinks, args)
         create_batch_job(alltests, args)
