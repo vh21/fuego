@@ -28,10 +28,19 @@ default_output() {
 }
 
 sync_fetch_jenkins_cli() {
+    # give time for jenkins to restart
+    sleep 20
+
+    retry=0
     until wget -v --no-proxy ${JEN_URL}/jnlpJars/jenkins-cli.jar -O jenkins-cli.jar
     do
         echo "Retrying wget -v --no-proxy ${JEN_URL}/jnlpJars/jenkins-cli.jar -O jenkins-cli.jar"
         service jenkins restart
-        sleep 10
+        delay=$(( 10 + ($retry * 4) ))
+        echo "Waiting for service restart ($delay seconds)"
+        sleep $delay
+        if [ $retry -ge 10 ] ; then
+           break
+        fi
     done
 }
