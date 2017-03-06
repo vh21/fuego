@@ -37,7 +37,7 @@ jQuery(document).ready(function () {
 
     var testname = localurl[localurl.length - 2],
       testsuite = testname.split(".")[3],
-      testinfo = [],
+      metrics = [],
       tests = [],
       plots = [],
       fws = [],
@@ -69,19 +69,19 @@ jQuery(document).ready(function () {
 
 function getSuitesInfo(series) {
     if (testsuite in series) {
-        testinfo = series[testsuite];
-        for (var i=0;i<testinfo.length;i++) {
-            jQuery('.plots').append('<div class="container"><div class="area_header">'+testsuite+' / '+testinfo[i]+'</div>'+
-                        '<div class="cont2"><div style="width:800px;height:200px;" id="ph'+i+'"></div><p></p><div style="width:800px;height:70px" id="phf'+i+'"></div></div>'+
-                        '<div class="cont3">Legend:<div id="phl'+i+'"></div><br/>'+
-                        '<div class="devices"><input type="checkbox" name="all_dev" checked="checked" id="all_dev_'+i+'"><label for="all_dev">All devices:</label><br/><div id="pht'+i+'"></div></div>'+
-                        '<div class="firmware"><input type="checkbox" name="all_fw" checked="checked" id="all_fw_'+i+'"><label for="all_fw">All firmware:</label><br/><div id="phfw'+i+'"></div>'+
-                        '</div></div>');
-        }
+	metrics = series[testsuite];
+	for (var i=0;i<metrics.length;i++) {
+	    jQuery('.plots').append('<div class="container"><div class="area_header">'+testsuite+' / '+metrics[i]+'</div>'+
+				    '<div class="cont2"><div style="width:800px;height:200px;float:right" id="ph'+i+'"></div><p></p><div style="width:800px;height:70px;float:right" id="phf'+i+'"></div></div>'+
+				    '<div class="cont3">Legend:<div id="phl'+i+'"></div><br/>'+
+				    '<div class="devices"><input type="checkbox" name="all_dev" checked="checked" id="all_dev_'+i+'"><label for="all_dev">All devices:</label><br/><div id="pht'+i+'"></div></div>'+
+				    '<div class="firmware"><input type="checkbox" name="all_fw" checked="checked" id="all_fw_'+i+'"><label for="all_fw">All firmware:</label><br/><div id="phfw'+i+'"></div>'+
+				    '</div></div>');
+	}
     }
     else {
-        jQuery('.plots').append('<div class="container"><div class="area_header">'+testsuite+':'+ 'No data' +'</div>'
-                    +'</div></div>');
+	jQuery('.plots').append('<div class="container"><div class="area_header">'+testsuite+':'+ 'No data (check metrics.json file)' +'</div>'
+				+'</div></div>');
     }
 }
 
@@ -95,10 +95,10 @@ function getBuildsInfo(series) {
   fws.reverse();
 }
 
-jQuery.ajax({ url: jenurl+'/tests.info', method: 'GET', dataType: 'json', async: false, success: getSuitesInfo});
+jQuery.ajax({ url: jenurl+'/'+testname+'/metrics.json', method: 'GET', dataType: 'json', async: false, success: getSuitesInfo});
 jQuery.ajax({ url: jenurl+'/'+testname+'/'+testname+'.info.json', method: 'GET', dataType: 'json', async: false, success: getBuildsInfo});
 
-for (var i=0;i<testinfo.length;i++) {
+for (var i=0;i<metrics.length;i++) {
   var tmp_ph = "#ph"+i,
     placeholder = jQuery("#ph"+i),
     placeholder_f = jQuery("#phf"+i),
@@ -107,7 +107,7 @@ for (var i=0;i<testinfo.length;i++) {
     plot, plot_f,
     previousPoint = null;
 
-  jQuery.ajax({url:jenurl+testname+'/'+testname+'.'+testinfo[i]+'.json',method:'GET',dataType:'json',async:false,success:onDataReceived});
+  jQuery.ajax({url:jenurl+testname+'/'+testname+'.'+metrics[i]+'.json',method:'GET',dataType:'json',async:false,success:onDataReceived});
   jQuery(placeholder_f).bind("plotselected", hand_o);
   jQuery("#pht"+i+" input").click(drawChoices);
   jQuery("#all_dev_"+i).click(drawChoices);

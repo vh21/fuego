@@ -74,7 +74,6 @@ RUN service jenkins start && \
 	sudo -u jenkins java -jar /var/cache/jenkins/war/WEB-INF/jenkins-cli.jar -s http://localhost:8080/fuego install-plugin pegdown-formatter
 
 RUN ln -s /fuego-rw/logs $JENKINS_HOME/userContent/fuego.logs
-COPY frontend-install/plugins/flot-plotter-plugin/tests.info $JENKINS_HOME/userContent/fuego.logs/
 COPY frontend-install/plugins/flot-plotter-plugin/flot.hpi $JENKINS_HOME/plugins/
 COPY docs/fuego-docs.pdf $JENKINS_HOME/userContent/docs/fuego-docs.pdf
 
