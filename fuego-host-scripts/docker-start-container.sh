@@ -1,4 +1,5 @@
 #!/bin/bash
+# $1 - name for the docker container (default: fuego-container)
 SOURCE="${BASH_SOURCE[0]}"
 while [ -h "$SOURCE" ]; do # resolve $SOURCE until the file is no longer a symlink
   DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
@@ -7,6 +8,8 @@ while [ -h "$SOURCE" ]; do # resolve $SOURCE until the file is no longer a symli
 done
 DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
 
+DOCKERCONTAINER=${1:-fuego-container}
+
 echo "Starting Fuego container (fuego-container)"
-sudo docker start --interactive=true --attach=true fuego-container || \
+sudo docker start --interactive=true --attach=true ${DOCKERCONTAINER} || \
   echo "Please create Fuego docker container via docker-create-container.sh script"
