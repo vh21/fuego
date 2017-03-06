@@ -19,6 +19,9 @@ fi
 
 sudo docker create -it --name ${DOCKERCONTAINER} \
     --privileged -v /dev/bus/usb:/dev/bus/usb \
+    -v /dev/ttyACM0:/dev/ttyACM0 \
+    -v /dev/ttyACM1:/dev/ttyACM1 \
+    -v /dev/ttyUSB0:/dev/ttyUSB0 \
     -v $DIR/../fuego-rw:/fuego-rw \
     -v $DIR/../fuego-ro:/fuego-ro:ro \
     -v $DIR/../../fuego-core:/fuego-core:ro \

@@ -24,10 +24,10 @@ RUN echo deb http://httpredir.debian.org/debian jessie-updates main non-free >> 
 RUN if [ -n "$HTTP_PROXY" ]; then echo 'Acquire::http::proxy "'$HTTP_PROXY'";' > /etc/apt/apt.conf.d/80proxy; fi
 RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get -yV install \
 	apt-utils daemon gcc make python-paramiko python-lxml python-simplejson \
-	python-matplotlib libtool xmlstarlet autoconf automake rsync openjdk-7-jre \
-	openjdk-7-jdk iperf netperf netpipe-tcp sshpass wget git \
-	diffstat sudo net-tools vim curl inotify-tools python-openpyxl \
-	g++ bzip2 bc libaio-dev gettext pkg-config libglib2.0-dev
+	python-matplotlib python-serial python-yaml python-openpyxl \
+	libtool xmlstarlet autoconf automake rsync openjdk-7-jre openjdk-7-jdk iperf \
+	netperf netpipe-tcp sshpass wget git diffstat sudo net-tools vim curl \
+	inotify-tools g++ bzip2 bc libaio-dev gettext pkg-config libglib2.0-dev
 RUN /bin/bash -c 'echo "dash dash/sh boolean false" | debconf-set-selections ; DEBIAN_FRONTEND=noninteractive dpkg-reconfigure dash'
 RUN if [ -n "$HTTP_PROXY" ]; then echo "use_proxy = on" >> /etc/wgetrc; fi
 
@@ -50,6 +50,12 @@ RUN wget -nv ${JENKINS_URL}
 RUN echo "${JENKINS_SHA} jenkins_${JENKINS_VERSION}_all.deb" | sha1sum -c -
 RUN dpkg -i jenkins_${JENKINS_VERSION}_all.deb
 RUN rm jenkins_${JENKINS_VERSION}_all.deb
+
+# ==============================================================================
+# Serial Config
+# ==============================================================================
+
+RUN /bin/bash -c 'git clone "https://github.com/frowand/serio" ;  chown -R jenkins serio ; cd serio ; cp serio /usr/local/bin/ ; ln -s /usr/local/bin/serio /usr/local/bin/sercp ; ln -s /usr/local/bin/serio /usr/local/bin/sersh ; cd -'
 
 # ==============================================================================
 # Post installation
