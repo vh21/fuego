@@ -27,7 +27,8 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get -yV install \
 	python-matplotlib python-serial python-yaml python-openpyxl python-requests \
 	libtool xmlstarlet autoconf automake rsync openjdk-7-jre openjdk-7-jdk iperf \
 	netperf netpipe-tcp sshpass wget git diffstat sudo net-tools vim curl \
-	inotify-tools g++ bzip2 bc libaio-dev gettext pkg-config libglib2.0-dev
+	inotify-tools g++ bzip2 bc libaio-dev gettext pkg-config libglib2.0-dev \
+	time
 RUN /bin/bash -c 'echo "dash dash/sh boolean false" | debconf-set-selections ; DEBIAN_FRONTEND=noninteractive dpkg-reconfigure dash'
 RUN if [ -n "$HTTP_PROXY" ]; then echo "use_proxy = on" >> /etc/wgetrc; fi
 
