@@ -28,8 +28,8 @@ def create_job(test, timeout, reboot, rebuild, precleanup, postcleanup, jobextra
     else:
         flot_link = ''
     # prepare links for descriptionsetter. Put a link to log by default
-    template_link = '&lt;a href=&quot;/fuego/userContent/fuego.logs/${JOB_NAME}/%s&quot;&gt;%s&lt;/a&gt;'
-    html_links = template_link % ('testlogs/${NODE_NAME}.${BUILD_ID}.${BUILD_NUMBER}.log', 'log')
+    template_link = '&lt;a href=&quot;/fuego/userContent/fuego.logs/%s/${NODE_NAME}.${BUILD_ID}.${BUILD_ID}/%%s&quot;&gt;%%s&lt;/a&gt;' % test
+    html_links = template_link % ('testlog.txt', 'log')
     if jobextralinks != 'None':
         for key, value in jobextralinks.iteritems():
             html_links = html_links + ' ' + template_link % (value, key)

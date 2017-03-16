@@ -25,6 +25,8 @@ if __name__=="__main__":
         jobs = subprocess.check_output('java -jar /var/cache/jenkins/war/WEB-INF/jenkins-cli.jar -s http://localhost:8080/fuego list-jobs', shell=True).splitlines()
         for job in jobs:
             subprocess.call('java -jar /var/cache/jenkins/war/WEB-INF/jenkins-cli.jar -s http://localhost:8080/fuego delete-job ' + str(job), shell=True)
+            sys.stdout.write(".")
+            sys.stdout.flush()
     except Exception as e:
         print(e)
         sys.exit(1)
