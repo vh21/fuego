@@ -79,7 +79,7 @@ Initial test
 You can use the docker container as a fuego target in order to confirm that
 the installation was successful.
 
-# fuego-create-node --board docker
+# sudo -u jenkins ftc add-nodes docker
 # fuego-create-jobs --board docker --testplan testplan_docker --distrib nosyslogd.dist
 
 Build the job "docker.testplan_docker.batch", it will trigger the rest of
