@@ -35,6 +35,7 @@ jQuery(document).ready(function () {
 
     var jenurl = 'http://'+'/'+location['host'] + '/' + prefix +'/userContent/fuego.logs/';
 
+    // testname is currently: (<board>.<testplan>.Benchmark.<testsuite>)
     var testname = localurl[localurl.length - 2],
       testsuite = testname.split(".")[3],
       metrics = [],
@@ -95,8 +96,8 @@ function getBuildsInfo(series) {
   fws.reverse();
 }
 
-jQuery.ajax({ url: jenurl+'/'+testname+'/metrics.json', method: 'GET', dataType: 'json', async: false, success: getSuitesInfo});
-jQuery.ajax({ url: jenurl+'/'+testname+'/'+testname+'.info.json', method: 'GET', dataType: 'json', async: false, success: getBuildsInfo});
+jQuery.ajax({ url: jenurl+'/Benchmark.'+testsuite+'/metrics.json', method: 'GET', dataType: 'json', async: false, success: getSuitesInfo});
+jQuery.ajax({ url: jenurl+'/Benchmark.'+testsuite+'/Benchmark.'+testsuite+'.info.json', method: 'GET', dataType: 'json', async: false, success: getBuildsInfo});
 
 for (var i=0;i<metrics.length;i++) {
   var tmp_ph = "#ph"+i,
@@ -107,7 +108,7 @@ for (var i=0;i<metrics.length;i++) {
     plot, plot_f,
     previousPoint = null;
 
-  jQuery.ajax({url:jenurl+testname+'/'+testname+'.'+metrics[i]+'.json',method:'GET',dataType:'json',async:false,success:onDataReceived});
+  jQuery.ajax({url:jenurl+'/Benchmark.'+testsuite+'/Benchmark.'+testsuite+'.'+metrics[i]+'.json',method:'GET',dataType:'json',async:false,success:onDataReceived});
   jQuery(placeholder_f).bind("plotselected", hand_o);
   jQuery("#pht"+i+" input").click(drawChoices);
   jQuery("#all_dev_"+i).click(drawChoices);
