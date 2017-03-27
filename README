@@ -80,10 +80,12 @@ You can use the docker container as a fuego target in order to confirm that
 the installation was successful.
 
 # sudo -u jenkins ftc add-nodes docker
-# fuego-create-jobs --board docker --testplan testplan_docker --distrib nosyslogd.dist
+# sudo -u jenkins ftc add-jobs -b docker -p testplan_docker
 
-Build the job "docker.testplan_docker.batch", it will trigger the rest of
-the jobs. Use fuego-delete-jobs to remove all jobs.
+On the Jenkins interface, build the "docker.testplan_docker.batch" job.
+It will trigger the rest of the jobs. To remove the jobs use:
+
+# sudo -u jenkins ftc rm-jobs docker.testplan_docker.*.*
 
 License
 -------------------------------------------------------------------------------
