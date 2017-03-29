@@ -79,13 +79,13 @@ Initial test
 You can use the docker container as a fuego target in order to confirm that
 the installation was successful.
 
-# sudo -u jenkins ftc add-nodes docker
-# sudo -u jenkins ftc add-jobs -b docker -p testplan_docker
+# ftc add-nodes docker
+# ftc add-jobs -b docker -p testplan_docker
 
 On the Jenkins interface, build the "docker.testplan_docker.batch" job.
 It will trigger the rest of the jobs. To remove the jobs use:
 
-# sudo -u jenkins ftc rm-jobs docker.testplan_docker.*.*
+# ftc rm-jobs docker.testplan_docker.*.*
 
 License
 -------------------------------------------------------------------------------
