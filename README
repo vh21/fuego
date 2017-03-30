@@ -81,6 +81,7 @@ the installation was successful.
 
 # ftc add-nodes docker
 # ftc add-jobs -b docker -p testplan_docker
+# ftc add-jobs -b docker -t Benchmark.Dhrystone -s default
 
 On the Jenkins interface, build the "docker.testplan_docker.batch" job.
 It will trigger the rest of the jobs. To remove the jobs use:
