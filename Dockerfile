@@ -28,7 +28,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get -yV install \
 	libtool xmlstarlet autoconf automake rsync openjdk-7-jre openjdk-7-jdk iperf \
 	netperf netpipe-tcp sshpass wget git diffstat sudo net-tools vim curl \
 	inotify-tools g++ bzip2 bc libaio-dev gettext pkg-config libglib2.0-dev \
-	time python-pip python-xmltodict at
+	time python-pip python-xmltodict at minicom lzop
 RUN pip install python-jenkins==0.4.14
 RUN /bin/bash -c 'echo "dash dash/sh boolean false" | debconf-set-selections ; DEBIAN_FRONTEND=noninteractive dpkg-reconfigure dash'
 RUN if [ -n "$HTTP_PROXY" ]; then echo "use_proxy = on" >> /etc/wgetrc; fi
@@ -52,6 +52,13 @@ RUN wget -nv ${JENKINS_URL}
 RUN echo "${JENKINS_SHA} jenkins_${JENKINS_VERSION}_all.deb" | sha1sum -c -
 RUN dpkg -i jenkins_${JENKINS_VERSION}_all.deb
 RUN rm jenkins_${JENKINS_VERSION}_all.deb
+
+# ==============================================================================
+# get ttc script and helpers
+# ==============================================================================
+RUN git clone https://github.com/tbird20d/ttc.git $INST_FUEGO_ENGINE_PATH/ttc
+RUN $INSTALL_FUEGO_ENGINE_PATH/ttc/install.sh /usr/local/bin
+RUN perl -p -i -e "s#config_dir = \"/etc\"#config_dir = \"/fuego-ro/conf\"#" /usr/local/bin/ttc
 
 # ==============================================================================
 # Serial Config
