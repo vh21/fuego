@@ -11,6 +11,16 @@ Note that Fuego is distributed as two repositories, one with docker
 and Jenkins stuff, and one with the fuego tests and script system.
 This file serves as the common changelog for both repositories.
 
+== [1.0.9] - 2017-20 ==
+ * Refactor Jenkins integration
+   * create Jenkins nodes and jobs with a script
+   * use fuego-ro and fuego-rw instead of userdata
+   * put fuego-core outside container
+ * add many ftc commands (for operating with server)
+ * put test specs into test directories
+ * support test packaging system (test.yaml file)
+ * allow for a board-specified tmp directory
+
 == [1.0.0] - 2016-11-08 ==
  * Add support for building the docker container behind a proxy
  * Add support for creating a container that can see USB changes
@@ -23,7 +33,7 @@ This file serves as the common changelog for both repositories.
      'distribs/nologger.dist' to 'distribs/nologread.dist' in the target
      configuration for these boards
  * Add .gitignore files to make repository management easier
- * Add code to create the FUEGO_HOME directory if not already present
+ * Add code to create the BOARD_TESTDIR directory if not already present
  * Change bzip2 test to support busybox version of bzip2
  * Add VERSION and CHANGELOG files
  * status:

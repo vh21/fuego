@@ -1,5 +1,4 @@
-#!/bin/bash
-# $1 - name for the docker container (default: fuego-container)
+# $1 - name for the docker image (default: fuego)
 SOURCE="${BASH_SOURCE[0]}"
 while [ -h "$SOURCE" ]; do # resolve $SOURCE until the file is no longer a symlink
   DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
@@ -8,8 +7,14 @@ while [ -h "$SOURCE" ]; do # resolve $SOURCE until the file is no longer a symli
 done
 DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
 
-DOCKERCONTAINER=${1:-fuego-container}
+DOCKERIMAGE=${1:-fuego}
 
-echo "Starting Fuego container (fuego-container)"
-sudo docker start --interactive=true --attach=true ${DOCKERCONTAINER} || \
-  echo "Please create Fuego docker container via docker-create-container.sh script"
+if [ "$(id -u)" == "0" ]; then
+	JENKINS_UID=$(id -u $SUDO_USER)
+	JENKINS_GID=$(id -g $SUDO_USER)
+else
+	JENKINS_UID=$(id -u $USER)
+	JENKINS_GID=$(id -g $USER)
+fi
+
+sudo docker build -t ${DOCKERIMAGE} --build-arg HTTP_PROXY=$http_proxy --build-arg uid=$JENKINS_UID --build-arg gid=$JENKINS_GID .

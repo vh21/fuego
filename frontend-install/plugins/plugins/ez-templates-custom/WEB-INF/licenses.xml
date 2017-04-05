@@ -1,5 +1,0 @@
-<l:dependencies xmlns:l='licenses' groupId='com.joelj.jenkins' artifactId='ez-templates' version='1.0-SNAPSHOT'>
-  <l:dependency name='ez-templates' groupId='com.joelj.jenkins' artifactId='ez-templates' version='1.0-SNAPSHOT' url='http://jenkins-ci.org/plugin/ez-templates/'>
-    <l:description />
-  </l:dependency>
-</l:dependencies>

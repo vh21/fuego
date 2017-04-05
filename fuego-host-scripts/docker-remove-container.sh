@@ -10,6 +10,4 @@ DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
 
 DOCKERCONTAINER=${1:-fuego-container}
 
-echo "Starting Fuego container (fuego-container)"
-sudo docker start --interactive=true --attach=true ${DOCKERCONTAINER} || \
-  echo "Please create Fuego docker container via docker-create-container.sh script"
+sudo docker rm ${DOCKERCONTAINER}

@@ -5,23 +5,12 @@ In this document we will use such notions as \textit{targets} and \textit{boards
 \item[Board] denotes a back-end entity, such as a physical board (specifically, the board or device to run tests on).
 \end{description}
 
-Board configuration is stored in \texttt{FUEGO\_ENGINE\_PATH/overlays/boards/<boardname>.board}, 
+Board configuration is stored in \texttt{FUEGO\_RO/boards/<boardname>.board},
 where \texttt{<boardname>} is the respective name of the target.
 
 \subsection{Adding a target in Jenkins interface}
 \label{sec:target-add}
-The simplest method of adding a new target is to copy from an existing one. 
-We provide \textit{template-dev} board for that purpose.
-\begin{enumerate}
-\item Open a browser window to the \href{http://localhost:8080/}{Fuego web interface}
-\item Click on \textbf{Target status}
-\item Click on \textbf{New node}
-\item Fill in the \textit{Node name} input field witht he name of the new board
-\item Choose \textit{Copy Existing Node}. And enter name of the source node, namely, \textit{template-dev}
-\item You will be forwarded to node configuration page.
-Locate the \textit{Environment variables} section in \textit{Node Properties}.
-Specify the path to board config file [\ref{sec:board_config}] using the variable \textbf{BOARD\_OVERLAY}.
-\end{enumerate}
+The simplest method of adding a new target is to use the ftc add-nodes tool.
 
 \subsection{Writing the board config overlay}
 \label{sec:board_config}
@@ -30,24 +19,24 @@ Board config file is an overlay (See \ref{subsec:overlay_fmt}) that must inherit
 The following is the step-by-step description of all mandatory environment variables that should be set by this file:
 
 \begin{description}
-\item[\texttt{TRANSPORT}:] defines how Fuego should communicate with the board. 
+\item[\texttt{TRANSPORT}:] defines how Fuego should communicate with the board.
   Currently only \texttt{ssh} is supported;
 \item[\texttt{IPADDR}:]  IP address or host name of board;
 \item[\texttt{SSH\_PORT}:]  ssh port number of board;
 \item[\texttt{LOGIN}:]  user name for ssh login;
 \item[\texttt{PASSWORD}:] password for ssh login;
 \item[\texttt{FUEGO\_HOME}:] path to the directory on device the tests will run from;
-\item[\texttt{PLATFORM}:] architecture of the board. 
+\item[\texttt{PLATFORM}:] architecture of the board.
   Currently \texttt{ia32}, \texttt{arm} and \texttt{mips} are supported. Used by some of tests during compilation.
 \end{description}
 
-The following variables specify devices and mount points that are used by some 
+The following variables specify devices and mount points that are used by some
 file system tests: \texttt{SATA\_DEV, SATA\_MP, USB\_DEV, USB\_MP, MMC\_DEV, MMC\_MP}.
 
 
 
 
-%%% Local Variables: 
+%%% Local Variables:
 %%% mode: latex
 %%% TeX-master: "fuego-guide"
-%%% End: 
+%%% End:

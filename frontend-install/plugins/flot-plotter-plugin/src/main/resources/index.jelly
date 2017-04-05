@@ -1,0 +1,4 @@
+<?jelly escape-by-default='true'?>
+<div>
+  Benchmark graphs plotting plug-in for Fuego.
+</div>

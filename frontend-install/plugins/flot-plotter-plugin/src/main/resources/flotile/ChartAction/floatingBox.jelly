@@ -1,0 +1,21 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt" xmlns:local="local">
+
+<script language="javascript" type="text/javascript" src="${rootURL}/plugin/flot/flot/jquery.min.js"></script>
+<script language="javascript" type="text/javascript" src="${rootURL}/plugin/flot/flot/jquery.flot.min.js"></script>
+<script language="javascript" type="text/javascript" src="${rootURL}/plugin/flot/flot/jquery.flot.navigate.min.js"></script>
+<script language="javascript" type="text/javascript" src="${rootURL}/plugin/flot/flot/jquery.flot.symbol.min.js"></script>
+<script language="javascript" type="text/javascript" src="${rootURL}/plugin/flot/flot/jquery.flot.selection.min.js"></script>
+<script language="javascript" type="text/javascript" src="${rootURL}/plugin/flot/flot/canvas2image.js"></script>
+<script language="javascript" type="text/javascript" src="${rootURL}/plugin/flot/flot/base64.js"></script>
+
+<link type="text/css" href="${rootURL}/plugin/flot/flot/my.css" rel="stylesheet" />
+
+<div>
+  <div id="mod">
+    <script language="javascript" type="text/javascript" src="${rootURL}/plugin/flot/flot/mod.js"></script>
+  </div>
+	<div class="plots"></div>
+</div>
+
+</j:jelly>
