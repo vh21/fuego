@@ -93,10 +93,6 @@ COPY frontend-install/plugins/flot-plotter-plugin/flot.hpi $JENKINS_HOME/plugins
 COPY docs/fuego-docs.pdf $JENKINS_HOME/userContent/docs/fuego-docs.pdf
 
 RUN ln -s /fuego-core/engine/scripts/ftc /usr/local/bin/
-RUN ln -s /fuego-ro/scripts/nodes/fuego-create-node /usr/local/bin/
-RUN ln -s /fuego-ro/scripts/nodes/fuego-delete-node /usr/local/bin/
-RUN ln -s /fuego-ro/scripts/jobs/fuego-create-jobs /usr/local/bin/
-RUN ln -s /fuego-ro/scripts/jobs/fuego-delete-jobs /usr/local/bin/
 COPY frontend-install/config.xml $JENKINS_HOME/config.xml
 
 RUN chown -R jenkins:jenkins $JENKINS_HOME/
