@@ -101,4 +101,4 @@ RUN chown -R jenkins:jenkins $JENKINS_HOME/
 # Setup startup command
 # ==============================================================================
 
-ENTRYPOINT service jenkins start && /bin/bash
+ENTRYPOINT service jenkins start && service netperf start && /bin/bash
