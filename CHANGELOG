@@ -11,7 +11,14 @@ Note that Fuego is distributed as two repositories, one with docker
 and Jenkins stuff, and one with the fuego tests and script system.
 This file serves as the common changelog for both repositories.
 
-== [1.0.9] - 2017-20 ==
+== [1.1.0] - 2017-04-?? ==
+ * Move log directories
+ * Add tests from AGL
+ * finish Jenkins refactoring
+ * Put commands for node and job creation into ftc
+ * Add more Fuego tests
+
+== [1.0.9] - 2017-02-?? ==
  * Refactor Jenkins integration
    * create Jenkins nodes and jobs with a script
    * use fuego-ro and fuego-rw instead of userdata
