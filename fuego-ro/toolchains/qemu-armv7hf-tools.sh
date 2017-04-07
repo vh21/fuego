@@ -12,6 +12,8 @@ export ARCH=arm
 export SDKROOT=/
 export PREFIX=arm-linux-gnueabihf
 export_tools
+CPP="${CC} -E"
+CXXCPP="${CXX} -E"
 
 # save original path, to get to non-toolchain version of python
 ORIG_PATH=$PATH
