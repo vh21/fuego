@@ -22,7 +22,7 @@ will be returned to the host shell.
 
 Configuration
 -------------------------------------------------------------------------------
-Please see the manual (docs/fuego-docs.pdf) for configuration and usage.
+Please see the docs (docs/fuego-docs.pdf) for configuration and usage.
 
 docker-create-containter.sh configures Docker to use the host network
 (using the --net="host" option).
@@ -36,7 +36,6 @@ update the following components:
 - Fuego engine
 - tests
 - overlays
-- jenkins jobs
 
 Board configurations and toolchain setup can be updated by doing ``git pull''
 from within the fuego host directory.
@@ -71,8 +70,8 @@ Re-build Jenkins' config.xml (if necessary):
 Rewrite Jobs config.xml (if necessary):
     + Configure the job manually and save it
     + Get the xml file
-         java -jar /var/cache/jenkins/war/WEB-INF/jenkins-cli.jar -s http://localhost:8080/fuego get-job docker.testplan_docker.Benchmark.Dhrystone
-    + Modify fuego-create-jobs as necessary
+         java -jar /var/cache/jenkins/war/WEB-INF/jenkins-cli.jar -s http://localhost:8080/fuego get-job docker.default.Benchmark.Dhrystone
+    + Modify ftc add-jobs (do_add_jobs()) as necessary
 
 Initial test
 ------------
@@ -86,7 +85,7 @@ the installation was successful.
 On the Jenkins interface, build the "docker.testplan_docker.batch" job.
 It will trigger the rest of the jobs. To remove the jobs use:
 
-# ftc rm-jobs docker.testplan_docker.*.*
+# $ ftc rm-jobs docker.testplan_docker.*.*
 
 License
 -------------------------------------------------------------------------------

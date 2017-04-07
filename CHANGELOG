@@ -11,14 +11,31 @@ Note that Fuego is distributed as two repositories, one with docker
 and Jenkins stuff, and one with the fuego tests and script system.
 This file serves as the common changelog for both repositories.
 
-== [1.1.0] - 2017-04-?? ==
+== [1.1.0] - 2017-04-07 ==
  * Move log directories
  * Add tests from AGL
- * finish Jenkins refactoring
- * Put commands for node and job creation into ftc
- * Add more Fuego tests
+   * These are experimental in this release
+ * Move spec files into test directories
+ * Move metrics files into test directories
+ * Refactor interface with Jenkins
+   * Create nodes and jobs with ftc tool
+   * Put post_test into script system
+   * Remove most plugins (groovy, dashboard-view, compact-cols and many more)
+   * Handle proxies in container build
+   * Use user UID as Jenkins uid inside container
+ * Move fuego-core directory from /home/jenkins to /fuego-core
+ * Move volume mounts and put more stuff outside the container
+ * Add some tests of fuego itself (*.fuego_* tests)
+ * Add new transports (ttc and serial)
+   * These are experimental in this release
+ * Lots of fixups to individual tests
+ * Create arm toolchain download script
+   * Don't put ARM toolchain into container automatically
+ * Add more tools to container distribution of Debian
+   * for various purposes
+ * Add test server system (prototype)
 
-== [1.0.9] - 2017-02-?? ==
+== [1.0.9] - 2017-03-20 ==
  * Refactor Jenkins integration
    * create Jenkins nodes and jobs with a script
    * use fuego-ro and fuego-rw instead of userdata
