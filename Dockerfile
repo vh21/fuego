@@ -95,6 +95,7 @@ COPY docs/fuego-docs.pdf $JENKINS_HOME/userContent/docs/fuego-docs.pdf
 
 RUN ln -s /fuego-core/engine/scripts/ftc /usr/local/bin/
 COPY frontend-install/config.xml $JENKINS_HOME/config.xml
+COPY frontend-install/jenkins.model.JenkinsLocationConfiguration.xml $JENKINS_HOME/jenkins.model.JenkinsLocationConfiguration.xml
 
 RUN chown -R jenkins:jenkins $JENKINS_HOME/
 
