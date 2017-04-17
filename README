@@ -85,7 +85,7 @@ the installation was successful.
 On the Jenkins interface, build the "docker.testplan_docker.batch" job.
 It will trigger the rest of the jobs. To remove the jobs use:
 
-# $ ftc rm-jobs docker.testplan_docker.*.*
+# ftc rm-jobs docker.testplan_docker.*.*
 
 License
 -------------------------------------------------------------------------------
