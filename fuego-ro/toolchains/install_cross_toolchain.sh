@@ -12,3 +12,6 @@ dpkg --add-architecture $ARCH
 curl http://emdebian.org/tools/debian/emdebian-toolchain-archive.key | sudo apt-key add -
 DEBIAN_FRONTEND=noninteractive apt-get update
 DEBIAN_FRONTEND=noninteractive apt-get -yV install crossbuild-essential-$ARCH
+
+# libaio is needed for LTP
+DEBIAN_FRONTEND=noninteractive apt-get -yV install libaio-dev:$ARCH
