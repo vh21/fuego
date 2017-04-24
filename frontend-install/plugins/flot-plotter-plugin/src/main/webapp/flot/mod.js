@@ -28,6 +28,7 @@ var jenkins_logs_path = 'http://'+location['host'] + '/fuego/userContent/fuego.l
 
 // get the test name from the URL
 var localurl = jQuery(location).attr('href').split("/");
+var testtype = localurl[localurl.length - 2].split(".")[2] // E.g.: Functional
 var testsuite = localurl[localurl.length - 2].split(".")[3] // E.g.: Dhrystone
 
 // results.json file
@@ -230,6 +231,6 @@ function plot_all_groupnames(series) {
     });
 }
 
-jQuery.ajax({ url: jenkins_logs_path+'/Benchmark.'+testsuite+'/results.json', method: 'GET', dataType: 'json', async: false, success: plot_all_groupnames});
+jQuery.ajax({ url: jenkins_logs_path+'/'+testtype+'.'+testsuite+'/results.json', method: 'GET', dataType: 'json', async: false, success: plot_all_groupnames});
 
 })
