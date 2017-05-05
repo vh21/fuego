@@ -6,6 +6,10 @@
 # CFLAGS and LDFLAGS are optional
 #
 # this script is sourced by ${FUEGO_RO}/toolchains/tools.sh
+#
+# Note that to use this script, you should install the
+# Debian cross-compiler toolchains, using the script
+# install_armhf_toolchain.sh
 
 export ARCH=arm
 
