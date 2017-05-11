@@ -1,0 +1,5 @@
+This directory contains <board>.vars files, which hold
+board dynamic variables.  These are variables that are
+set (and cleared) by Fuego tests, rather than directly
+by the user.  They serve a similar functionality to
+LAVA's "device dictionary".
