@@ -18,7 +18,9 @@ if [ ! -d $DIR/../../fuego-core ]; then
 fi
 
 sudo docker create -it --name ${DOCKERCONTAINER} \
-    --privileged -v /dev/bus/usb:/dev/bus/usb \
+    --privileged \
+    -v /boot:/boot:ro \
+    -v /dev/bus/usb:/dev/bus/usb \
     -v /dev/ttyACM0:/dev/ttyACM0 \
     -v /dev/ttyACM1:/dev/ttyACM1 \
     -v /dev/ttyUSB0:/dev/ttyUSB0 \
