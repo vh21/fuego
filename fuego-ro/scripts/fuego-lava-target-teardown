@@ -1,0 +1,33 @@
+#!/bin/bash
+
+# NODE_NAME / NODE_LABELS  ... need a job ID here
+source $FUEGO_RO/boards/${NODE_NAME}.lava
+
+echo "##### FUEGO LAVA TARGET TEARDOWN ####"
+
+OLDPWD=`pwd`
+
+export LAVATMP="/tmp/${NODE_NAME}.${EXECUTOR_NUMBER}/"
+cd ${LAVATMP}
+
+export MYJOB=`cat .myjob | grep "submitted as job" | sed -e "s#submitted as job id: ##g"`
+
+if [ x"" = x"$MYJOB" ] ; then
+  echo "No LAVA Job # . Likely job submission failed - and we should have failed earlier !"
+  exit 1
+fi
+
+# we use 2 methods - to be sure ;)
+# the first method instructs the job within lava to finish.
+${SSH}${IPADDR} "sh -c 'stop_hacking || true'"
+
+sleep 10
+# Fixme: check if down before cancelling
+
+# To be really sure, we also cancel the job itself.
+# The work has been done and the board needs to be freed.
+lava-tool cancel-job https://${LAVA_USER}@${LAVA_HOST} $MYJOB
+
+cd $OLDPWD
+
+echo "##### FUEGO LAVA TARGET TEARDOWN - DONE####"

@@ -1,0 +1,87 @@
+# Your first LAVA JOB definition for a raspberrypi3 board
+device_type: raspberrypi3-uboot
+job_name: fuego->lava job
+
+# for nfsroot comment out the protocol:
+protocols:
+  lava-xnbd:
+    port: auto
+
+timeouts:
+  job:
+    minutes: 30
+  action:
+    minutes: 10
+  connection:
+    minutes: 5
+  bootloader-commands:
+    minutes: 4
+  auto-login-action:
+    minutes: 4
+  lava-test-shell:
+    minutes: 60
+  lava-test-retry:
+    minutes: 60
+  auto-login-action:
+    minutes: 5
+
+priority: medium
+visibility: public
+
+# ACTION_BLOCK
+actions:
+- deploy:
+    failure_retry: 2
+    timeout:
+      minutes: 20
+    # for nfsroot change to tftp:
+    to: nbd
+    dtb:
+      url: '@REPLACE_LAVA_DTB@'
+    kernel:
+      url: '@REPLACE_LAVA_KERNEL@'
+    # initrd is optional
+    initrd:
+      url: '@REPLACE_LAVA_INITRD@'
+    #nbdroot or nfsroot can be used
+    nbdroot:
+      url: '@REPLACE_LAVA_NBDROOT@'
+      compression: @REPLACE_LAVA_ROOTFS_COMPRESSION@
+    os: oe
+    failure_retry: 2
+
+# BOOT_BLOCK
+- boot:
+    failure_retry: 2
+    method: u-boot
+    # for nfsroot change to nfs:
+    commands: nbd
+    type: @REPLACE_LAVA_BOOT_TYPE@
+    prompts:
+      - 'linaro-test'
+      - 'root@debian:~#'
+      - '/ #'
+      - 'root@raspberrypi3:~'
+      - '@REPLACE_LAVA_SHELL_PROMPT@'
+    auto_login:
+      login_prompt: "login:"
+      username: root
+    # This is needed to deal with the NBDroot unmodified rootfs
+    transfer_overlay:
+      download_command: wget
+      unpack_command: tar -C / -xvpf
+
+# TEST BLOCK
+- test:
+   failure_retry: 3
+   name: basic-hacking-session
+   timeout:
+     minutes: 60
+   definitions:
+     - repository: https://git.linaro.org/lava-team/hacking-session.git
+       from: git
+       path: hacking-session-oe.yaml
+       name: hacking
+       lava_test_dir: /tmp/lava
+       parameters:
+         "PUB_KEY": "@REPLACE_LAVA_PUBKEY@"

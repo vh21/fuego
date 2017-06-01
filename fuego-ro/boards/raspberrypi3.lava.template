@@ -1,0 +1,27 @@
+# LAVA SERVER
+#LAVA_HOST_PROTOCOL="https"
+LAVA_HOST="lava.myhost.org/RPC2"
+LAVA_USER="myusername"
+LAVA_TOKEN="mylavatoken"
+# LAVA BOOT TEMPLATE
+DEFAULT_LAVA_TEMPLATE="raspberrypi3.lava.yaml"
+# REPLACEMENT VALUES IN TEMPLATE
+DEFAULT_LAVA_BOOT_TYPE="bootm"
+DEFAULT_LAVA_KERNEL="http://lab/rpi3/Image-raspberrypi3.bin"
+DEFAULT_LAVA_DTB="http://lab/rpi3/Image-bcm2710-rpi-3-b.dtb"
+#DEFAULT_LAVA_RAMDISK="" # for later
+#DEFAULT_LAVA_INITRD=""  # for later
+#DEFAULT_LAVA_NBDROOT="" # for later
+DEFAULT_LAVA_NFSROOTFS="http://lab/rpi3/agl-image-ivi-qa-raspberrypi3.tar.xz"
+DEFAULT_LAVA_ROOTFS_COMPRESSION="xz"
+#DEFAULT_LAVA_SHELL_PROMPT="/"
+DEFAULT_LAVA_LOGIN_PROMT="login:"
+DEFAULT_LAVA_LOGIN_USER="root"
+#DEFAULT_LAVA_LOGIN_PASS="s3cr3t"
+DEFAULT_LAVA_PUBKEY=""
+DEFAULT_LAVA_SCHEDULE_TIMEOUT_MINUTES=30
+DEFAULT_LAVA_BOOT_TIMEOUT_MINUTES=15
+
+# FIXME: This is a duplicate of the board config still.
+SSH_PORT="2222"
+IPADDR="10.0.0.235"

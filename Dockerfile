@@ -29,6 +29,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get -yV install \
 	netperf netpipe-tcp sshpass wget git diffstat sudo net-tools vim curl \
 	inotify-tools g++ bzip2 bc libaio-dev gettext pkg-config libglib2.0-dev \
 	time python-pip python-xmltodict at minicom lzop bsdmainutils u-boot-tools \
+	mc netcat lava-tool openssh-server
 	python-parsedatetime
 RUN pip install python-jenkins==0.4.14
 RUN pip install filelock
@@ -102,6 +103,24 @@ COPY frontend-install/config.xml $JENKINS_HOME/config.xml
 COPY frontend-install/jenkins.model.JenkinsLocationConfiguration.xml $JENKINS_HOME/jenkins.model.JenkinsLocationConfiguration.xml
 
 RUN chown -R jenkins:jenkins $JENKINS_HOME/
+
+# ==============================================================================
+# Lava
+# ==============================================================================
+
+RUN ln -s /fuego-ro/scripts/fuego-lava-target-setup /usr/local/bin
+RUN ln -s /fuego-ro/scripts/fuego-lava-target-teardown /usr/local/bin
+# CONVENIENCE HACKS
+# not mounted, yet
+#RUN echo "fuego-create-node --board raspberrypi3" >> /root/firststart.sh
+#RUN echo "fuego-create-jobs --board raspberrypi3 --testplan testplan_docker --distrib nosyslogd.dist" >> /root/firststart.sh
+
+RUN echo "deb http://emdebian.org/tools/debian/ jessie main" > /etc/apt/sources.list.d/crosstools.list
+RUN dpkg --add-architecture armhf
+RUN curl http://emdebian.org/tools/debian/emdebian-toolchain-archive.key | sudo apt-key add -
+RUN DEBIAN_FRONTEND=noninteractive apt-get update
+RUN DEBIAN_FRONTEND=noninteractive apt-get -yV install crossbuild-essential-armhf cpp-arm-linux-gnueabihf gcc-arm-linux-gnueabihf binutils-arm-linux-gnueabihf
+
 
 # ==============================================================================
 # Setup startup command

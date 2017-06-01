@@ -1,0 +1,16 @@
+To enable Fuego-LAVA support, you need to enable:
+
+TARGET_SETUP_LINK="fuego-lava-target-setup"
+TARGET_TEARDOWN_LINK="fuego-lava-target-teardown"
+
+
+Then you need a <boardname>.lava and a <boardname>.lava.yaml.
+
+<boardname>.lava holds env variables
+<boardname>.lava.yaml holds a template for the lava test job.
+
+There are examples for raspberrypi3:
+- raspberrypi3.lava.template 
+  -> copy to raspberrypi3.lava
+  -> insert credentials and values for DTB,KERNEL,ROOTFS
+- raspberrypi3.lava.yaml
