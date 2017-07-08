@@ -7,7 +7,7 @@ BOARD_TESTDIR="/home/a"
 PASSWORD=""
 PLATFORM="set platform here (see tools.sh)"
 TRANSPORT="ssh"
-ARCHITECTURE="set_ia32_or_arm_here"
+ARCHITECTURE="set_ia32_x86_64_or_arm_or_arm64_here"
 
 SATA_DEV="/dev/sdb1"
 SATA_MP="/mnt/sata"
