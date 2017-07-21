@@ -162,6 +162,73 @@ function plot_test_set(test_set, index) {
     return jQuery.plot(upper_placeholder, flot_results_json, upper_options);
 }
 
+function json_updated(series) {
+    var localurl = jQuery(location).attr('href')
+    display_table(series);
+
+//     if (localurl.search("Functional") != -1) {
+//         display_table(series);
+//     } else {
+//         plot_all_test_sets(series);
+//         display_table(series);
+//     }
+}
+
+function display_table(series) {
+    var obj = series;
+    var count = 0;
+    jQuery('.plots').append("<h1>" + obj.test_name + "</h1>");
+    jQuery.each(obj, function (key, data) {
+        if (key == "test_name")
+            return;
+        jQuery('.plots').append("<h2>" + key + "</h2>");
+        measurements_length = Object.keys(data.measurements).length
+        common = '<table border="1" id="' + count +'" cellspacing="0">' +
+            '<tr style="background-color:#cccccc">' +
+            '<th colspan="' + (measurements_length + 6) + '" align="left">' +
+            'board: ' + data.board + '<br/>' +
+            'kernel_version: ' + data.kernel_version + '<br/>' +
+            'test_spec: ' + data.test_spec + '<br/>' +
+            'test_case: ' + data.test_case + '<br/>' +
+            'test_plan: ' + data.test_plan + '<br/>' +
+            'test_set: ' + data.test_set + '<br/>' +
+            'toolchain: ' + data.toolchain + '<br/>' +
+            '</th>' +
+            '</tr>' +
+            '<tr style="background-color:#cccccc">' +
+            '<th colspan="1" align="left">build number</th>' +
+            '<th colspan="1" align="left">status</th>'
+
+        jQuery.each(data.measurements, function (key, measure) {
+            common = common +
+                '<th colspan="1" align="left">' + key + '</th>'
+        })
+
+        common = common +
+            '<th colspan="1" align="left">start_time</th>' +
+            '<th colspan="1" align="left">duration</th>' +
+            '</tr>'
+            '</table>';
+        jQuery('.plots').append(common);
+
+        for (var i=0; i < data.build_number.length; i++) {
+            result_row = '<tr>' +
+                '<td colspan="1" align="left">' + data.build_number[i] + '</td>' +
+                '<td colspan="1" align="left">' + data.status[i] + '</td>'
+            jQuery.each(data.measurements, function (key, measure) {
+                result_row = result_row +
+                    '<td colspan="1" align="left">' + measure.status[i] + '</td>'
+            })
+            result_row = result_row +
+                '<td colspan="1" align="left">' + data.start_time[i] + '</td>' +
+                '<td colspan="1" align="left">' + data.duration_ms[i] + ' ms</td>' +
+                '</tr>';
+            jQuery("#" + count + " > tbody:last-child").append(result_row);
+        }
+        count++;
+    });
+}
+
 function plot_all_test_sets(series) {
     // results_json is the results.json file (global)
     results_json = series
@@ -232,6 +299,6 @@ function plot_all_test_sets(series) {
     });
 }
 
-jQuery.ajax({ url: jenkins_logs_path+'/'+testtype+'.'+testsuite+'/results.json', method: 'GET', dataType: 'json', async: false, success: plot_all_test_sets});
+jQuery.ajax({ url: jenkins_logs_path+'/'+testtype+'.'+testsuite+'/results.json', method: 'GET', dataType: 'json', async: false, success: json_updated});
 
 })
