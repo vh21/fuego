@@ -50,15 +50,14 @@ function show_upperplot_tooltip(event, pos, item) {
         var x = item.datapoint[0].toFixed(2);
         var y = item.datapoint[1].toFixed(2);
         var info = results_json[item.series.label];
-        jQuery("#tooltip").html("value: " + info['data'][item.dataIndex] + "<br \>" +
-                                "ref: " + info['ref'][item.dataIndex] + "<br \>" +
-                                "timestamp: " + info['timestamp'][item.dataIndex] + "<br \>" +
+        jQuery("#tooltip").html("data: " + info['data'][item.dataIndex] + "<br \>" +
+                                "start_time: " + info['start_time'][item.dataIndex] + "<br \>" +
                                 "board: " + info['board'] + "<br \>" +
                                 "spec: " + info['spec'] + "<br \>" +
-                                "fwver: " + info['fwver'] + "<br \>" +
+                                "kernel_version: " + info['kernel_version'] + "<br \>" +
                                 "platform: " + info['platform'] + "<br \>" +
-                                "groupname: " + info['groupname'] + "<br \>" +
-                                "test: " + info['test'] + "<br \>" +
+                                "test_set: " + info['test_set'] + "<br \>" +
+                                "test_case: " + info['test_case'] + "<br \>" +
                                 "x: " + x + "<br \>" +
                                 "y: " + y)
                           .css({top: item.pageY+5, left: item.pageX-200})
@@ -70,7 +69,7 @@ function show_upperplot_tooltip(event, pos, item) {
 
 function handle_lowerplot_zoom(event, ranges) {
     var id = jQuery(this).attr("id"); // e.g.: upper-2048_Kb_Record_Write-0
-    var groupname = id.split('-')[1];
+    var test_set = id.split('-')[1];
     var index = id.split('-')[2];
     var plot = plots[index];
 
@@ -82,21 +81,21 @@ function handle_lowerplot_zoom(event, ranges) {
     plot.draw();
 }
 
-function replot_groupname() {
+function replot_test_set() {
     var id = jQuery(this).attr("id"); // e.g.: label-2048_Kb_Record_Write-0
-    var groupname = id.split('-')[1];
+    var test_set = id.split('-')[1];
     var index = id.split('-')[2];
 
-    plot_groupname(groupname, index);
+    plot_test_set(test_set, index);
 }
 
-function plot_groupname(groupname, index) {
+function plot_test_set(test_set, index) {
     // prepare data to display
-    var label_id = 'label-' + groupname + '-' + index;
+    var label_id = 'label-' + test_set + '-' + index;
     var flot_results_json = []
     jQuery.each(results_json, function(label, results_json_item) {
         var is_checked = jQuery('#' + label_id).children('input[name="' + label + '"]').attr("checked");
-        if (is_checked && (results_json_item['groupname'] == groupname)) {
+        if (is_checked && (results_json_item['test_set'] == test_set)) {
             var data = [];
             results_json_item['data'].forEach(function(data_item, j) {
                 data.push([j, data_item]);
@@ -156,52 +155,54 @@ function plot_groupname(groupname, index) {
     };
 
     // finally plot the data
-    var upper_placeholder = jQuery('#upper-' + groupname + '-' + index);
-    var lower_placeholder = jQuery('#lower-' + groupname + '-' + index);
+    var upper_placeholder = jQuery('#upper-' + test_set + '-' + index);
+    var lower_placeholder = jQuery('#lower-' + test_set + '-' + index);
 
     jQuery.plot(lower_placeholder, flot_results_json, lower_options);
     return jQuery.plot(upper_placeholder, flot_results_json, upper_options);
 }
 
-function plot_all_groupnames(series) {
+function plot_all_test_sets(series) {
     // results_json is the results.json file (global)
     results_json = series
 
-    // extract set of boards, specs, fwvers
+    // extract set of boards, test_specs, kernel_versions
     var labels = [];
     var boards = [];
-    var specs = [];
-    var fwvers = [];
-    var groupnames = [];
-    var tests = [];
+    var test_specs = [];
+    var kernel_versions = [];
+    var test_sets = [];
+    var test_cases = [];
 
     jQuery.each(results_json, function(key, results_json_item) {
+        if (key == "test_name")
+            return;
         if (!(labels.includes(key)))
             labels.push(key);
         if (!(boards.includes(results_json_item['board'])))
             boards.push(results_json_item['board']);
-        if (!(specs.includes(results_json_item['spec'])))
-            specs.push(results_json_item['spec']);
-        if (!(fwvers.includes(results_json_item['fwver']))) // FIXTHIS: remove tail?
-            fwvers.push(results_json_item['fwver']);
-        if (!(groupnames.includes(results_json_item['groupname'])))
-            groupnames.push(results_json_item['groupname']);
-        if (!(tests.includes(results_json_item['test'])))
-            tests.push(results_json_item['test']);
+        if (!(test_specs.includes(results_json_item['test_spec'])))
+            test_specs.push(results_json_item['test_spec']);
+        if (!(kernel_versions.includes(results_json_item['kernel_version']))) // FIXTHIS: remove tail?
+            kernel_versions.push(results_json_item['kernel_version']);
+        if (!(test_sets.includes(results_json_item['test_set'])))
+            test_sets.push(results_json_item['test_set']);
+        if (!(test_cases.includes(results_json_item['test_case'])))
+            test_cases.push(results_json_item['test_case']);
     });
 
-    // there is one plot per groupname
-    groupnames.forEach(function(groupname, i) {
-        // FIXTHIS: make sure that groupname has no - in it
-        var label_id = 'label-' + groupname + '-' + i;
+    // there is one plot per test_set
+    test_sets.forEach(function(test_set, i) {
+        // FIXTHIS: make sure that test_set has no - in it
+        var label_id = 'label-' + test_set + '-' + i;
         // create all html elements
         jQuery('.plots').append(
             '<div class="container">' +
-            '    <div class="area_header">' + testsuite + ' / ' + groupname + '</div>' +
+            '    <div class="area_header">' + testsuite + ' / ' + test_set + '</div>' +
             '    <div class="two_figures_container">' +
-            '        <div style="width:100%;height:200px;" id="upper-' + groupname + '-' + i + '"></div>' +
+            '        <div style="width:100%;height:200px;" id="upper-' + test_set + '-' + i + '"></div>' +
             '        <p></p>' +
-            '        <div style="width:100%;height:70px;" id="lower-' + groupname + '-' + i + '"></div>' +
+            '        <div style="width:100%;height:70px;" id="lower-' + test_set + '-' + i + '"></div>' +
             '    </div>' +
             '    <br/>' +
             '    <div class="legend_container">Legend:' +
@@ -212,7 +213,7 @@ function plot_all_groupnames(series) {
             '</div>');
 
         labels.forEach(function(label) {
-            if (results_json[label].groupname == groupname) {
+            if (results_json[label].test_set == test_set) {
                 var id = 'id_' + label + '_'+ i;
                 jQuery('#' + label_id).append(
                     '<input type="checkbox" name="' + label + '" checked="checked" id="' + id + '">' +
@@ -221,16 +222,16 @@ function plot_all_groupnames(series) {
         });
 
         // hook callbacks to interactive elements
-        jQuery('#lower-' + groupname + '-' + i).bind("plotselected", handle_lowerplot_zoom);
-        jQuery('#upper-' + groupname + '-' + i).bind("plothover", show_upperplot_tooltip);
-        jQuery('#' + label_id).click(replot_groupname);
+        jQuery('#lower-' + test_set + '-' + i).bind("plotselected", handle_lowerplot_zoom);
+        jQuery('#upper-' + test_set + '-' + i).bind("plothover", show_upperplot_tooltip);
+        jQuery('#' + label_id).click(replot_test_set);
 
         // plot this group
-        upper_plot = plot_groupname(groupname, i);
+        upper_plot = plot_test_set(test_set, i);
         plots.push(upper_plot);
     });
 }
 
-jQuery.ajax({ url: jenkins_logs_path+'/'+testtype+'.'+testsuite+'/results.json', method: 'GET', dataType: 'json', async: false, success: plot_all_groupnames});
+jQuery.ajax({ url: jenkins_logs_path+'/'+testtype+'.'+testsuite+'/results.json', method: 'GET', dataType: 'json', async: false, success: plot_all_test_sets});
 
 })
