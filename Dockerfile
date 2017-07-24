@@ -30,6 +30,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get -yV install \
 	inotify-tools g++ bzip2 bc libaio-dev gettext pkg-config libglib2.0-dev \
 	time python-pip python-xmltodict at minicom lzop bsdmainutils u-boot-tools
 RUN pip install python-jenkins==0.4.14
+RUN pip install filelock
 RUN /bin/bash -c 'echo "dash dash/sh boolean false" | debconf-set-selections ; DEBIAN_FRONTEND=noninteractive dpkg-reconfigure dash'
 RUN if [ -n "$HTTP_PROXY" ]; then echo "use_proxy = on" >> /etc/wgetrc; fi
 RUN if [ -n "$HTTP_PROXY" ]; then echo "http_proxy=$HTTP_PROXY; https_proxy=$HTTP_PROXY" >> /etc/environment; fi
