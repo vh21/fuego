@@ -7,7 +7,7 @@
 #
 # this script should be sourced by ${FUEGO_RO}/toolchains/tools.sh
 
-POKY_SDK_ROOT=${FUEGO_RO}/toolchains/poky/2.0.1
+POKY_SDK_ROOT=/opt/poky/2.1+snapshot
 export SDKROOT=${POKY_SDK_ROOT}/sysroots/armv5e-poky-linux-gnueabi
 
 # the Yocto project environment setup script changes PATH so that python uses
