@@ -89,15 +89,21 @@ RUN source /etc/default/jenkins && \
 	fi && \
 	sed -i -e "s#^JAVA_ARGS.*#JAVA_ARGS\=\"${JAVA_ARGS}\"#g" /etc/default/jenkins;
 
+COPY frontend-install/plugins/flot-plotter-plugin/flot.hpi /tmp
+
 RUN service jenkins start && \
 	sleep 30 && \
 	sudo -u jenkins java -jar /var/cache/jenkins/war/WEB-INF/jenkins-cli.jar -s http://localhost:8080/fuego install-plugin description-setter && \
-	sudo -u jenkins java -jar /var/cache/jenkins/war/WEB-INF/jenkins-cli.jar -s http://localhost:8080/fuego install-plugin pegdown-formatter
+	sudo -u jenkins java -jar /var/cache/jenkins/war/WEB-INF/jenkins-cli.jar -s http://localhost:8080/fuego install-plugin pegdown-formatter && \
+    sudo -u jenkins java -jar /var/cache/jenkins/war/WEB-INF/jenkins-cli.jar -s http://localhost:8080/fuego install-plugin /tmp/flot.hpi && \
+    sleep 10
+
+# Let Jenkins install flot before making the symlink
+RUN service jenkins restart && sleep 30 && \
+    rm $JENKINS_HOME/plugins/flot/flot/mod.js && \
+    ln -s /fuego-core/engine/scripts/mod.js $JENKINS_HOME/plugins/flot/flot/mod.js
 
 RUN ln -s /fuego-rw/logs $JENKINS_HOME/userContent/fuego.logs
-COPY frontend-install/plugins/flot-plotter-plugin/flot.hpi $JENKINS_HOME/plugins/
-RUN ln -s /fuego-core/engine/scripts/mod.js $JENKINS_HOME/plugins/flot/flot/mod.js
-
 COPY docs/fuego-docs.pdf $JENKINS_HOME/userContent/docs/fuego-docs.pdf
 
 RUN ln -s /fuego-core/engine/scripts/ftc /usr/local/bin/
