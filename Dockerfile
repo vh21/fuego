@@ -96,6 +96,8 @@ RUN service jenkins start && \
 
 RUN ln -s /fuego-rw/logs $JENKINS_HOME/userContent/fuego.logs
 COPY frontend-install/plugins/flot-plotter-plugin/flot.hpi $JENKINS_HOME/plugins/
+RUN ln -s /fuego-core/engine/scripts/mod.js $JENKINS_HOME/plugins/flot/flot/mod.js
+
 COPY docs/fuego-docs.pdf $JENKINS_HOME/userContent/docs/fuego-docs.pdf
 
 RUN ln -s /fuego-core/engine/scripts/ftc /usr/local/bin/
