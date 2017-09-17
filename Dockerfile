@@ -29,8 +29,8 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get -yV install \
 	netperf netpipe-tcp sshpass wget git diffstat sudo net-tools vim curl \
 	inotify-tools g++ bzip2 bc libaio-dev gettext pkg-config libglib2.0-dev \
 	time python-pip python-xmltodict at minicom lzop bsdmainutils u-boot-tools \
-	mc netcat lava-tool openssh-server
-	python-parsedatetime
+	mc netcat lava-tool openssh-server python-parsedatetime
+
 RUN pip install python-jenkins==0.4.14
 RUN pip install filelock
 RUN /bin/bash -c 'echo "dash dash/sh boolean false" | debconf-set-selections ; DEBIAN_FRONTEND=noninteractive dpkg-reconfigure dash'
