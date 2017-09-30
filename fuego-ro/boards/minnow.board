@@ -1,0 +1,11 @@
+inherit "base-board"
+include "base-params"
+
+IPADDR="10.0.1.80"
+LOGIN="root"
+PASSWORD="fuego"
+BOARD_TESTDIR="/home/fuego"
+PLATFORM="x86_64"
+TRANSPORT="ssh"
+ARCHITECTURE="x86_64"
+DISTRIB="nosyslogd.dist"
