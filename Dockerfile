@@ -30,7 +30,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get -yV install \
 	inotify-tools g++ bzip2 bc libaio-dev gettext pkg-config libglib2.0-dev \
 	time python-pip python-xmltodict at minicom lzop bsdmainutils u-boot-tools \
 	mc netcat lava-tool openssh-server python-parsedatetime \
-	libsdl1.2-dev libcairo libxmu libxmuu
+	libsdl1.2-dev libcairo2-dev libxmu-dev libxmuu-dev
 
 RUN pip install python-jenkins==0.4.14
 RUN pip install filelock
