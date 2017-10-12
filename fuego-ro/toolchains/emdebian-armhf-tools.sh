@@ -9,7 +9,10 @@
 #
 # Note that to use this script, you should install the
 # Debian cross-compiler toolchains, using the script
-# install_armhf_toolchain.sh
+# install_cross_toolchain.sh
+#
+# do this, inside the container, as follows:
+#  /fuego-ro/toolchain/install_cross_toolchain.sh armhf
 
 export ARCH=arm
 

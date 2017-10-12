@@ -18,6 +18,7 @@ if [ ! -d $DIR/../../fuego-core ]; then
 fi
 
 sudo docker create -it --name ${DOCKERCONTAINER} \
+    -v /boot:/boot:ro \
     -v $DIR/../fuego-rw:/fuego-rw \
     -v $DIR/../fuego-ro:/fuego-ro:ro \
     -v $DIR/../../fuego-core:/fuego-core:ro \

@@ -23,288 +23,282 @@
 jQuery.noConflict();
 jQuery(document).ready(function () {
 
-    var localurl = jQuery(location).attr('href').split("/");
-    var pathname = jQuery(location).attr('pathname').split("/");
+// Jenkins logs path
+var jenkins_logs_path = 'http://'+location['host'] + '/fuego/userContent/fuego.logs/';
 
-    var prefix = pathname[1];
-    var i = 2;
-    while (pathname[i] != "view" && pathname[i] != "job") {
-    	prefix = prefix + '/' + pathname[i];
-    	i++;
-    }
+// get the test name from the URL
+var localurl = jQuery(location).attr('href').split("/");
+var testtype = localurl[localurl.length - 2].split(".")[2] // E.g.: Functional
+var testsuite = localurl[localurl.length - 2].split(".")[3] // E.g.: Dhrystone
 
-    var jenurl = 'http://'+'/'+location['host'] + '/' + prefix +'/userContent/fuego.logs/';
+// results.json file
+var results_json = null;
+var plots = [];
 
-    // testname is currently: (<board>.<testplan>.Benchmark.<testsuite>)
-    var testname = localurl[localurl.length - 2],
-      testsuite = testname.split(".")[3],
-      metrics = [],
-      tests = [],
-      plots = [],
-      fws = [],
-      devices = [],
-      glob_suffix = '**',
-      fw_ver_len = 12,
-      fw_ver_prefix_len = fw_ver_len - glob_suffix.length;
-
-  var options = {
-    lines: { show: true , lineWidth:1.2 },
-    points: { show: true },
-    xaxis: {},
-    yaxis: {},
-    grid: { hoverable: true, clickable: true, backgroundColor: "#f5f5f5", borderWidth: 0.5 },
-    pan: { interactive: true },
-    zoom: { interactive: true },
-    legend: { position: 'nw', noColumns:2, container: null },
-    colors: ["#008f00", "#73fa79", "#009193", "#73fcd6", "#ff9300", "#ffd479", "#942193", "#d783ff", "#424242", "#a9a9a9", "#011993", "#76d6ff", "#929000", "#fffc79", "#941100", "#ff7e79"]
-  };
-  var options_f = {
-    lines: { show: true, lineWidth:1.0 },
-    points: { show: false },
-    grid: { backgroundColor: "#f0f0f0", borderWidth: 0.5 },
-    legend: { show: false },
-    selection: { mode: "x", color: "blue" },
-    // colors: ["#0000ff", "#008000", "#00bfbf", "#148f8f", "#bf00bf", "#bfbf00", "#000", "#3cff00"]
-    colors: ["#008f00", "#73fa79", "#009193", "#73fcd6", "#ff9300", "#ffd479", "#942193", "#d783ff", "#424242", "#a9a9a9", "#011993", "#76d6ff", "#929000", "#fffc79", "#941100", "#ff7e79"]
-  };
-
-function getSuitesInfo(series) {
-    if (testsuite in series) {
-	metrics = series[testsuite];
-	for (var i=0;i<metrics.length;i++) {
-	    jQuery('.plots').append('<div class="container"><div class="area_header">'+testsuite+' / '+metrics[i]+'</div>'+
-				    '<div class="cont2"><div style="width:800px;height:200px;float:right" id="ph'+i+'"></div><p></p><div style="width:800px;height:70px;float:right" id="phf'+i+'"></div></div>'+
-				    '<div class="cont3">Legend:<div id="phl'+i+'"></div><br/>'+
-				    '<div class="devices"><input type="checkbox" name="all_dev" checked="checked" id="all_dev_'+i+'"><label for="all_dev">All devices:</label><br/><div id="pht'+i+'"></div></div>'+
-				    '<div class="firmware"><input type="checkbox" name="all_fw" checked="checked" id="all_fw_'+i+'"><label for="all_fw">All firmware:</label><br/><div id="phfw'+i+'"></div>'+
-				    '</div></div>');
-	}
-    }
-    else {
-	jQuery('.plots').append('<div class="container"><div class="area_header">'+testsuite+':'+ 'No data (check metrics.json file)' +'</div>'
-				+'</div></div>');
-    }
-}
-
-function getBuildsInfo(series) {
-  devices = series;
-  devices.forEach(function(dev){
-    dev['info'][1].forEach(function(fw){
-     if (fws.indexOf(fw) == -1) {
-       fws.push(fw);}});});
-  fws.sort();
-  fws.reverse();
-}
-
-jQuery.ajax({ url: jenurl+'/Benchmark.'+testsuite+'/metrics.json', method: 'GET', dataType: 'json', async: false, success: getSuitesInfo});
-jQuery.ajax({ url: jenurl+'/Benchmark.'+testsuite+'/Benchmark.'+testsuite+'.info.json', method: 'GET', dataType: 'json', async: false, success: getBuildsInfo});
-
-for (var i=0;i<metrics.length;i++) {
-  var tmp_ph = "#ph"+i,
-    placeholder = jQuery("#ph"+i),
-    placeholder_f = jQuery("#phf"+i),
-    legend = jQuery("#phl"+i),
-    target_list = jQuery("#pht"+i),
-    plot, plot_f,
-    previousPoint = null;
-
-  jQuery.ajax({url:jenurl+'/Benchmark.'+testsuite+'/Benchmark.'+testsuite+'.'+metrics[i]+'.json',method:'GET',dataType:'json',async:false,success:onDataReceived});
-  jQuery(placeholder_f).bind("plotselected", hand_o);
-  jQuery("#pht"+i+" input").click(drawChoices);
-  jQuery("#all_dev_"+i).click(drawChoices);
-  jQuery("#phfw"+i+" input").click(drawChoices);
-  jQuery("#all_fw_"+i).click(drawChoices);
-  jQuery(placeholder).bind("plothover", MoreInfo_PopUp);
-}
-
-function MoreInfo_PopUp (event, pos, item) {
-  var fw, sdk, name;
-  if (item) {
-    jQuery("#tooltip").remove();
-    if (previousPoint != item.dataIndex) {
-      previousPoint = item.dataIndex;
-      var x = item.datapoint[0].toFixed(2),
-          y = item.datapoint[1].toFixed(2),
-          id = -1,
-          o = 0;
-
-      while (id < 0) {
-      	id = devices[o]['info'][0].indexOf(parseFloat(x).toString());
-        if (id >= 0) {
-          fw = devices[o]['info'][1][id];
-          sdk = devices[o]['info'][2][id];
-          name = devices[o].device;
-        }
-        o++;
-      }
-
-      if (fw){
-        previousPoint = null;
-        showTooltip(item.pageX,item.pageY,"<b>"+item.series.label+"</b>"+
-          "<br/>Build: "+parseFloat(x).toFixed()+
-          "<br/>Device: "+name+
-          "<br/>Value: "+y+
-          "<br/>SDK: "+sdk+
-          "<br/>FW: "+fw);
-      }
-    }
-  }
-  else {
-    jQuery("#tooltip").remove();
-    previousPoint = null;
-  }
-}
-
-function hand_o (event,ranges) {
-  var n = parseInt(this.id.substring(this.id.length-1));
-  plots[n][0]=jQuery.plot(jQuery("#ph"+n),plots[n][2],jQuery.extend(true,{},options,{
-    xaxis:{min:ranges.xaxis.from, max:ranges.xaxis.to},
-    yaxis: {min:ranges.yaxis.from,max:ranges.yaxis.to}
-  }));
-}
-
-function drawChoices() {
-  var res = [], checked_fw = [], checked_dev = [],
-      all_devs_checked = false, all_fw_checked = false,
-      k = parseInt(this.id.slice(-1)); // XXX this assumes the maximum of 10 graphs!
-
-  // Handle group check-boxes, and set all_*_checked falgs
-  if (jQuery(this).attr("name") == "all_dev") {
-    all_devs_checked = jQuery(this).attr("checked");
-    jQuery("#pht"+k+" input").attr("checked", all_devs_checked);
-  } else if (jQuery(this).attr("name") == "all_fw") {
-    all_fw_checked = jQuery(this).attr("checked");
-    jQuery("#phfw"+k+" input").attr("checked", all_fw_checked);
-  }
-
-  if (!all_devs_checked) {
-    all_devs_checked = (jQuery("#pht"+k+" input:checked").length == jQuery("#pht"+k+" input").length);
-    jQuery("#all_dev_"+k).attr("checked", all_devs_checked);
-  }
-
-  if (!all_fw_checked) {
-    all_fw_checked = (jQuery("#phfw"+k+" input:checked").length == jQuery("#phfw"+k+" input").length);
-    jQuery("#all_fw_"+k).attr("checked", all_fw_checked);
-  }
-
-  jQuery("#pht"+k+" input:checked").each(function(){
-    var devname = jQuery(this).attr("name");
-    devices.forEach(function(dev){
-     	if (dev.device == devname) {
-        checked_dev.push(jQuery.extend(true, {}, dev))}});
-  });
-
-  checked_dev.forEach(function(dev){
-    var new_bids = [];
-    jQuery("#phfw"+k+" input:checked").each(function(){
-      var fwname = jQuery(this).attr("name");
-      for (var f=0; f<dev.info[1].length; f++) {
-	var fw = dev.info[1][f];
-        if (fwname == fw ||
-            // Special handling of firmware version groups
-            (fw.length == fw_ver_len && fwname.slice(-1 * glob_suffix.length) == glob_suffix &&
-             fwname.slice(0, fw_ver_prefix_len) == fw.slice(0, fw_ver_prefix_len))) {
-          for (var ind=0; ind<devices.length; ind++) {
-            if (devices[ind].device == dev.device) {
-              new_bids.push(devices[ind].info[0][f]);
-            }
-          }
-        }
-      }
-    });
-    dev.info[0] = new_bids;
-  });
-
-  checked_dev.forEach(function(dev){
-    plots[k][2].forEach(function(graph){
-      graph.data.forEach(function(dot){
-        if (jQuery.inArray(dot[0],dev.info[0]) >= 0) {
-          var exist = false;
-          res.forEach(function(res_point){
-            if (res_point.label == graph.label) {
-              res_point.data.push([dot[0],dot[1]]);
-              exist = true; }
-          });
-          if (exist == false){
-            res.push({label:graph.label,data:[[dot[0],dot[1]]],points:graph.points});
-          }
-        }
-      });
-    });
-  });
-  res.forEach(function(re){re.data.sort(function(a,b){return(a[0]-b[0])});});
-  plotGraphs(jQuery("#ph"+k),jQuery("#phf"+k),res);
-}
-
-function showTooltip(x, y, contents) {
-  jQuery('<div id="tooltip">' + contents + '</div>').css( {
+// hidden tooltip element
+jQuery('<div id="tooltip"></div>').css( {
     position: 'absolute',
     display: 'none',
-    top: y + 1,
-    left: x + 5,
     border: '1px solid #fdd',
-    padding: '2px', 'background-color':'#ffe', opacity:0.90
-  }).appendTo("body").fadeIn(200);
-}
+    padding: '2px',
+    'background-color': '#ffe',
+    opacity:0.90
+}).appendTo("body").fadeIn(200);
 
-function plotGraphs(placeholder, overview, series) {
-  var width = 75, // Last N points to show on main graph
-      y_max = -1, // Max Y-value for group of tests
-      y_min = 1000000000,
-      x_max = 0;   // The last build number
-
-  series.forEach (function (a) {
-    if ('data' in a) {
-      var data = a.data;
-      slice = data.slice(-1 * width);
-      slice.forEach(function (e) {
-        y_val = parseFloat(e[1]);
-        if (y_max < y_val) y_max = y_val;
-        if (y_min > y_val) y_min = y_val;
-        x_val = parseInt(e[0]);
-        if (x_max < x_val) x_max = x_val;
-      });
-  }});
-
-  options.xaxis.max = x_max;
-  // XXX includes outside points if some of inside ones are disabled
-  options.xaxis.min = x_max - width;
-
-  options.yaxis.max = 1.02 * y_max;
-  options.yaxis.min = 0.98 * y_min;
-
-  options.legend.container = legend;
-
-  plot = jQuery.plot(placeholder, series, options);
-  plot_f = jQuery.plot(overview, series, options_f);
-}
-
-function onDataReceived(series) {
-  var deviceContainer = jQuery("#pht"+i),
-  fwContainer = jQuery("#phfw"+i);
-
-  devices.forEach(function (dev) {
-    deviceContainer.append('<input class="shift" type="checkbox" name="'+dev['device']+'" checked="checked" id="id_' + dev['device'] + '_'+ i +'">' +
-      '<label for="id_'+dev['device']+'">'+dev['device']+'</label><br/>');
-  });
-
-  var prev_fw = '';
-  var new_fw = '';
-  fws.forEach(function(fw){
-    // Combine unofficial (e.g. nightly) builds into groups.
-    // Otherwise, the list becomes too long.
-    if (fw.length == fw_ver_len && fw.substr(8,2) != '00') {
-      new_fw = fw.substr(0, fw_ver_len - glob_suffix.length) + glob_suffix;
+function show_upperplot_tooltip(event, pos, item) {
+    if (item) {
+        var x = item.datapoint[0].toFixed(2);
+        var y = item.datapoint[1].toFixed(2);
+        var info = results_json[item.series.label];
+        jQuery("#tooltip").html("data: " + info['data'][item.dataIndex] + "<br \>" +
+                                "start_time: " + info['start_time'][item.dataIndex] + "<br \>" +
+                                "board: " + info['board'] + "<br \>" +
+                                "spec: " + info['spec'] + "<br \>" +
+                                "kernel_version: " + info['kernel_version'] + "<br \>" +
+                                "platform: " + info['platform'] + "<br \>" +
+                                "test_set: " + info['test_set'] + "<br \>" +
+                                "test_case: " + info['test_case'] + "<br \>" +
+                                "x: " + x + "<br \>" +
+                                "y: " + y)
+                          .css({top: item.pageY+5, left: item.pageX-200})
+                          .fadeIn(200);
     } else {
-      new_fw = fw;
+        jQuery("#tooltip").hide();
     }
-    if (prev_fw != new_fw) {
-      fwContainer.append('<input class="shift" type="checkbox" name="'+ new_fw +'" checked="checked" id="fwid_'+ new_fw +'_'+ i +'">'+'<label for="fwid_'+ new_fw +'">'+ new_fw +'</label><br/>');
-      prev_fw = new_fw;
-    }
-  });
+}
 
-  plotGraphs(placeholder, placeholder_f, series);
-  plots.push([plot,plot_f,series]);
-  }
+function handle_lowerplot_zoom(event, ranges) {
+    var id = jQuery(this).attr("id"); // e.g.: upper-2048_Kb_Record_Write-0
+    var test_set = id.split('-')[1];
+    var index = id.split('-')[2];
+    var plot = plots[index];
+
+    plot.getOptions().xaxes[0].min = ranges.xaxis.from;
+    plot.getOptions().xaxes[0].max = ranges.xaxis.to;
+    plot.getOptions().yaxes[0].min = ranges.yaxis.from;
+    plot.getOptions().yaxes[0].max = ranges.yaxis.to;
+    plot.setupGrid();
+    plot.draw();
+}
+
+function replot_test_set() {
+    var id = jQuery(this).attr("id"); // e.g.: label-2048_Kb_Record_Write-0
+    var test_set = id.split('-')[1];
+    var index = id.split('-')[2];
+
+    plot_test_set(test_set, index);
+}
+
+function plot_test_set(test_set, index) {
+    // prepare data to display
+    var label_id = 'label-' + test_set + '-' + index;
+    var flot_results_json = []
+    jQuery.each(results_json, function(label, results_json_item) {
+        var is_checked = jQuery('#' + label_id).children('input[name="' + label + '"]').attr("checked");
+        if (is_checked && (results_json_item['test_set'] == test_set)) {
+            var data = [];
+            results_json_item['data'].forEach(function(data_item, j) {
+                data.push([j, data_item]);
+            });
+            flot_results_json.push({ 'label' : label, 'data' : data});
+        }
+    });
+
+    // calculate y_max, y_min and x_max fromt the result data
+    var y_min = 1000000000;
+    var y_max = -1;
+    var x_max = 0;
+    var num_samples = 75; // we only plot the last 75 points on the upper plot
+
+    flot_results_json.forEach (function (flot_result_item) {
+        slice = flot_result_item['data'].slice(-1 * num_samples);
+        slice.forEach(function (data_value) {
+            x = parseInt(data_value[0]);
+            y = parseFloat(data_value[1]);
+            y_max = Math.max(y_max, y);
+            y_min = Math.min(y_min, y);
+            x_max = Math.max(x_max, x)
+        });
+    });
+
+    // prepare the plot options for the upper and lower plots
+    var upper_options = {
+        lines   : { show: true , lineWidth:1.2 },
+        points  : { show: true },
+        xaxis   : { max: x_max,
+                    min: Math.max(x_max - num_samples, 0) },
+        yaxis   : { max: 1.02 * y_max,
+                    min: 0.98 * y_min},
+        grid    : { hoverable: true, clickable: true,
+                    backgroundColor: "#f5f5f5", borderWidth: 0.5 },
+        pan     : { interactive: true },
+        zoom    : { interactive: true },
+        legend  : { position: 'nw',
+                    noColumns:2,
+                    container: jQuery("#legend_item_"+index) },
+        colors  : [ "#008f00", "#73fa79", "#009193", "#73fcd6", "#ff9300",
+                    "#ffd479", "#942193", "#d783ff", "#424242", "#a9a9a9",
+                    "#011993", "#76d6ff", "#929000", "#fffc79", "#941100",
+                    "#ff7e79" ],
+    };
+
+    var lower_options = {
+        lines   : { show: true, lineWidth:1.0 },
+        points  : { show: false },
+        grid    : { backgroundColor: "#f0f0f0", borderWidth: 0.5 },
+        legend  : { show: false },
+        selection: { mode: "x", color: "blue" },
+        colors  : [ "#008f00", "#73fa79", "#009193", "#73fcd6", "#ff9300",
+                    "#ffd479", "#942193", "#d783ff", "#424242", "#a9a9a9",
+                    "#011993", "#76d6ff", "#929000", "#fffc79", "#941100",
+                    "#ff7e79" ]
+    };
+
+    // finally plot the data
+    var upper_placeholder = jQuery('#upper-' + test_set + '-' + index);
+    var lower_placeholder = jQuery('#lower-' + test_set + '-' + index);
+
+    jQuery.plot(lower_placeholder, flot_results_json, lower_options);
+    return jQuery.plot(upper_placeholder, flot_results_json, upper_options);
+}
+
+function json_updated(series) {
+    var localurl = jQuery(location).attr('href')
+    display_table(series);
+
+//     if (localurl.search("Functional") != -1) {
+//         display_table(series);
+//     } else {
+//         plot_all_test_sets(series);
+//         display_table(series);
+//     }
+}
+
+function display_table(series) {
+    var obj = series;
+    var count = 0;
+    jQuery('.plots').append("<h1>" + obj.test_name + "</h1>");
+    jQuery.each(obj, function (key, data) {
+        if (key == "test_name")
+            return;
+        jQuery('.plots').append("<h2>" + key + "</h2>");
+        measurements_length = Object.keys(data.measurements).length
+        common = '<table border="1" id="' + count +'" cellspacing="0">' +
+            '<tr style="background-color:#cccccc">' +
+            '<th colspan="' + (measurements_length + 6) + '" align="left">' +
+            'board: ' + data.board + '<br/>' +
+            'kernel_version: ' + data.kernel_version + '<br/>' +
+            'test_spec: ' + data.test_spec + '<br/>' +
+            'test_case: ' + data.test_case + '<br/>' +
+            'test_plan: ' + data.test_plan + '<br/>' +
+            'test_set: ' + data.test_set + '<br/>' +
+            'toolchain: ' + data.toolchain + '<br/>' +
+            '</th>' +
+            '</tr>' +
+            '<tr style="background-color:#cccccc">' +
+            '<th colspan="1" align="left">build number</th>' +
+            '<th colspan="1" align="left">status</th>'
+
+        jQuery.each(data.measurements, function (key, measure) {
+            common = common +
+                '<th colspan="1" align="left">' + key + '</th>'
+        })
+
+        common = common +
+            '<th colspan="1" align="left">start_time</th>' +
+            '<th colspan="1" align="left">duration</th>' +
+            '</tr>'
+            '</table>';
+        jQuery('.plots').append(common);
+
+        for (var i=0; i < data.build_number.length; i++) {
+            result_row = '<tr>' +
+                '<td colspan="1" align="left">' + data.build_number[i] + '</td>' +
+                '<td colspan="1" align="left">' + data.status[i] + '</td>'
+            jQuery.each(data.measurements, function (key, measure) {
+                result_row = result_row +
+                    '<td colspan="1" align="left">' + measure.status[i] + '</td>'
+            })
+            result_row = result_row +
+                '<td colspan="1" align="left">' + data.start_time[i] + '</td>' +
+                '<td colspan="1" align="left">' + data.duration_ms[i] + ' ms</td>' +
+                '</tr>';
+            jQuery("#" + count + " > tbody:last-child").append(result_row);
+        }
+        count++;
+    });
+}
+
+function plot_all_test_sets(series) {
+    // results_json is the results.json file (global)
+    results_json = series
+
+    // extract set of boards, test_specs, kernel_versions
+    var labels = [];
+    var boards = [];
+    var test_specs = [];
+    var kernel_versions = [];
+    var test_sets = [];
+    var test_cases = [];
+
+    jQuery.each(results_json, function(key, results_json_item) {
+        if (key == "test_name")
+            return;
+        if (!(labels.includes(key)))
+            labels.push(key);
+        if (!(boards.includes(results_json_item['board'])))
+            boards.push(results_json_item['board']);
+        if (!(test_specs.includes(results_json_item['test_spec'])))
+            test_specs.push(results_json_item['test_spec']);
+        if (!(kernel_versions.includes(results_json_item['kernel_version']))) // FIXTHIS: remove tail?
+            kernel_versions.push(results_json_item['kernel_version']);
+        if (!(test_sets.includes(results_json_item['test_set'])))
+            test_sets.push(results_json_item['test_set']);
+        if (!(test_cases.includes(results_json_item['test_case'])))
+            test_cases.push(results_json_item['test_case']);
+    });
+
+    // there is one plot per test_set
+    test_sets.forEach(function(test_set, i) {
+        // FIXTHIS: make sure that test_set has no - in it
+        var label_id = 'label-' + test_set + '-' + i;
+        // create all html elements
+        jQuery('.plots').append(
+            '<div class="container">' +
+            '    <div class="area_header">' + testsuite + ' / ' + test_set + '</div>' +
+            '    <div class="two_figures_container">' +
+            '        <div style="width:100%;height:200px;" id="upper-' + test_set + '-' + i + '"></div>' +
+            '        <p></p>' +
+            '        <div style="width:100%;height:70px;" id="lower-' + test_set + '-' + i + '"></div>' +
+            '    </div>' +
+            '    <br/>' +
+            '    <div class="legend_container">Legend:' +
+            '        <div id="legend_item_' + i + '"></div>' +
+            '        <br/>' +
+            '        <div id="' + label_id + '"></div>' +
+            '    </div>' +
+            '</div>');
+
+        labels.forEach(function(label) {
+            if (results_json[label].test_set == test_set) {
+                var id = 'id_' + label + '_'+ i;
+                jQuery('#' + label_id).append(
+                    '<input type="checkbox" name="' + label + '" checked="checked" id="' + id + '">' +
+                    '<label for="' + id + '">' + label + '</label><br/>');
+            }
+        });
+
+        // hook callbacks to interactive elements
+        jQuery('#lower-' + test_set + '-' + i).bind("plotselected", handle_lowerplot_zoom);
+        jQuery('#upper-' + test_set + '-' + i).bind("plothover", show_upperplot_tooltip);
+        jQuery('#' + label_id).click(replot_test_set);
+
+        // plot this group
+        upper_plot = plot_test_set(test_set, i);
+        plots.push(upper_plot);
+    });
+}
+
+jQuery.ajax({ url: jenkins_logs_path+'/'+testtype+'.'+testsuite+'/results.json', method: 'GET', dataType: 'json', async: false, success: json_updated});
+
 })

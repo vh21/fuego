@@ -1,0 +1,149 @@
+#!/bin/bash
+# (c) 2017 jsmoeller@linuxfoundation.org
+set -e
+
+#set -x
+
+# NODE_NAME / NODE_LABELS  ... need a job/board ID here
+source $FUEGO_RO/boards/${NODE_NAME}.lava
+
+echo "##### FUEGO LAVA TARGET SETUP ####"
+
+OLDPWD=`pwd`
+
+# work in tmp dir based on node (still serialized, even with multiple executors)
+export LAVATMP="/tmp/${NODE_NAME}.${EXECUTOR_NUMBER}/"
+mkdir -p ${LAVATMP}
+cd ${LAVATMP}
+
+#echo "default keyring config"
+if [ ! -d ~/.local/share/python_keyring/ ] ; then
+rm -rf ~/.local/share/python_keyring/ || true
+mkdir -p ~/.local/share/python_keyring/
+fi
+
+cat <<EOF >  ~/.local/share/python_keyring/keyringrc.cfg
+[backend]
+default-keyring=keyring.backends.file.PlaintextKeyring
+EOF
+
+# auth .... should better be done with jenkins auth injection plugin ...
+cat <<EOF > ./token
+$LAVA_TOKEN
+EOF
+
+lava-tool auth-add --token-file ./token https://${LAVA_USER}@${LAVA_HOST}
+rm ./token
+
+# find template  ... again: NODE_NAME for MACHINE :/
+if [ ! -f $FUEGO_RO/boards/${NODE_NAME}.lava.yaml ]; then
+    echo "LAVA job template file not found"
+    exit 1
+fi
+
+cp $FUEGO_RO/boards/${NODE_NAME}.lava.yaml ./testjob.yaml
+
+# REPLACE_DEVICE_TYPE
+# TODO: dynamic replacements if not using defaults
+sed -i -e "s#@REPLACE_LAVA_DTB@#${DEFAULT_LAVA_DTB}#g" testjob.yaml
+sed -i -e "s#@REPLACE_LAVA_KERNEL@#${DEFAULT_LAVA_KERNEL}#g" testjob.yaml
+sed -i -e "s#@REPLACE_LAVA_INITRD@#${DEFAULT_LAVA_INITRD}#g" testjob.yaml
+sed -i -e "s#@REPLACE_LAVA_NFSROOTFS@#${DEFAULT_LAVA_NFSROOTFS}#g" testjob.yaml
+sed -i -e "s#@REPLACE_LAVA_NBDROOT@#${DEFAULT_LAVA_NBDROOT}#g" testjob.yaml
+sed -i -e "s#@REPLACE_LAVA_ROOTFS_COMPRESSION@#${DEFAULT_LAVA_ROOTFS_COMPRESSION}#g" testjob.yaml
+#sed -i -e "s#@REPLACE_BOOT_METHOD@#${}#g" testjob.yaml
+sed -i -e "s#@REPLACE_LAVA_BOOT_TYPE@#${DEFAULT_LAVA_BOOT_TYPE}#g" testjob.yaml
+#sed -i -e "sä@REPLACE_LAVA_SHELL_PROMPT@ä${DEFAULT_LAVA_SHELL_PROMPT}äg" testjob.yaml
+sed -i -e "s#@REPLACE_LAVA_PUBKEY@#${DEFAULT_LAVA_PUBKEY}#g" testjob.yaml
+
+lava-tool submit-job https://${LAVA_USER}@${LAVA_HOST} testjob.yaml | tee .myjob
+
+export MYJOB=`cat .myjob | grep "submitted as job" | sed -e "s#submitted as job id: ##g"`
+
+if [ x"" = x"$MYJOB" ] ; then
+  echo "No LAVA Job # . Likely job submission failed."
+  exit 1
+fi
+
+# Fixme: in the current implementation the synchronous operation of
+#        Fuego and the asynchronous operation of lava are glued
+#        together with a polling loop.
+
+# wait a few minutes until job switches from submitted -> running:
+export LAVASCHEDULETIMEOUT=20
+if [ -n "${DEFAULT_LAVA_SCHEDULE_TIMEOUT_MINUTES}" ] ; then
+  export LAVASCHEDULETIMEOUT=${DEFAULT_LAVA_SCHEDULE_TIMEOUT_MINUTES}
+fi
+
+BOARDUP=false
+while [ ! $BOARDUP -o ${LAVASCHEDULETIMEOUT} -gt 0 ] ; do
+  echo "Waiting for job to start (submitted->running) ... ${LAVASCHEDULETIMEOUT} minutes remaining."
+  export LAVASCHEDULETIMEOUT=$((${LAVASCHEDULETIMEOUT} - 1))
+  lava-tool job-status https://${LAVA_USER}@${LAVA_HOST} $MYJOB > .myjobscheduled
+  STATUS=`grep "Job Status:" .myjobscheduled | sed -e "s#Job Status: ##g"`
+
+  if [ x"Incomplete" = x"${STATUS}" ] ; then
+    echo "Job ended 'Incomplete' already ?! Cannot continue"
+    exit 1
+  fi
+
+  if [ x"Complete" = x"${STATUS}" ] ; then
+    echo "Job ended 'Complete' already ?! Cannot continue"
+    exit 1
+  fi
+
+  if [ x"Canceled" = x"${STATUS}" ] ; then
+    echo "Job ended 'Canceled' already ?! Cannot continue"
+    exit 1
+  fi
+
+  if [ x"Running" = x"${STATUS}" ] ; then
+    export LAVASCHEDULETIMEOUT=0
+    export BOARDUP=true
+    continue
+  fi
+
+  #
+  sleep 60
+done
+
+if ! $BOARDUP; then
+   echo "BOARD NOT UP - exiting." 
+   exit 1
+fi
+
+# Now the job is running ... and we need to wait again for the board to boot
+# wait a few minutes until job switches from submitted -> running:
+export BOOTTIMEOUT=10
+if [ -n "${DEFAULT_LAVA_BOOT_TIMEOUT_MINUTES}" ] ; then
+  export BOOTTIMEOUT=${DEFAULT_LAVA_BOOT_TIMEOUT_MINUTES}
+fi
+
+# artificially offset the timeout value to allow some
+# error-handling in the loop by using the LAVABOOTTIMEOUT variable
+# Only LAVABOOTTIMEOUT=1 means board is up
+# everything else is a failure right now
+export LAVABOOTTIMEOUT=$((${BOOTTIMEOUT} + 5))
+
+while [ ${LAVABOOTTIMEOUT} -gt 5 ] ; do
+  export LAVABOOTTIMEOUT=$((${LAVABOOTTIMEOUT} - 1))
+
+  # a simple and working test as we use ssh as transport:
+  if nc -w 5 -z ${IPADDR} ${SSH_PORT} 2>/dev/null ; then
+    export LAVABOOTTIMEOUT=1
+  fi
+  sleep 60
+done
+
+
+if [ ! x"1" = x"${LAVABOOTTIMEOUT}" ] ; then
+    echo "Failure during booting of LAVA board. Cannot run test."
+    # Todo: retrieve and print log
+    exit 1
+fi
+
+# Cool, the board is up and ssh is available. GO!
+
+# make sure we leave the environment as we entered it.
+cd $OLDPWD
+echo "##### FUEGO LAVA TARGET SETUP - DONE ####"

@@ -6,7 +6,7 @@ SSH_PORT=5555
 LOGIN="root"
 BOARD_TESTDIR="/home/a"
 PASSWORD="adm"
-PLATFORM="qemu-armv7hf"
+PLATFORM="emdebian-armhf"
 TRANSPORT="ssh"
 ARCHITECTURE="arm"
 

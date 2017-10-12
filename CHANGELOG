@@ -11,6 +11,29 @@ Note that Fuego is distributed as two repositories, one with docker
 and Jenkins stuff, and one with the fuego tests and script system.
 This file serves as the common changelog for both repositories.
 
+== [1.2.0] - 2017-10-12 ==
+ * Rewrite charting and parts of the flot plugin
+ * Add more tools and libs to docker container for x86_64 builds
+ * Move serio and ttc source to /usr/local/src
+ * Support board dynamic variables in fuego-rw/boards
+ * Allow for docker containers and image names with non-default values
+ * MAJOR: Improve conn. management (e.g. add TARGET_TEARDOWN_LINK, and others)
+ * Add ftc add-views command
+ * Add ftc build-jobs command
+ * Add new tests: kernel_build, serial_rx and others
+ * Rename specs to spec.json
+ * Add dependencies system (NEED_xxxx variables)
+ * Add support for loading test source from git repositories
+ * Add skiplist and other features to LTP test
+ * Add testplan_ltsi
+ * Lots of fixes to individual tests
+ * Support aarch64 builds for many tests
+ * MAJOR: Output run.json (consistent results format for all tests)
+ * Convert to using criteria.json file, for added results processing
+ * Add reference.json to hold units and other measure meta-data
+ * Update parser API
+ * Add ftc gen-report command
+
 == [1.1.0] - 2017-04-07 ==
  * Move log directories
  * Add tests from AGL

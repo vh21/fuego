@@ -15,7 +15,7 @@
   <div id="mod">
     <script language="javascript" type="text/javascript" src="${rootURL}/plugin/flot/flot/mod.js"></script>
   </div>
-	<div class="plots"></div>
+  <div class="plots"></div>
 </div>
 
 </j:jelly>

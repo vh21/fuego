@@ -1,0 +1,34 @@
+inherit "base-board"
+include "base-params"
+
+MACHINE=raspberrypi3
+
+IPADDR="10.0.0.235"
+SSH_PORT="2222"
+SRV_IP="10.0.0.40"
+LOGIN="root"
+BOARD_TESTDIR="/root/"
+PASSWORD=""
+PLATFORM="qemu-armv7hf"
+TRANSPORT="ssh"
+ARCHITECTURE="arm"
+ORCHESTRATOR="lava"
+
+#SATA_DEV="/dev/sdb1"
+#SATA_MP="/mnt/sata"
+
+#USB_DEV="/dev/sda1"
+#USB_MP="/mnt/usb"
+
+#MMC_DEV="/dev/mmcblk0p2"
+#MMC_MP="/mnt/mmc"
+
+#MAX_REBOOT_RETRIES="3"
+#LTP_OPEN_POSIX_SUBTEST_COUNT_POS="1232"
+#LTP_OPEN_POSIX_SUBTEST_COUNT_NEG="158"
+#EXPAT_SUBTEST_COUNT_POS="1769"
+#EXPAT_SUBTEST_COUNT_NEG="41"
+
+# inject link setup and link-teardown
+TARGET_SETUP_LINK="fuego-lava-target-setup"
+TARGET_TEARDOWN_LINK="fuego-lava-target-teardown"
