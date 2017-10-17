@@ -23,7 +23,7 @@ RUN echo deb http://httpredir.debian.org/debian jessie main non-free > /etc/apt/
 RUN echo deb http://httpredir.debian.org/debian jessie-updates main non-free >> /etc/apt/sources.list
 RUN if [ -n "$HTTP_PROXY" ]; then echo 'Acquire::http::proxy "'$HTTP_PROXY'";' > /etc/apt/apt.conf.d/80proxy; fi
 RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get -yV install \
-	apt-utils daemon gcc make python-paramiko python-lxml python-simplejson \
+	apt-utils daemon gcc make cmake python-paramiko python-lxml python-simplejson \
 	python-matplotlib python-serial python-yaml python-openpyxl python-requests \
 	libtool xmlstarlet autoconf automake rsync openjdk-7-jre openjdk-7-jdk iperf \
 	netperf netpipe-tcp sshpass wget git diffstat sudo net-tools vim curl \
