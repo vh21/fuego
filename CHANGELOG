@@ -11,6 +11,21 @@ Note that Fuego is distributed as two repositories, one with docker
 and Jenkins stuff, and one with the fuego tests and script system.
 This file serves as the common changelog for both repositories.
 
+== [1.2.1] - 2017-11-15 ==
+ * Add parsing for LTP posix test results
+ * Add Functional.kselftest
+ * Add cmake and security repos (for newer packages) to docker build
+ * Fix issues in multiple tests:
+   * Functional.lwip, Functional.curl, Functional.libtar, Funtional.librsvg
+   * Functional.thrift, Funtional.boost, Benchmark.tiobench, Functional.neon
+   * Functional.glibc, Functional.LTP, Functional.tiff
+ * Fix bugs in source-sharing between platforms
+ * Support pre-installed LTP
+ * Major improvements to cyclictest and signaltest
+ * Support filtering of measure_plots via chart_config
+ * Add dependency requirements to several tests
+ * Use per_job_build in bc and cyclictest
+
 == [1.2.0] - 2017-10-12 ==
  * Rewrite charting and parts of the flot plugin
  * Add more tools and libs to docker container for x86_64 builds
