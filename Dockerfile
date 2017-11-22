@@ -4,7 +4,7 @@
 # ==============================================================================
 
 FROM debian:jessie
-MAINTAINER tim.bird@am.sony.com
+MAINTAINER tim.bird@sony.com
 
 # ==============================================================================
 # Proxy variables
