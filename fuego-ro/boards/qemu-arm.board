@@ -6,6 +6,7 @@ SSH_PORT=5555
 LOGIN="root"
 BOARD_TESTDIR="/home/a"
 PASSWORD="adm"
+#SSH_KEY="path/to/id_rsa"
 PLATFORM="emdebian-armhf"
 TRANSPORT="ssh"
 ARCHITECTURE="arm"
