@@ -1,0 +1,31 @@
+#!/bin/sh
+###############################################################################
+# This script installs some package for running the Vuls test
+###############################################################################
+
+if [ $UID -ne 0 ]; then
+    echo "please run the script under root user"
+    exit 1
+fi
+
+# Install sqlite
+dpkg -l sqlite || apt-get -yV install sqlite
+
+GOROOT=/usr/local/go
+if [ -x ${GOROOT}/bin/go ]; then
+    echo "Go was already installed in the system"
+    exit 0
+fi
+
+# ==============================================================================
+# install go
+# ==============================================================================
+GO_VERSION=1.8.3
+GO_URL=https://storage.googleapis.com/golang/go${GO_VERSION}.linux-amd64.tar.gz
+wget -nv ${GO_URL}
+tar -C /usr/local -xzf go${GO_VERSION}.linux-amd64.tar.gz
+rm -rf go${GO_VERSION}.linux-amd64.tar.gz
+
+mkdir -p /var/log/vuls
+chown jenkins /var/log/vuls
+chmod 700 /var/log/vuls
