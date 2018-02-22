@@ -1,6 +1,6 @@
 .. _about-fuego:
 
-.. Note: this section shared content with the project README
+.. Note: this section shares content with the project README
          file. When editing this section, als sync the content
          with the README file.
 
