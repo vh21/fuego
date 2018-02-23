@@ -11,6 +11,8 @@ PLATFORM="emdebian-armhf"
 TRANSPORT="ssh"
 ARCHITECTURE="arm"
 FUEGO_TARGET_TMP="/home/a"
+BOARD_CONTROL="ttc"
+TTC_TARGET="bbb"
 
 SATA_DEV="/dev/sdb1"
 SATA_MP="/mnt/sata"
