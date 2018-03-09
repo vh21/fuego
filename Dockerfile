@@ -139,4 +139,4 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update
 # Setup startup command
 # ==============================================================================
 
-ENTRYPOINT service jenkins start && service netperf start && /bin/bash
+ENTRYPOINT service jenkins start && service netperf start && iperf3 -V -s -D -f M && /bin/bash
