@@ -129,8 +129,11 @@ RUN echo "deb http://emdebian.org/tools/debian/ jessie main" > /etc/apt/sources.
 RUN dpkg --add-architecture armhf
 RUN curl http://emdebian.org/tools/debian/emdebian-toolchain-archive.key | sudo apt-key add -
 RUN DEBIAN_FRONTEND=noninteractive apt-get update
-RUN DEBIAN_FRONTEND=noninteractive apt-get -yV install crossbuild-essential-armhf cpp-arm-linux-gnueabihf gcc-arm-linux-gnueabihf binutils-arm-linux-gnueabihf
-
+# TRB-2018-03-19 - don't automatically install emdebian armhf toolchains
+# These are old, and have conflicts with recent Debian package releases.
+# Also, users should be encouraged to install the correct toolchain for
+# their board.
+#RUN DEBIAN_FRONTEND=noninteractive apt-get -yV install crossbuild-essential-armhf cpp-arm-linux-gnueabihf gcc-arm-linux-gnueabihf binutils-arm-linux-gnueabihf
 
 # ==============================================================================
 # Setup startup command
