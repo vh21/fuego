@@ -25,11 +25,10 @@ if [ -d /tmp/toolchain_install ] ; then
 fi
 mkdir -p /tmp/toolchain_install
 
-echo deb http://emdebian.org/tools/debian/ jessie main > /etc/apt/sources.list.d/crosstools.list
-dpkg --add-architecture $ARCH
-curl http://emdebian.org/tools/debian/emdebian-toolchain-archive.key | sudo apt-key add -
+echo deb http://deb.debian.org/debian unstable main > /etc/apt/sources.list.d/crosstools.list
+dpkg --add-architecture "${ARCH}"
 DEBIAN_FRONTEND=noninteractive apt-get update
-DEBIAN_FRONTEND=noninteractive apt-get -yV install crossbuild-essential-$ARCH
+DEBIAN_FRONTEND=noninteractive apt-get -yV install "crossbuild-essential-${ARCH}"
 
 # libaio is needed for LTP
 DEBIAN_FRONTEND=noninteractive apt-get -yV install libaio1:$ARCH
@@ -52,3 +51,4 @@ cp -vd usr/lib/${toolchain_dir}libaio.* /usr/lib/${toolchain_dir}
 # clean up
 cd $SAVEDIR
 rm -rf /tmp/toolchain_install
+rm -f /etc/apt/sources.list.d/crosstools.list
