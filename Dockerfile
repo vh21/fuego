@@ -35,6 +35,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get -yV install \
 
 RUN pip install python-jenkins==0.4.14
 RUN pip install filelock
+RUN pip install flake8
 RUN /bin/bash -c 'echo "dash dash/sh boolean false" | debconf-set-selections ; DEBIAN_FRONTEND=noninteractive dpkg-reconfigure dash'
 RUN if [ -n "$HTTP_PROXY" ]; then echo "use_proxy = on" >> /etc/wgetrc; fi
 RUN if [ -n "$HTTP_PROXY" ]; then echo -e "http_proxy=$HTTP_PROXY\nhttps_proxy=$HTTP_PROXY" >> /etc/environment; fi
