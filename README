@@ -1,10 +1,38 @@
 Fuego
 =======================
 
+Fuego is a test system designed specifically for embedded Linux testing.
+It supports automated testing of embedded targets (boards or products)
+from a host system.  This is it's primary method of test execution.
+
+A quick introduction to Fuego is that is consists of a host/target script
+engine, and ver 100 pre-packaged tests.  These are installed in a docker
+container, along with a Jenkins web interface and job control system, ready
+for out-of-the-box Continuous Integration testing of your embedded Linux
+project.
+
+To use Fuego, you need to install it, then add a board file to let
+Fuego know information about the board you are testing. You also add
+a toolchain (if needed) for your board, and then populate the Jenkins
+interface with test jobs that you are interested in.
+
+Then start testing!
+
+Getting Started
+---------------
+The first thing to do with Fuego is to create your own Docker container
+with the Fuego distribution of host-side packages (including Jenkins)
+and tests.
+
+Fuego currently comes in 2 source repositories: one for building the
+container, and one with the tests.  This README is in the 'fuego' repository.
+You also need the 'fuego-core' repository, in a directory parallel to this
+one.
+
 Installing Fuego to a docker container
 -------------------------------------------------------------------------------
-Run install.sh from the top directory. This will launch the ``docker build''
-command.  You can modify the Dockerfile to suit your needs.
+Run install.sh from the top directory. This launch the ``docker build''
+command to create a docker image - named 'fuego' by default.
 
 Running
 -------------------------------------------------------------------------------
