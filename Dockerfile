@@ -95,15 +95,41 @@ RUN source /etc/default/jenkins && \
 
 COPY frontend-install/plugins/flot-plotter-plugin/flot.hpi /tmp
 
+COPY frontend-install/install-plugins.sh frontend-install/jenkins-support /usr/local/bin/
+
+
+# install flot.hpi manually from local file
 RUN service jenkins start && \
 	sleep 30 && \
-	sudo -u jenkins java -jar /var/cache/jenkins/war/WEB-INF/jenkins-cli.jar -s http://localhost:8080/fuego install-plugin description-setter && \
-	sudo -u jenkins java -jar /var/cache/jenkins/war/WEB-INF/jenkins-cli.jar -s http://localhost:8080/fuego install-plugin pegdown-formatter && \
     sudo -u jenkins java -jar /var/cache/jenkins/war/WEB-INF/jenkins-cli.jar -s http://localhost:8080/fuego install-plugin /tmp/flot.hpi && \
-    sleep 10
+    sleep 10 && \
+    service jenkins stop
 
-# Let Jenkins install flot before making the symlink
-RUN service jenkins restart && sleep 30 && \
+# install other plugins from Jenkins update center
+# NOTE: not sure all of these are needed, but keep list
+# compatible with 1.2.1 release for now
+RUN /usr/local/bin/install-plugins.sh ant:1.7 \
+    bouncycastle-api:2.16.2 \
+    description-setter:1.10 \
+    display-url-api:2.1.0 \
+    external-monitor-job:1.7 \
+    greenballs:1.15 \
+    icon-shim:2.0.3 \
+    javadoc:1.4 \
+    junit:1.21 \
+    ldap:1.17 \
+    mailer:1.20 \
+    matrix-auth:1.7 \
+    matrix-project:1.12 \
+    antisamy-markup-formatter:1.5 \
+    pam-auth:1.3 \
+    pegdown-formatter:1.3 \
+    script-security:1.35 \
+    structs:1.10 \
+    windows-slaves:1.3.1
+
+# make the mod.js symlink well after flot is installed
+RUN service jenkins start && sleep 30 && \
     rm $JENKINS_HOME/plugins/flot/flot/mod.js && \
     ln -s /fuego-core/engine/scripts/mod.js $JENKINS_HOME/plugins/flot/flot/mod.js
 
@@ -127,14 +153,14 @@ RUN ln -s /fuego-ro/scripts/fuego-lava-target-teardown /usr/local/bin
 #RUN echo "fuego-create-node --board raspberrypi3" >> /root/firststart.sh
 #RUN echo "fuego-create-jobs --board raspberrypi3 --testplan testplan_docker --distrib nosyslogd.dist" >> /root/firststart.sh
 
-RUN echo "deb http://emdebian.org/tools/debian/ jessie main" > /etc/apt/sources.list.d/crosstools.list
-RUN dpkg --add-architecture armhf
-RUN curl http://emdebian.org/tools/debian/emdebian-toolchain-archive.key | sudo apt-key add -
-RUN DEBIAN_FRONTEND=noninteractive apt-get update
 # TRB-2018-03-19 - don't automatically install emdebian armhf toolchains
 # These are old, and have conflicts with recent Debian package releases.
 # Also, users should be encouraged to install the correct toolchain for
 # their board.
+#RUN echo "deb http://emdebian.org/tools/debian/ jessie main" > /etc/apt/sources.list.d/crosstools.list
+#RUN dpkg --add-architecture armhf
+#RUN curl http://emdebian.org/tools/debian/emdebian-toolchain-archive.key | sudo apt-key add -
+#RUN DEBIAN_FRONTEND=noninteractive apt-get update
 #RUN DEBIAN_FRONTEND=noninteractive apt-get -yV install crossbuild-essential-armhf cpp-arm-linux-gnueabihf gcc-arm-linux-gnueabihf binutils-arm-linux-gnueabihf
 
 # ==============================================================================
