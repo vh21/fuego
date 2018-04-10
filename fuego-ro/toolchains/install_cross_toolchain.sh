@@ -25,7 +25,7 @@ if [ -d /tmp/toolchain_install ] ; then
 fi
 mkdir -p /tmp/toolchain_install
 
-echo deb http://deb.debian.org/debian unstable main > /etc/apt/sources.list.d/crosstools.list
+echo deb http://deb.debian.org/debian stretch main > /etc/apt/sources.list.d/crosstools.list
 dpkg --add-architecture "${ARCH}"
 DEBIAN_FRONTEND=noninteractive apt-get update
 DEBIAN_FRONTEND=noninteractive apt-get -yV install "crossbuild-essential-${ARCH}"
