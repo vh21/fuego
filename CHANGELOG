@@ -11,6 +11,30 @@ Note that Fuego is distributed as two repositories, one with docker
 and Jenkins stuff, and one with the fuego tests and script system.
 This file serves as the common changelog for both repositories.
 
+== [1.3.0] - 2018-05-07 ==
+ * Start work on Sphynx documentation
+ * Add BOARD_CONTROL feature
+ * Switch from emdebian to debian cross toolchains
+ * Clean up some python and whitespace issues
+ * Add lint test
+ * Add fuego release test
+ * Add autopkgtest for Debian package tests
+ * Add support for executing individual test phases
+ * Add a test for y2038 issue
+ * Add vuls test
+ * Add a suite of new Realtime tests
+ * Add automatic skiplist generation to LTP
+ * Add support for NEED_PROGRAM dependency check
+ * Add support to split the output for each testcase
+ * Add many new outputs and features to ftc gen-report
+ * Switch to newer dbench test
+ * Have ftc use a configuration file
+ * Improve kernel_build test
+ * Add fixes to several tests
+ * Add support for web and image checking
+ * Support hardware reboot on board hang
+ * Add LTP_one_test to isolate failing LTP testcase
+
 == [1.2.1] - 2017-11-15 ==
  * Add parsing for LTP posix test results
  * Add Functional.kselftest
