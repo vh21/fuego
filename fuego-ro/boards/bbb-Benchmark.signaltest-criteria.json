@@ -1,0 +1,27 @@
+{
+    "schema_version":"1.0",
+    "criteria":[
+        {
+            "tguid":"default.latencies.max_latency",
+            "reference":{
+                "comment":"bbb does not have RT patch applied",
+                "value":11000,
+                "operator":"le"
+            }
+        },
+        {
+            "tguid":"default.latencies.min_latency",
+            "reference":{
+                "value":1000,
+                "operator":"le"
+            }
+        },
+        {
+            "tguid":"default.latencies.avg_latency",
+            "reference":{
+                "value":1000,
+                "operator":"le"
+            }
+        }
+    ]
+}
