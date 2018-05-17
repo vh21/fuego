@@ -148,8 +148,10 @@ RUN source /etc/default/jenkins && \
 
 COPY frontend-install/plugins/flot-plotter-plugin/flot.hpi /tmp
 
-COPY frontend-install/install-plugins.sh frontend-install/jenkins-support /usr/local/bin/
-
+COPY frontend-install/install-plugins.sh \
+    frontend-install/jenkins-support \
+    frontend-install/clitest \
+    /usr/local/bin/
 
 # install flot.hpi manually from local file
 RUN service jenkins start && \
