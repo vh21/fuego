@@ -29,26 +29,26 @@ EXPAT_SUBTEST_COUNT_NEG="41"
 ZFOO="value1"
 
 function zfoo() {
-	echo "hello from zfoo"
-	ls -l
+    echo "hello from zfoo"
+    ls -l
 }
 
 function zbar() {
-	echo "hello from zbar"
-	echo "misplaced brace"
+    echo "hello from zbar"
+    echo "misplaced brace"
    }
 
 # test some overrides
 override ZFOO="value2 (overridden)"
 
 override-func zfoo() {
-	echo "hello from zfoo (overridden)"
-	find . -type d
+    echo "hello from zfoo (overridden)"
+    find . -type d
 }
 
 # the following should emit warnings
 override ZZFOO="not here"
 
 override-func zzbar() {
-	echo "in zzbar override"
+    echo "in zzbar override"
 }
