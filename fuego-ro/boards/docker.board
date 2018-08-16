@@ -11,3 +11,6 @@ PLATFORM="x86_64"
 TRANSPORT="local"
 ARCHITECTURE="x86_64"
 DISTRIB="nosyslogd.dist"
+
+ARCH_TIMER_NAME="Local timer"
+ARCH_TIMER_ID="LOC"
