@@ -8,7 +8,7 @@ SSH_PORT="22"
 LOGIN="root"
 FUEGO_HOME="/home/a"
 PASSWORD=""
-PLATFORM="fake-platform"
+TOOLCHAIN="fake-toolchain"
 TRANSPORT="ssh"
 ARCHITECTURE="arm"
 

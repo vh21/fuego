@@ -8,7 +8,7 @@ LOGIN="root"
 BOARD_TESTDIR="/home/a"
 PASSWORD=""
 #SSH_KEY="path/to/id_rsa"
-PLATFORM="lager"
+TOOLCHAIN="lager"
 TRANSPORT="ssh"
 ARCHITECTURE="arm"
 

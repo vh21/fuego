@@ -19,7 +19,8 @@
 # THE SOFTWARE.
 
 # DESCRIPTION
-# This script defines (or calls env. setup script) build variables for ${PLATFORM}
+# This script calls the env. setup script for ${TOOLCHAIN} to set
+# up environment variables
 
 function export_tools () {
     export AS=${PREFIX}-as
@@ -36,10 +37,15 @@ function export_tools () {
     export CONFIGURE_FLAGS="--target=${PREFIX} --host=${PREFIX} --build=`uname -m`-unknown-linux-gnu"
 }
 
-# scan the toolchains directory for a matching $PLATFORM-tools.sh file
-if [ -f "${FUEGO_RO}/toolchains/${PLATFORM}-tools.sh" ];
+# for backwards compatibility with board files that use PLATFORM
+if [ -z "$TOOLCHAIN" ] ; then
+    TOOLCHAIN="$PLATFORM"
+fi
+
+# scan the toolchains directory for a matching $TOOLCHAIN-tools.sh file
+if [ -f "${FUEGO_RO}/toolchains/${TOOLCHAIN}-tools.sh" ];
 then
-    source ${FUEGO_RO}/toolchains/${PLATFORM}-tools.sh
+    source ${FUEGO_RO}/toolchains/${TOOLCHAIN}-tools.sh
 else
-    abort_job "Missing toolchain setup script ${FUEGO_RO}/toolchains/${PLATFORM}-tools.sh"
+    abort_job "Missing toolchain setup script ${FUEGO_RO}/toolchains/${TOOLCHAIN}-tools.sh"
 fi
