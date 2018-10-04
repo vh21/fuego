@@ -20,4 +20,4 @@ HOST=arm-poky-linux-gnueabi
 
 # don't use PYTHONHOME from environment setup script
 unset PYTHONHOME
-env -u PYTHONHOME
+env -u PYTHONHOME >/dev/null

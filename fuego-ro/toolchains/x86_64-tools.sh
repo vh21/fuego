@@ -25,4 +25,4 @@ HOST=x86_64-linux
 # save original path, to get to non-toolchain version of python
 ORIG_PATH=$PATH
 unset PYTHONHOME
-env -u PYTHONHOME
+env -u PYTHONHOME >/dev/null
