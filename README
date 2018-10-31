@@ -31,14 +31,20 @@ one.
 
 Installing Fuego to a docker container
 -------------------------------------------------------------------------------
-Run install.sh from the top directory. This launch the ``docker build''
+Run install.sh from the top directory. This launches the ``docker build''
 command to create a docker image - named 'fuego' by default.
+
+Next, run this command to create the container:
+  fuego-host-scripts/docker-create-container.sh
+
+As an alternative, if you have tests or test infrastructure that requires
+access to USB and serial ports, you may run this command:
+  fuego-host-scripts/docker-create-usb-privileged-container.sh
 
 Running
 -------------------------------------------------------------------------------
-Issue the following commands from the top directory:
+Issue the following command from the top directory:
 
-  fuego-host-scripts/docker-create-container.sh
   fuego-host-scripts/docker-start-container.sh
 
 Once the container is started, a web interface to the test system will
