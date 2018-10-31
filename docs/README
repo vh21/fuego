@@ -1,0 +1,26 @@
+Notes for building the documentation.
+
+We are in the process of converting from the old latex-based
+documentation to .rst-based documentation.
+
+The top-level Makefile supports making either one.
+
+The new documentation uses Sphinx, which must be installed on your
+host in order to build it.  For Ubuntu, this includes the packages:
+  python-sphinx, (and maybe some others)
+ 
+
+The old documentation uses latex, which must be installed on your
+host. For Ubuntu, this includes the packages:
+  texlive-latex-base, texlive-latex-recommended, texlive-fonts-extra
+
+= building =
+To build the old PDF documentation, do:
+
+make fuego-docs.pdf
+
+To build the new documentation (as HTML), do:
+
+make html
+
+The resulting files will be in docs/_build/html, with starting file index.html
