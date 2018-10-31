@@ -56,8 +56,8 @@ ARG JENKINS_SHA=bfc226aabe2bb089623772950c4cc13aee613af1
 ARG JENKINS_URL=https://pkg.jenkins.io/debian-stable/binary/jenkins_${JENKINS_VERSION}_all.deb
 ENV JENKINS_HOME=/var/lib/jenkins
 
-RUN groupadd -g ${gid} ${group} \
-	&& useradd -l -m -d "${JENKINS_HOME}" -u ${uid} -g ${gid} -G sudo -s /bin/bash ${user}
+RUN getent group ${gid} >/dev/null || groupadd -g ${gid} ${group}
+RUN useradd -l -m -d "${JENKINS_HOME}" -u ${uid} -g ${gid} -G sudo -s /bin/bash ${user}
 RUN wget -nv ${JENKINS_URL}
 RUN echo "${JENKINS_SHA} jenkins_${JENKINS_VERSION}_all.deb" | sha1sum -c -
 RUN dpkg -i jenkins_${JENKINS_VERSION}_all.deb
