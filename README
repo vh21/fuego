@@ -33,33 +33,35 @@ Installing Fuego to a docker container
 -------------------------------------------------------------------------------
 Run install.sh from the top directory. This launches the ``docker build''
 command to create a docker image - named 'fuego' by default.
+It also creates a container from this image, called 'fuego-container'
 
-Next, run this command to create the container:
-  fuego-host-scripts/docker-create-container.sh
-
-As an alternative, if you have tests or test infrastructure that requires
-access to USB and serial ports, you may run this command:
-  fuego-host-scripts/docker-create-usb-privileged-container.sh
+Note that if you have tests or test infrastructure that requires
+access to USB or serial ports, you should run install.sh with the
+'--priv' option, like so:
+  ./install.sh --priv
 
 Running
 -------------------------------------------------------------------------------
-Issue the following command from the top directory:
+To start your Fuego container, issue the following command top directory:
 
-  fuego-host-scripts/docker-start-container.sh
+  ./start.sh fuego-container
 
-Once the container is started, a web interface to the test system will
-be available at: http://localhost:8080/fuego
+(or, use the name of whatever container was created in the install stop).
 
 The shell used to start the container will enter a shell inside the
 container.  If you exit that shell, the container will stop, and you
 will be returned to the host shell.
 
+Once the container is started, a web interface to the test system will
+be available at: http://localhost:8080/fuego
+
+
 Configuration
 -------------------------------------------------------------------------------
 Please see the docs (docs/fuego-docs.pdf) for configuration and usage.
 
-docker-create-containter.sh configures Docker to use the host network
-(using the --net="host" option).
+By default, Fuego configures Docker to use the host network.
+(See the --net="host" option in fuego-host-scripts/docker-create-container.sh.)
 Please see the Docker manual for different network setup options.
 
 Updating fuego-core and fuego
