@@ -40,8 +40,7 @@ prompt:::
   $ git clone https://bitbucket.org/tbird20d/fuego.git
   $ git clone https://bitbucket.org/tbird20d/fuego-core.git
   $ cd fuego ; ./install.sh
-  $ fuego-host-scripts/docker-create-container.sh
-  $ fuego-host-scripts/docker-start-container.sh
+  $ ./start.sh
   $ firefox http://localhost:8080/fuego
 
 
@@ -49,7 +48,7 @@ The third step (with ./install.sh) will take some time - about 45 minutes
 on my machine.  This is the main step that is building the docker
 container.
 
-When you run the 'docker-start-container.sh' script, the terminal
+When you run the 'start.sh' script, the terminal
 where this is run will be placed at a shell prompt, as the root user,
 inside the docker container.  The container will run until you exit this
 shell.  You should leave it running for the duration of your testing.
