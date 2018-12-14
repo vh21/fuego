@@ -1,4 +1,4 @@
-inherit "base-board"
+inherit "base-board-test-vars"
 include "base-params"
 
 IPADDR=127.0.0.1
@@ -11,3 +11,18 @@ TOOLCHAIN="x86_64"
 TRANSPORT="local"
 ARCHITECTURE="x86_64"
 DISTRIB="nosyslogd.dist"
+
+# following variables are used for Fuego self-tests
+# these values should override
+FTV_VAR_03="board three"
+FTV_VAR_09="board nine"
+
+# these values should be overridden
+FTV_VAR_15="board fifteen"
+FTV_VAR_16="board sixteen"
+FTV_VAR_17="board seventeen"
+FTV_VAR_18="board eighteen"
+FTV_VAR_19="board nineteen"
+
+FUNCTIONAL_FUEGO_TEST_VARIABLES_VAR_16="board sixteen"
+FUNCTIONAL_FUEGO_TEST_VARIABLES_VAR_17="board seventeen"
