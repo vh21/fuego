@@ -1,0 +1,10 @@
+#!/bin/bash
+# fuegosh:  get to a shell prompt in the Fuego docker container
+#
+# to install this: copy it to /usr/local/bin, or to a 'bin'
+# directory for your personal account (e.g. ~/bin)
+
+# find the last running docker container with 'fuego' in it's name
+# and execute bash in it
+id=$(sudo docker ps | grep fuego | tail -n 1 | cut -b 1-12)
+sudo docker exec -i -t $id bash
