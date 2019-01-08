@@ -11,6 +11,29 @@ Note that Fuego is distributed as two repositories, one with docker
 and Jenkins stuff, and one with the fuego tests and script system.
 This file serves as the common changelog for both repositories.
 
+== [1.4.0] - 2019-01-09 ==
+ * Adjust board files with some per-test variables
+ * Change PLATFORM to TOOLCHAIN throughout
+ * Add 'localhost' board
+ * Add fuegosh utility program - to get access to container more easily
+ * Simplify the installation scripts
+ * Add clitest for command-line testing
+ * Add log_this function
+ * Add report_live function
+ * Enhance LTP test
+ * Add dynamic variables
+ * Add more Fuego selftests
+ * Add loglevels for more flexible debug output
+ * Add many busybox tests
+ * Fix many individual test bugs
+ * Enhance kernel_build test, with multiple deploy options, modules, etc.
+ * Enhance support for Fuego test server
+ * Add testsuite version to run.json
+ * Add snapshot feature
+ * Add many new tests: bind, tar, pppd, and many more
+ * Support 'bt' (between) criteria operation
+ * Add a bunch of RT tests (svsematest, ptsematest, migratetest)
+
 == [1.3.0] - 2018-05-07 ==
  * Start work on Sphynx documentation
  * Add BOARD_CONTROL feature
