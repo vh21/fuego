@@ -60,8 +60,12 @@ RUN getent group ${gid} >/dev/null || groupadd -g ${gid} ${group}
 RUN useradd -l -m -d "${JENKINS_HOME}" -u ${uid} -g ${gid} -G sudo -s /bin/bash ${user}
 RUN wget -nv ${JENKINS_URL}
 RUN echo "${JENKINS_SHA} jenkins_${JENKINS_VERSION}_all.deb" | sha1sum -c -
+# allow Jenkins to start and install plugins, as part of dpkg installation
+RUN printf "#!/bin/sh\nexit 0" > /usr/sbin/policy-rc.d
+RUN ls /var/lib/jenkins/plugins || true
 RUN dpkg -i jenkins_${JENKINS_VERSION}_all.deb
 RUN rm jenkins_${JENKINS_VERSION}_all.deb
+RUN ls /var/lib/jenkins/plugins || true
 
 
 # ==============================================================================
@@ -186,12 +190,12 @@ RUN /usr/local/bin/install-plugins.sh ant:1.7 \
 # make the mod.js symlink well after flot is installed
 RUN service jenkins start && sleep 30 && \
     rm $JENKINS_HOME/plugins/flot/flot/mod.js && \
-    ln -s /fuego-core/engine/scripts/mod.js $JENKINS_HOME/plugins/flot/flot/mod.js
+    ln -s /fuego-core/scripts/mod.js $JENKINS_HOME/plugins/flot/flot/mod.js
 
 RUN ln -s /fuego-rw/logs $JENKINS_HOME/userContent/fuego.logs
 COPY docs/fuego-docs.pdf $JENKINS_HOME/userContent/docs/fuego-docs.pdf
 
-RUN ln -s /fuego-core/engine/scripts/ftc /usr/local/bin/
+RUN ln -s /fuego-core/scripts/ftc /usr/local/bin/
 COPY frontend-install/config.xml $JENKINS_HOME/config.xml
 COPY frontend-install/jenkins.model.JenkinsLocationConfiguration.xml $JENKINS_HOME/jenkins.model.JenkinsLocationConfiguration.xml
 
