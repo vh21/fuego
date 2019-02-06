@@ -30,6 +30,20 @@ if [ "$1" = "--priv" ]; then
     shift
 fi
 
+# get fuego-core repository, if not already present
+if [ ! -f fuego-core/scripts/ftc ] ; then
+    # set fuego-core branch to same as current fuego branch
+    # get current git branch
+    set -o noglob
+    while IFS=" " read -r part1 part2 ; do
+        if [ $part1 = "*" ] ; then
+            branch=$part2
+        fi
+    done < <(git branch)
+    set +o noglob
+    git clone -b $branch https://bitbucket.org/fuegotest/fuego-core.git
+fi
+
 image_name=${1:-fuego}
 container_name="${image_name}-container"
 
