@@ -12,8 +12,8 @@ DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
 DOCKERIMAGE=${1:-fuego}
 DOCKERCONTAINER=${2:-fuego-container}
 
-if [ ! -d $DIR/../../fuego-core ]; then
-   echo "You need to clone fuego-core at $DIR/../../fuego-core"
+if [ ! -d $DIR/../fuego-core ]; then
+   echo "You need to clone fuego-core at $DIR/../fuego-core"
    exit 1
 fi
 
@@ -28,7 +28,7 @@ sudo docker create -it --name ${DOCKERCONTAINER} \
     -v /dev/serial:/dev/serial \
     -v $DIR/../fuego-rw:/fuego-rw \
     -v $DIR/../fuego-ro:/fuego-ro:ro \
-    -v $DIR/../../fuego-core:/fuego-core:ro \
+    -v $DIR/../fuego-core:/fuego-core:ro \
     --env no_proxy="$no_proxy" \
     --net="host" ${DOCKERIMAGE} || \
     echo "Could not create fuego-container. See error messages."
