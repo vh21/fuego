@@ -134,6 +134,12 @@ RUN /bin/bash -c 'git clone https://github.com/frowand/serio.git /usr/local/src/
 RUN /bin/bash -c 'git clone https://github.com/tbird20d/serlogin.git /usr/local/src/serlogin ;  chown -R jenkins /usr/local/src/serlogin ; cp /usr/local/src/serlogin/serlogin /usr/local/bin'
 
 # ==============================================================================
+# fserver
+# ==============================================================================
+
+RUN /bin/bash -c 'git clone https://github.com/tbird20d/fserver.git /usr/local/lib/fserver' ; ln -s /usr/local/lib/start_local_bg_server /usr/local/bin/start_local_bg_server'
+
+# ==============================================================================
 # Post installation
 # ==============================================================================
 
@@ -207,20 +213,6 @@ RUN chown -R jenkins:jenkins $JENKINS_HOME/
 
 RUN ln -s /fuego-ro/scripts/fuego-lava-target-setup /usr/local/bin
 RUN ln -s /fuego-ro/scripts/fuego-lava-target-teardown /usr/local/bin
-# CONVENIENCE HACKS
-# not mounted, yet
-#RUN echo "fuego-create-node --board raspberrypi3" >> /root/firststart.sh
-#RUN echo "fuego-create-jobs --board raspberrypi3 --testplan testplan_docker --distrib nosyslogd.dist" >> /root/firststart.sh
-
-# TRB-2018-03-19 - don't automatically install emdebian armhf toolchains
-# These are old, and have conflicts with recent Debian package releases.
-# Also, users should be encouraged to install the correct toolchain for
-# their board.
-#RUN echo "deb http://emdebian.org/tools/debian/ jessie main" > /etc/apt/sources.list.d/crosstools.list
-#RUN dpkg --add-architecture armhf
-#RUN curl http://emdebian.org/tools/debian/emdebian-toolchain-archive.key | sudo apt-key add -
-#RUN DEBIAN_FRONTEND=noninteractive apt-get update
-#RUN DEBIAN_FRONTEND=noninteractive apt-get -yV install crossbuild-essential-armhf cpp-arm-linux-gnueabihf gcc-arm-linux-gnueabihf binutils-arm-linux-gnueabihf
 
 # ==============================================================================
 # Setup startup command
