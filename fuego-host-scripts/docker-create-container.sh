@@ -2,7 +2,7 @@
 # $1 - name for the docker image (default: fuego)
 # $2 - name for the docker container (default: fuego-container)
 
-DIR=$(realpath "${BASH_SOURCE[0]}")
+DIR=$(dirname $(realpath "${BASH_SOURCE[0]}"))
 
 DOCKERIMAGE=${1:-fuego}
 DOCKERCONTAINER=${2:-fuego-container}
