@@ -137,7 +137,7 @@ RUN /bin/bash -c 'git clone https://github.com/tbird20d/serlogin.git /usr/local/
 # fserver
 # ==============================================================================
 
-RUN /bin/bash -c 'git clone https://github.com/tbird20d/fserver.git /usr/local/lib/fserver' ; ln -s /usr/local/lib/start_local_bg_server /usr/local/bin/start_local_bg_server'
+RUN /bin/bash -c 'git clone https://github.com/tbird20d/fserver.git /usr/local/lib/fserver ; ln -s /usr/local/lib/fserver/start_local_bg_server /usr/local/bin/start_local_bg_server'
 
 # ==============================================================================
 # Post installation
