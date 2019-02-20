@@ -67,57 +67,6 @@ RUN dpkg -i jenkins_${JENKINS_VERSION}_all.deb
 RUN rm jenkins_${JENKINS_VERSION}_all.deb
 RUN ls /var/lib/jenkins/plugins || true
 
-
-# ==============================================================================
-# Install Fuego Release Test Dependencies
-# ==============================================================================
-
-# TODO: This session should be moved to a separate Dockerfile in the future,
-# that simply extends a fuego-base image and compiles a Fuego that's capable of
-# testing itself.
-
-# Install Dependencies
-RUN apt-get update && \
-    apt-get -yV install \
-        apt-transport-https \
-        ca-certificates \
-        chromium \
-        curl \
-        gnupg2 \
-        imagemagick \
-        python3 \
-        python3-pip \
-        python3-pillow \
-        software-properties-common && \
-    rm -rf /var/lib/apt/lists/* && \
-    python3 -m pip install \
-        docker \
-        pexpect \
-        selenium
-
-# Install Docker
-RUN curl -fsSL https://download.docker.com/linux/$(source /etc/os-release; \
-        echo "$ID")/gpg | sudo apt-key add - && \
-    add-apt-repository \
-        "deb [arch=amd64] https://download.docker.com/linux/$(\
-            source /etc/os-release; echo "$ID") $(lsb_release -cs) stable" && \
-    apt-get update && \
-    apt-get -yV install \
-        docker-ce
-
-# Install Chrome Driver for SeleniumHQ
-RUN CHROME_DRIVER_VERSION=$(curl --silent --fail \
-        https://chromedriver.storage.googleapis.com/LATEST_RELEASE) && \
-    curl https://chromedriver.storage.googleapis.com/$(\
-        echo ${CHROME_DRIVER_VERSION})/chromedriver_linux64.zip \
-            -o chrome-driver.zip && \
-    unzip chrome-driver.zip -d /usr/local/bin && rm chrome-driver.zip && \
-    chmod +x /usr/local/bin/chromedriver
-
-# Setting jenkins as a sudoer. Needed for accessing the dockerd socket.
-RUN echo "jenkins ALL = (root) NOPASSWD:ALL" >> /etc/sudoers
-
-
 # ==============================================================================
 # get ttc script and helpers
 # ==============================================================================
