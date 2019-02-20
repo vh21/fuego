@@ -1,12 +1,12 @@
 #!/bin/bash
 #
-# install.sh [<image-name>] [--priv]
+# install.sh [--help] [--priv] [<image_name>] [<port>]
 #
 
 if [ -n "$1" ]; then
     if [ "$1" = "--help" -o "$1" = "-h" ]; then
         cat <<HERE
-Usage: install.sh [--help] [--priv] [<image_name>]
+Usage: install.sh [--help] [--priv] [<image_name>] [<port>]
 
 Create the docker image and container with the Fuego test distribution.
 If no <image_name> is provided, the image will be named 'fuego'.
@@ -45,11 +45,12 @@ if [ ! -f fuego-core/scripts/ftc ] ; then
 fi
 
 image_name=${1:-fuego}
+jenkins_port=${2:-8080}
 container_name="${image_name}-container"
 
 set -e
 
-source fuego-host-scripts/docker-build-image.sh ${image_name}
+source fuego-host-scripts/docker-build-image.sh ${image_name} ${jenkins_port}
 if [ "$priv" == "0" ]; then
     fuego-host-scripts/docker-create-container.sh ${image_name} ${container_name}
 else

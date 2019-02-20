@@ -42,6 +42,7 @@ RUN pip install flake8
 RUN /bin/bash -c 'echo "dash dash/sh boolean false" | debconf-set-selections ; dpkg-reconfigure dash'
 RUN if [ -n "$HTTP_PROXY" ]; then echo "use_proxy = on" >> /etc/wgetrc; fi
 RUN if [ -n "$HTTP_PROXY" ]; then echo -e "http_proxy=$HTTP_PROXY\nhttps_proxy=$HTTP_PROXY" >> /etc/environment; fi
+RUN echo -e "JENKINS_PORT=$JENKINS_PORT" >> /etc/environment
 
 # ==============================================================================
 # Install Jenkins with the same UID/GID as the host user
@@ -51,10 +52,12 @@ ARG user=jenkins
 ARG group=jenkins
 ARG uid=1000
 ARG gid=${uid}
+ARG JENKINS_PORT=8080
 ARG JENKINS_VERSION=2.32.1
 ARG JENKINS_SHA=bfc226aabe2bb089623772950c4cc13aee613af1
 ARG JENKINS_URL=https://pkg.jenkins.io/debian-stable/binary/jenkins_${JENKINS_VERSION}_all.deb
 ENV JENKINS_HOME=/var/lib/jenkins
+ENV JENKINS_PORT=$JENKINS_PORT
 
 RUN getent group ${gid} >/dev/null || groupadd -g ${gid} ${group}
 RUN useradd -l -m -d "${JENKINS_HOME}" -u ${uid} -g ${gid} -G sudo -s /bin/bash ${user}
@@ -105,6 +108,8 @@ RUN source /etc/default/jenkins && \
 	fi && \
 	sed -i -e "s#^JAVA_ARGS.*#JAVA_ARGS\=\"${JAVA_ARGS}\"#g" /etc/default/jenkins;
 
+RUN sed -i -e "s#8080#$JENKINS_PORT#g" /etc/default/jenkins
+
 COPY frontend-install/plugins/flot-plotter-plugin/flot.hpi /tmp
 
 COPY frontend-install/install-plugins.sh \
@@ -115,7 +120,7 @@ COPY frontend-install/install-plugins.sh \
 # install flot.hpi manually from local file
 RUN service jenkins start && \
 	sleep 30 && \
-    sudo -u jenkins java -jar /var/cache/jenkins/war/WEB-INF/jenkins-cli.jar -s http://localhost:8080/fuego install-plugin /tmp/flot.hpi && \
+    sudo -u jenkins java -jar /var/cache/jenkins/war/WEB-INF/jenkins-cli.jar -s http://localhost:$JENKINS_PORT/fuego install-plugin /tmp/flot.hpi && \
     sleep 10 && \
     service jenkins stop
 
@@ -153,6 +158,7 @@ COPY docs/fuego-docs.pdf $JENKINS_HOME/userContent/docs/fuego-docs.pdf
 RUN ln -s /fuego-core/scripts/ftc /usr/local/bin/
 COPY frontend-install/config.xml $JENKINS_HOME/config.xml
 COPY frontend-install/jenkins.model.JenkinsLocationConfiguration.xml $JENKINS_HOME/jenkins.model.JenkinsLocationConfiguration.xml
+RUN sed -i -e "s#8080#$JENKINS_PORT#g" $JENKINS_HOME/jenkins.model.JenkinsLocationConfiguration.xml
 
 RUN chown -R jenkins:jenkins $JENKINS_HOME/
 

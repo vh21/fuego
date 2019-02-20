@@ -1,6 +1,8 @@
 #!/bin/bash
 # $1 - name for the docker image (default: fuego)
+# $2 - port for jenkins (default: 8080)
 DOCKERIMAGE=${1:-fuego}
+JENKINS_PORT=${2:-8080}
 
 # uncomment this to avoid using the docker cache while building
 # (for testing)
@@ -14,4 +16,8 @@ else
 	JENKINS_GID=$(id -g $USER)
 fi
 
-sudo docker build ${NO_CACHE} -t ${DOCKERIMAGE} --build-arg HTTP_PROXY=$http_proxy --build-arg uid=$JENKINS_UID --build-arg gid=$JENKINS_GID .
+echo "Using Port $JENKINS_PORT"
+
+sudo docker build ${NO_CACHE} -t ${DOCKERIMAGE} --build-arg HTTP_PROXY=$http_proxy \
+	--build-arg uid=$JENKINS_UID --build-arg gid=$JENKINS_GID \
+	--build-arg JENKINS_PORT=$JENKINS_PORT .
