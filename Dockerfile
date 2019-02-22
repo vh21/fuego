@@ -102,10 +102,8 @@ RUN wget -nv ${JENKINS_URL}
 RUN echo "${JENKINS_SHA} jenkins_${JENKINS_VERSION}_all.deb" | sha1sum -c -
 # allow Jenkins to start and install plugins, as part of dpkg installation
 RUN printf "#!/bin/sh\nexit 0" > /usr/sbin/policy-rc.d
-RUN ls /var/lib/jenkins/plugins || true
 RUN dpkg -i jenkins_${JENKINS_VERSION}_all.deb
 RUN rm jenkins_${JENKINS_VERSION}_all.deb
-RUN ls /var/lib/jenkins/plugins || true
 
 # ==============================================================================
 # get ttc script and helpers
