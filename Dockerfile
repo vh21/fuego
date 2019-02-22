@@ -213,4 +213,6 @@ RUN ln -s /fuego-ro/scripts/fuego-lava-target-teardown /usr/local/bin
 # Setup startup command
 # ==============================================================================
 
+# FIXTHIS: when running multiple Fuego containers, or if the host is already
+#  running the netperf server, netperf will complain because the port is taken
 ENTRYPOINT service jenkins start && service netperf start && iperf3 -V -s -D -f M && /bin/bash
