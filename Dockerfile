@@ -25,20 +25,52 @@ RUN echo deb http://httpredir.debian.org/debian jessie main non-free > /etc/apt/
 RUN echo deb http://httpredir.debian.org/debian jessie-updates main non-free >> /etc/apt/sources.list
 RUN echo deb http://security.debian.org/ jessie/updates main >> /etc/apt/sources.list
 RUN if [ -n "$HTTP_PROXY" ]; then echo 'Acquire::http::proxy "'$HTTP_PROXY'";' > /etc/apt/apt.conf.d/80proxy; fi
-RUN apt-get update && apt-get -yV install \
-	apt-utils daemon gcc make cmake python-paramiko python-lxml python-simplejson \
-	python-matplotlib python-serial python-yaml python-openpyxl python-requests \
-	python-reportlab libtool xmlstarlet autoconf automake rsync openjdk-7-jre openjdk-7-jdk \
-	iperf netperf netpipe-tcp sshpass wget git diffstat sudo net-tools vim curl \
-	inotify-tools g++ bzip2 bc libaio-dev gettext pkg-config libglib2.0-dev \
-	time python-pip python-xmltodict at minicom lzop bsdmainutils u-boot-tools \
-	mc netcat lava-tool openssh-server python-parsedatetime \
-	libsdl1.2-dev libcairo2-dev libxmu-dev libxmuu-dev iperf3 \
-	bison flex libelf-dev libssl-dev
 
-RUN pip install python-jenkins==0.4.14
+# Fuego python dependencies
+# - python-lxml: ftc, loggen
+# - python-simplejson: ftc
+# - python-yaml: ftc
+# - python-openpyxl: ftc (also LTP)
+# - python-requests: ftc (also fuego_release_test)
+# - python-reportlab: ftc
+# - python-parsedatetime: ftc
+# - python-pip: to install filelock, flake8
+# - filelock: parser
+RUN apt-get update && apt-get -yV install \
+	python-lxml python-simplejson python-yaml python-openpyxl \
+	python-requests python-reportlab python-parsedatetime \
+	python-pip
 RUN pip install filelock
+
+# Fuego command dependencies
+RUN apt-get update && apt-get -yV install \
+	git sshpass openssh-client sudo net-tools wget curl lava-tool
+
+# Default SDK for testing locally or on an x86 board
+RUN apt-get update && apt-get -yV install \
+	gcc g++ make cmake bison flex autoconf automake libtool \
+	libelf-dev libssl-dev libsdl1.2-dev libcairo2-dev libxmu-dev \
+	libxmuu-dev libglib2.0-dev libaio-dev u-boot-tools pkg-config
+
+# Default test host dependencies
+# - iperf iperf3 netperf: used as servers on the host
+# - bzip2 bc: used for local tests by Functional.bzip2/bc
+# - python-matplotlib: Benchmark.iperf3 parser
+# - python-xmltodict: AGL tests
+# - flake8: Functional.fuego_lint
+# FIXTHIS: install dependencies dynamically on the tests that need them
+RUN apt-get update && apt-get -yV install \
+	iperf iperf3 netperf bzip2 bc python-matplotlib python-xmltodict
 RUN pip install flake8
+
+# FIXTHIS: determine if these tools are really necessary
+# RUN apt-get update && apt-get -yV install \
+#	apt-utils python-paramiko python-serial \
+#	xmlstarlet rsync diffstat vim  \
+#	inotify-tools gettext time netpipe-tcp \
+#	at minicom lzop bsdmainutils \
+#	mc netcat openssh-server
+
 RUN /bin/bash -c 'echo "dash dash/sh boolean false" | debconf-set-selections ; dpkg-reconfigure dash'
 RUN if [ -n "$HTTP_PROXY" ]; then echo "use_proxy = on" >> /etc/wgetrc; fi
 RUN if [ -n "$HTTP_PROXY" ]; then echo -e "http_proxy=$HTTP_PROXY\nhttps_proxy=$HTTP_PROXY" >> /etc/environment; fi
@@ -59,6 +91,12 @@ ARG JENKINS_URL=https://pkg.jenkins.io/debian-stable/binary/jenkins_${JENKINS_VE
 ENV JENKINS_HOME=/var/lib/jenkins
 ENV JENKINS_PORT=$JENKINS_PORT
 
+# Jenkins dependencies
+RUN apt-get update && apt-get -yV install \
+	openjdk-7-jdk daemon psmisc adduser procps unzip
+RUN pip install python-jenkins==0.4.14
+
+RUN echo -e "JENKINS_PORT=$JENKINS_PORT" >> /etc/environment
 RUN getent group ${gid} >/dev/null || groupadd -g ${gid} ${group}
 RUN useradd -l -m -d "${JENKINS_HOME}" -u ${uid} -g ${gid} -G sudo -s /bin/bash ${user}
 RUN wget -nv ${JENKINS_URL}
@@ -92,7 +130,7 @@ RUN /bin/bash -c 'git clone https://github.com/tbird20d/serlogin.git /usr/local/
 RUN /bin/bash -c 'git clone https://github.com/tbird20d/fserver.git /usr/local/lib/fserver ; ln -s /usr/local/lib/fserver/start_local_bg_server /usr/local/bin/start_local_bg_server'
 
 # ==============================================================================
-# Post installation
+# Jenkins post installation
 # ==============================================================================
 
 RUN source /etc/default/jenkins && \
@@ -155,12 +193,17 @@ RUN service jenkins start && sleep 30 && \
 RUN ln -s /fuego-rw/logs $JENKINS_HOME/userContent/fuego.logs
 COPY docs/fuego-docs.pdf $JENKINS_HOME/userContent/docs/fuego-docs.pdf
 
-RUN ln -s /fuego-core/scripts/ftc /usr/local/bin/
 COPY frontend-install/config.xml $JENKINS_HOME/config.xml
 COPY frontend-install/jenkins.model.JenkinsLocationConfiguration.xml $JENKINS_HOME/jenkins.model.JenkinsLocationConfiguration.xml
 RUN sed -i -e "s#8080#$JENKINS_PORT#g" $JENKINS_HOME/jenkins.model.JenkinsLocationConfiguration.xml
 
 RUN chown -R jenkins:jenkins $JENKINS_HOME/
+
+# ==============================================================================
+# ftc post installation
+# ==============================================================================
+
+RUN ln -s /fuego-core/scripts/ftc /usr/local/bin/
 
 # ==============================================================================
 # Lava
