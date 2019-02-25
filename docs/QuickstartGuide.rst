@@ -37,8 +37,8 @@ Download, build, start and access
 To accomplish the first 6 steps, do the following from a Linux command
 prompt:::
 
-  $ git clone https://bitbucket.org/tbird20d/fuego.git
-  $ git clone https://bitbucket.org/tbird20d/fuego-core.git
+  $ git clone https://bitbucket.org/fuegotest/fuego.git
+  $ git clone https://bitbucket.org/fuegotest/fuego-core.git
   $ cd fuego ; ./install.sh
   $ ./start.sh
   $ firefox http://localhost:8080/fuego
@@ -57,8 +57,8 @@ shell.  You should leave it running for the duration of your testing.
 in the 'next' branch, then please replace the 'git clone' command in
 the instructions above with these:::
 
-  $ git clone -b next https://bitbucket.org/tbird20d/fuego.git
-  $ git clone -b next https://bitbucket.org/tbird20d/fuego-core.git''
+  $ git clone -b next https://bitbucket.org/fuegotest/fuego.git
+  $ git clone -b next https://bitbucket.org/fuegotest/fuego-core.git''
 
 On the last step, to access the Fuego interface you can use any
 browser - not just Firefox.  By default the Fuego interface runs on your
