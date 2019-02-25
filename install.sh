@@ -1,12 +1,12 @@
 #!/bin/bash
 #
-# install.sh [--help] [--priv] [--no-cache] [<image_name>] [<port>]
+# install.sh [--help] [--priv] [--no-cache] [--nojenkins] [<image_name>] [<port>]
 #
 
 if [ -n "$1" ]; then
     if [ "$1" = "--help" -o "$1" = "-h" ]; then
         cat <<HERE
-Usage: install.sh [--help] [--priv] [--no-cache] [<image_name>] [<port>]
+Usage: install.sh [--help] [--priv] [--no-cache] [--nojenkins] [<image_name>] [<port>]
 
 Create the docker image and container with the Fuego test distribution.
 If no <image_name> is provided, the image will be named 'fuego'.
@@ -20,6 +20,7 @@ options:
           test infrastructure that requires access to serial and usb
           devices.
  --no-cache Don't use cache when creating the docker image
+ --nojenkins Creates a docker image and container without Jenkins
 HERE
         exit 0
     fi
@@ -33,6 +34,12 @@ fi
 
 if [ "$1" = "--no-cache" ]; then
     NOCACHE=--no-cache
+    shift
+fi
+
+dockerfile="Dockerfile"
+if [ "$1" = "--nojenkins" ]; then
+    dockerfile="Dockerfile.nojenkins"
     shift
 fi
 
@@ -56,7 +63,7 @@ container_name="${image_name}-container"
 
 set -e
 
-source fuego-host-scripts/docker-build-image.sh $NOCACHE ${image_name} ${jenkins_port}
+source fuego-host-scripts/docker-build-image.sh $NOCACHE ${image_name} ${jenkins_port} ${dockerfile}
 if [ "$priv" == "0" ]; then
     fuego-host-scripts/docker-create-container.sh ${image_name} ${container_name}
 else
