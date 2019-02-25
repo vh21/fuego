@@ -45,7 +45,8 @@ RUN pip install filelock
 
 # Fuego command dependencies
 RUN apt-get update && apt-get -yV install \
-	git sshpass openssh-client sudo net-tools wget curl lava-tool
+	git sshpass openssh-client sudo net-tools wget curl lava-tool \
+	bash-completion
 
 # Default SDK for testing locally or on an x86 board
 RUN apt-get update && apt-get -yV install \
@@ -202,6 +203,8 @@ RUN chown -R jenkins:jenkins $JENKINS_HOME/
 # ==============================================================================
 
 RUN ln -s /fuego-core/scripts/ftc /usr/local/bin/
+COPY fuego-core/scripts/ftc_completion.sh /etc/bash_completion.d/ftc
+RUN echo ". /etc/bash_completion" >> /root/.bashrc
 
 # ==============================================================================
 # Lava
