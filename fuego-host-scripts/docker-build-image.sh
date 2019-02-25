@@ -4,15 +4,16 @@
 # $3 - Dockerfile or Dockerfile.nojenkins
 #
 # Example:
-#  ./fuego-host-scripts/docker-build-image.sh myfuegoimg 8082 Dockerfile.nojenkins
+#  ./fuego-host-scripts/docker-build-image.sh --no-cache myfuegoimg 8082 Dockerfile.nojenkins
 #
+if [ "$1" = "--no-cache" ]; then
+	NO_CACHE=--no-cache
+	shift
+fi
+
 DOCKERIMAGE=${1:-fuego}
 JENKINS_PORT=${2:-8080}
 DOCKERFILE=${3:-Dockerfile}
-
-# uncomment this to avoid using the docker cache while building
-# (for testing)
-#NO_CACHE=--no-cache
 
 if [ "$(id -u)" == "0" ]; then
 	JENKINS_UID=$(id -u $SUDO_USER)

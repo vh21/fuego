@@ -1,12 +1,12 @@
 #!/bin/bash
 #
-# install.sh [--help] [--priv] [<image_name>] [<port>]
+# install.sh [--help] [--priv] [--no-cache] [<image_name>] [<port>]
 #
 
 if [ -n "$1" ]; then
     if [ "$1" = "--help" -o "$1" = "-h" ]; then
         cat <<HERE
-Usage: install.sh [--help] [--priv] [<image_name>] [<port>]
+Usage: install.sh [--help] [--priv] [--no-cache] [<image_name>] [<port>]
 
 Create the docker image and container with the Fuego test distribution.
 If no <image_name> is provided, the image will be named 'fuego'.
@@ -19,6 +19,7 @@ options:
           and USB devices.  This may be needed if you have tests or
           test infrastructure that requires access to serial and usb
           devices.
+ --no-cache Don't use cache when creating the docker image
 HERE
         exit 0
     fi
@@ -27,6 +28,11 @@ fi
 priv=0
 if [ "$1" = "--priv" ]; then
     priv=1
+    shift
+fi
+
+if [ "$1" = "--no-cache" ]; then
+    NOCACHE=--no-cache
     shift
 fi
 
@@ -50,7 +56,7 @@ container_name="${image_name}-container"
 
 set -e
 
-source fuego-host-scripts/docker-build-image.sh ${image_name} ${jenkins_port}
+source fuego-host-scripts/docker-build-image.sh $NOCACHE ${image_name} ${jenkins_port}
 if [ "$priv" == "0" ]; then
     fuego-host-scripts/docker-create-container.sh ${image_name} ${container_name}
 else
