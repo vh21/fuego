@@ -3,9 +3,10 @@
 # install.sh [--help] [--priv] [--no-cache] [--nojenkins] [<image_name>] [<port>]
 #
 
-if [ -n "$1" ]; then
-    if [ "$1" = "--help" -o "$1" = "-h" ]; then
-        cat <<HERE
+# $1 is the exit code after usage is shown
+usage() {
+    exit_code="$1"
+    cat <<HERE
 Usage: install.sh [--help] [--priv] [--no-cache] [--nojenkins] [<image_name>] [<port>]
 
 Create the docker image and container with the Fuego test distribution.
@@ -22,26 +23,45 @@ options:
  --no-cache Don't use cache when creating the docker image
  --nojenkins Creates a docker image and container without Jenkins
 HERE
-        exit 0
+    exit $exit_code
+}
+
+if [ -n "$1" ]; then
+    if [ "$1" = "--help" -o "$1" = "-h" ]; then
+        usage 0
     fi
 fi
 
 priv=0
-if [ "$1" = "--priv" ]; then
-    priv=1
-    shift
-fi
-
-if [ "$1" = "--no-cache" ]; then
-    NOCACHE=--no-cache
-    shift
-fi
-
+NOCACHE=""
 dockerfile="Dockerfile"
-if [ "$1" = "--nojenkins" ]; then
-    dockerfile="Dockerfile.nojenkins"
-    shift
-fi
+
+POSITIONAL=()
+while [[ $# -gt 0 ]] ; do
+  case $1 in
+    --priv)
+      priv=1
+      shift
+      ;;
+    --no-cache)
+      NOCACHE="--no-cache"
+      shift
+      ;;
+    --nojenkins)
+      dockerfile="Dockerfile.nojenkins"
+      shift
+      ;;
+    *)
+      POSITIONAL+=("$1") # save argument for later
+      shift
+  esac
+done
+set -- "${POSITIONAL[@]}" # restore positional arguments
+
+image_name=${1:-fuego}
+jenkins_port=${2:-8080}
+
+container_name="${image_name}-container"
 
 # get fuego-core repository, if not already present
 if [ ! -f fuego-core/scripts/ftc ] ; then
@@ -56,10 +76,6 @@ if [ ! -f fuego-core/scripts/ftc ] ; then
     set +o noglob
     git clone -b $branch https://bitbucket.org/fuegotest/fuego-core.git
 fi
-
-image_name=${1:-fuego}
-jenkins_port=${2:-8080}
-container_name="${image_name}-container"
 
 set -e
 
