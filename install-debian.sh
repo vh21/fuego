@@ -83,6 +83,7 @@ if [ ! -d "/fuego" ]; then
 	ln -s /fuego/fuego-rw /fuego-rw
 	cd fuego
 	git clone --branch next --depth=1 https://bitbucket.org/nirrognas/fuego-core.git
+	ln -s /fuego/fuego-core /fuego-core
 fi
 
 # ==============================================================================
