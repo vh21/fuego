@@ -186,6 +186,8 @@ if [ $nojenkins -eq 0 ]; then
 	cp /fuego/frontend-install/jenkins.model.JenkinsLocationConfiguration.xml $JENKINS_HOME/jenkins.model.JenkinsLocationConfiguration.xml
 	sed -i -e "s#8080#$JENKINS_PORT#g" $JENKINS_HOME/jenkins.model.JenkinsLocationConfiguration.xml
 	chown -R jenkins:jenkins $JENKINS_HOME/
+else
+	sed -i -e 's/jenkins_enabled=1/jenkins_enabled=0/g' /fuego-ro/conf/fuego.conf
 fi
 
 # ==============================================================================
@@ -228,7 +230,6 @@ ln -s /fuego-ro/scripts/fuego-lava-target-teardown /usr/local/bin
 # ==============================================================================
 # Small guide
 # ==============================================================================
-echo "Edit /fuego-ro/conf/fuego.conf, and set jenkins_enabled=0"
 echo "Run 'service netperf start' to start a netperf server"
 echo "Run 'iperf3 -V -s -D -f M' to start an iperf3 server"
 echo "Run 'ftc list-boards' to see the available boards"
