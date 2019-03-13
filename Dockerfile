@@ -65,11 +65,18 @@ RUN apt-get update && apt-get -yV install \
 	iperf iperf3 netperf bzip2 bc python-matplotlib python-xmltodict
 RUN pip install flake8
 
+# miscelaneous packages:
+# python-serial - used by serio
+# diffstat and vim - used by Tim
+# time - useful for timing command duration
+RUN apt-get update && apt-get -yV install \
+    python-serial diffstat vim time
+
 # FIXTHIS: determine if these tools are really necessary
-# RUN apt-get update && apt-get -yV install \
-#	apt-utils python-paramiko python-serial \
-#	xmlstarlet rsync diffstat vim  \
-#	inotify-tools gettext time netpipe-tcp \
+#RUN apt-get update && apt-get -yV install \
+#	apt-utils python-paramiko \
+#	xmlstarlet rsync \
+#	inotify-tools gettext netpipe-tcp \
 #	at minicom lzop bsdmainutils \
 #	mc netcat openssh-server
 
