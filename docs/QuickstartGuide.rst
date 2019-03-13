@@ -38,11 +38,9 @@ To accomplish the first 6 steps, do the following from a Linux command
 prompt:::
 
   $ git clone https://bitbucket.org/fuegotest/fuego.git
-  $ git clone https://bitbucket.org/fuegotest/fuego-core.git
   $ cd fuego ; ./install.sh
   $ ./start.sh
   $ firefox http://localhost:8080/fuego
-
 
 The third step (with ./install.sh) will take some time - about 45 minutes
 on my machine.  This is the main step that is building the docker
