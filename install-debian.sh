@@ -118,6 +118,7 @@ if [ $nojenkins -eq 0 ]; then
 	chown -R jenkins:jenkins /fuego
 	chown -R jenkins:jenkins /fuego-ro
 	chown -R jenkins:jenkins /fuego-rw
+	chown -R jenkins:jenkins /fuego-core
 
 	source /etc/default/jenkins && \
 		JENKINS_ARGS="$JENKINS_ARGS --prefix=/fuego" && \
@@ -134,11 +135,18 @@ if [ $nojenkins -eq 0 ]; then
 
 	sed -i -e "s#8080#$JENKINS_PORT#g" /etc/default/jenkins
 
-
 	cp /fuego/frontend-install/install-plugins.sh \
 		/fuego/frontend-install/jenkins-support \
 		/fuego/frontend-install/clitest \
 		/usr/local/bin/
+
+	cp /fuego/frontend-install/config.xml $JENKINS_HOME/config.xml
+	ln -s /fuego-rw/logs $JENKINS_HOME/userContent/fuego.logs
+	mkdir $JENKINS_HOME/userContent/docs
+	cp /fuego/docs/fuego-docs.pdf $JENKINS_HOME/userContent/docs/fuego-docs.pdf
+	jenkins cp /fuego/frontend-install/jenkins.model.JenkinsLocationConfiguration.xml $JENKINS_HOME/jenkins.model.JenkinsLocationConfiguration.xml
+	sed -i -e "s#8080#$JENKINS_PORT#g" $JENKINS_HOME/jenkins.model.JenkinsLocationConfiguration.xml
+	chown -R jenkins:jenkins $JENKINS_HOME/
 
 	# install flot.hpi manually from local file
 	service jenkins start && \
@@ -148,9 +156,6 @@ if [ $nojenkins -eq 0 ]; then
 			/fuego/frontend-install/plugins/flot-plotter-plugin/flot.hpi && \
 		sleep 10 && \
 		service jenkins stop
-
-	echo -e "done"
-	exit 0
 
 	# install other plugins from Jenkins update center
 	# NOTE: not sure all of these are needed, but keep list
@@ -180,11 +185,6 @@ if [ $nojenkins -eq 0 ]; then
 		rm $JENKINS_HOME/plugins/flot/flot/mod.js && \
 		ln -s /fuego-core/scripts/mod.js $JENKINS_HOME/plugins/flot/flot/mod.js
 
-	ln -s /fuego-rw/logs $JENKINS_HOME/userContent/fuego.logs
-	cp /fuego/docs/fuego-docs.pdf $JENKINS_HOME/userContent/docs/fuego-docs.pdf
-	cp /fuego/frontend-install/config.xml $JENKINS_HOME/config.xml
-	cp /fuego/frontend-install/jenkins.model.JenkinsLocationConfiguration.xml $JENKINS_HOME/jenkins.model.JenkinsLocationConfiguration.xml
-	sed -i -e "s#8080#$JENKINS_PORT#g" $JENKINS_HOME/jenkins.model.JenkinsLocationConfiguration.xml
 	chown -R jenkins:jenkins $JENKINS_HOME/
 else
 	sed -i -e 's/jenkins_enabled=1/jenkins_enabled=0/g' /fuego-ro/conf/fuego.conf
