@@ -4,43 +4,29 @@ FROM fuego
 # Install Fuego Release Test Dependencies
 # ==============================================================================
 
-# Install Dependencies
-RUN apt-get update && \
-    apt-get -yV install \
+RUN apt-get update -q=2 ;\
+    # Install Dependencies
+    apt-get -q=2 -V --no-install-recommends install \
         apt-transport-https \
-        ca-certificates \
         chromium \
-        curl \
-        gnupg2 \
         imagemagick \
         python3 \
         python3-pip \
-        python3-pillow \
-        software-properties-common && \
-    rm -rf /var/lib/apt/lists/* && \
+        python3-pillow ;\
+    # Install Docker
+    curl -fsSL https://download.docker.com/linux/debian/gpg | apt-key add - ;\
+    echo "deb https://download.docker.com/linux/debian jessie stable" > /etc/apt/sources.list.d/docker.list ;\
+    apt-get update -q=2 ;\
+    apt-get -q=2 -V --no-install-recommends install docker-ce ;\
+    # Install Python Dependencies from PyPI
     python3 -m pip install \
         docker \
         pexpect \
-        selenium
-
-# Install Docker
-RUN curl -fsSL https://download.docker.com/linux/$(source /etc/os-release; \
-        echo "$ID")/gpg | sudo apt-key add - && \
-    add-apt-repository \
-        "deb [arch=amd64] https://download.docker.com/linux/$(\
-            source /etc/os-release; echo "$ID") $(lsb_release -cs) stable" && \
-    apt-get update && \
-    apt-get -yV install \
-        docker-ce
-
-# Install Chrome Driver for SeleniumHQ
-RUN CHROME_DRIVER_VERSION=$(curl --silent --fail \
-        https://chromedriver.storage.googleapis.com/LATEST_RELEASE) && \
-    curl https://chromedriver.storage.googleapis.com/$(\
-        echo ${CHROME_DRIVER_VERSION})/chromedriver_linux64.zip \
-            -o chrome-driver.zip && \
-    unzip chrome-driver.zip -d /usr/local/bin && rm chrome-driver.zip && \
-    chmod +x /usr/local/bin/chromedriver
-
-# Setting jenkins as a sudoer. Needed for accessing the dockerd socket.
-RUN echo "jenkins ALL = (root) NOPASSWD:ALL" >> /etc/sudoers
+        selenium ;\
+    # Install Chrome Driver for SeleniumHQ
+    curl https://chromedriver.storage.googleapis.com/2.29/chromedriver_linux64.zip -o chrome-driver.zip ;\
+    unzip chrome-driver.zip -d /usr/local/bin ;\
+    chmod +x /usr/local/bin/chromedriver ;\
+    rm -rf /var/lib/apt/lists/* chrome-driver.zip ;\
+    # Setting jenkins as a sudoer. Needed for accessing the dockerd socket.
+    echo "jenkins ALL = (root) NOPASSWD:ALL" >> /etc/sudoers
