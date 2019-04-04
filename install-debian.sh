@@ -38,8 +38,7 @@ fi
 
 # netperf is in non-free
 echo deb http://httpredir.debian.org/debian jessie main non-free > /etc/apt/sources.list
-echo deb http://httpredir.debian.org/debian jessie-updates main non-free >> /etc/apt/sources.list
-echo deb http://security.debian.org/ jessie/updates main >> /etc/apt/sources.list
+echo deb http://security.debian.org/debian-security jessie/updates main >> /etc/apt/sources.list
 
 apt-get update
 

@@ -23,8 +23,7 @@ ARG DEBIAN_FRONTEND=noninteractive
 
 WORKDIR /
 RUN echo deb http://httpredir.debian.org/debian jessie main non-free > /etc/apt/sources.list
-RUN echo deb http://httpredir.debian.org/debian jessie-updates main non-free >> /etc/apt/sources.list
-RUN echo deb http://security.debian.org/ jessie/updates main >> /etc/apt/sources.list
+RUN echo deb http://security.debian.org/debian-security jessie/updates main >> /etc/apt/sources.list
 RUN if [ -n "$HTTP_PROXY" ]; then echo 'Acquire::http::proxy "'$HTTP_PROXY'";' > /etc/apt/apt.conf.d/80proxy; fi
 
 # Fuego python dependencies
