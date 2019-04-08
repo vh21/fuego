@@ -4,7 +4,7 @@
 # ==============================================================================
 # FIXTHIS: build this as an extension of the nonjenkins image
 
-FROM debian:jessie
+FROM debian:stretch-slim
 MAINTAINER tim.bird@sony.com
 
 # ==============================================================================
@@ -22,8 +22,8 @@ ENV https_proxy ${HTTP_PROXY}
 ARG DEBIAN_FRONTEND=noninteractive
 
 WORKDIR /
-RUN echo deb http://httpredir.debian.org/debian jessie main non-free > /etc/apt/sources.list
-RUN echo deb http://security.debian.org/debian-security jessie/updates main >> /etc/apt/sources.list
+RUN echo deb http://deb.debian.org/debian stretch main non-free > /etc/apt/sources.list
+RUN echo deb http://security.debian.org/debian-security stretch/updates main >> /etc/apt/sources.list
 RUN if [ -n "$HTTP_PROXY" ]; then echo 'Acquire::http::proxy "'$HTTP_PROXY'";' > /etc/apt/apt.conf.d/80proxy; fi
 
 # Fuego python dependencies
@@ -36,6 +36,7 @@ RUN if [ -n "$HTTP_PROXY" ]; then echo 'Acquire::http::proxy "'$HTTP_PROXY'";' >
 # - python-parsedatetime: ftc
 # - python-pip: to install filelock, flake8
 # - filelock: parser
+RUN mkdir -p /usr/share/man/man1
 RUN apt-get update && apt-get -yV install \
 	python-lxml python-simplejson python-yaml python-openpyxl \
 	python-requests python-reportlab python-parsedatetime \
@@ -100,7 +101,7 @@ ENV JENKINS_PORT=$JENKINS_PORT
 
 # Jenkins dependencies
 RUN apt-get update && apt-get -yV install \
-	openjdk-7-jdk daemon psmisc adduser procps unzip
+	default-jdk daemon psmisc adduser procps unzip
 RUN pip install python-jenkins==0.4.14
 
 RUN echo -e "JENKINS_PORT=$JENKINS_PORT" >> /etc/environment

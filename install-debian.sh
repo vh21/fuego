@@ -37,8 +37,8 @@ fi
 # ==============================================================================
 
 # netperf is in non-free
-echo deb http://httpredir.debian.org/debian jessie main non-free > /etc/apt/sources.list
-echo deb http://security.debian.org/debian-security jessie/updates main >> /etc/apt/sources.list
+echo deb http://deb.debian.org/debian stretch main non-free > /etc/apt/sources.list
+echo deb http://security.debian.org/debian-security stretch/updates main >> /etc/apt/sources.list
 
 apt-get update
 
@@ -98,7 +98,7 @@ if [ $nojenkins -eq 0 ]; then
 
 	# Jenkins dependencies
 	apt-get -yV install \
-		openjdk-7-jdk daemon psmisc adduser procps unzip
+		default-jdk daemon psmisc adduser procps unzip
 	pip install python-jenkins==0.4.14
 
 	echo -e "JENKINS_PORT=$JENKINS_PORT" >> /etc/environment
