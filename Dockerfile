@@ -93,16 +93,18 @@ ARG group=jenkins
 ARG uid=1000
 ARG gid=${uid}
 ARG JENKINS_PORT=8080
-ARG JENKINS_VERSION=2.32.1
-ARG JENKINS_SHA=bfc226aabe2bb089623772950c4cc13aee613af1
+ARG JENKINS_VERSION=2.164.1
+ARG JENKINS_SHA=969df594d1958800cd7da55e19ca75cf65f7fbf0
 ARG JENKINS_URL=https://pkg.jenkins.io/debian-stable/binary/jenkins_${JENKINS_VERSION}_all.deb
+ARG JENKINS_UC=https://updates.jenkins.io
+ARG REF=/var/lib/jenkins/plugins
 ENV JENKINS_HOME=/var/lib/jenkins
 ENV JENKINS_PORT=$JENKINS_PORT
 
 # Jenkins dependencies
 RUN apt-get -q=2 -V --no-install-recommends install \
 	default-jdk daemon psmisc adduser procps unzip
-RUN pip install python-jenkins==0.4.14
+RUN pip install python-jenkins==1.4.0
 
 RUN echo -e "JENKINS_PORT=$JENKINS_PORT" >> /etc/environment
 RUN getent group ${gid} >/dev/null || groupadd -g ${gid} ${group}
@@ -144,7 +146,7 @@ RUN source /etc/default/jenkins && \
 	sed -i -e "s#JENKINS_ARGS.*#JENKINS_ARGS\=\"${JENKINS_ARGS}\"#g" /etc/default/jenkins
 
 RUN source /etc/default/jenkins && \
-	JAVA_ARGS="$JAVA_ARGS -Djenkins.install.runSetupWizard=false" && \
+	JAVA_ARGS="$JAVA_ARGS -Djenkins.install.runSetupWizard=false -Dhudson.model.DirectoryBrowserSupport.allowSymlinkEscape=true" && \
 	if [ -n "$HTTP_PROXY" ]; then \
 		PROXYSERVER=$(echo $http_proxy | sed -E 's/^http://' | sed -E 's/\///g' | sed -E 's/(.*):(.*)/\1/') && \
 		PROXYPORT=$(echo $http_proxy | sed -E 's/^http://' | sed -E 's/\///g' | sed -E 's/(.*):(.*)/\2/') && \
@@ -164,32 +166,34 @@ COPY frontend-install/install-plugins.sh \
 # install flot.hpi manually from local file
 RUN service jenkins start && \
 	sleep 30 && \
-    sudo -u jenkins java -jar /var/cache/jenkins/war/WEB-INF/jenkins-cli.jar -s http://localhost:$JENKINS_PORT/fuego install-plugin /tmp/flot.hpi && \
+    sudo -u jenkins java -jar /var/cache/jenkins/war/WEB-INF/jenkins-cli.jar -remoting -s http://localhost:$JENKINS_PORT/fuego install-plugin /tmp/flot.hpi && \
     sleep 10 && \
     service jenkins stop
 
 # install other plugins from Jenkins update center
 # NOTE: not sure all of these are needed, but keep list
 # compatible with 1.2.1 release for now
-RUN /usr/local/bin/install-plugins.sh ant:1.7 \
-    bouncycastle-api:2.16.2 \
+RUN /usr/local/bin/install-plugins.sh \
+    ant:1.9 \
+    antisamy-markup-formatter:1.5 \
+    bouncycastle-api:2.17 \
+    command-launcher:1.3 \
     description-setter:1.10 \
-    display-url-api:2.1.0 \
+    display-url-api:2.3.1 \
     external-monitor-job:1.7 \
     greenballs:1.15 \
     icon-shim:2.0.3 \
-    javadoc:1.4 \
-    junit:1.21 \
-    ldap:1.17 \
-    mailer:1.20 \
-    matrix-auth:1.7 \
-    matrix-project:1.12 \
-    antisamy-markup-formatter:1.5 \
-    pam-auth:1.3 \
+    javadoc:1.5 \
+    jdk-tool:1.2 \
+    junit:1.27 \
+    ldap:1.20 \
+    mailer:1.23 \
+    matrix-auth:2.3 \
+    matrix-project:1.14 \
+    pam-auth:1.5 \
     pegdown-formatter:1.3 \
-    script-security:1.35 \
-    structs:1.10 \
-    windows-slaves:1.3.1
+    structs:1.17 \
+    windows-slaves:1.4
 
 # make the mod.js symlink well after flot is installed
 RUN service jenkins start && sleep 30 && \
