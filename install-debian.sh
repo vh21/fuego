@@ -40,28 +40,28 @@ fi
 echo deb http://deb.debian.org/debian stretch main non-free > /etc/apt/sources.list
 echo deb http://security.debian.org/debian-security stretch/updates main >> /etc/apt/sources.list
 
-apt-get update
+apt-get update -q=2
 
 # Fuego python dependencies
-apt-get -yV install \
+apt-get -q=2 -V --no-install-recommends install \
 	python-lxml python-simplejson python-yaml python-openpyxl \
 	python-requests python-reportlab python-parsedatetime \
 	python-pip
 pip install filelock
 
 # Fuego command dependencies
-apt-get -yV install \
+apt-get -q=2 -V --no-install-recommends install \
 	git sshpass openssh-client sudo net-tools wget curl lava-tool \
 	bash-completion
 
 # Default SDK for testing locally or on an x86 board
-apt-get -yV install \
-	gcc g++ make cmake bison flex autoconf automake libtool \
+apt-get -q=2 -V --no-install-recommends install \
+	build-essential cmake bison flex automake libtool \
 	libelf-dev libssl-dev libsdl1.2-dev libcairo2-dev libxmu-dev \
 	libxmuu-dev libglib2.0-dev libaio-dev u-boot-tools pkg-config
 
 # Default test host dependencies
-apt-get -yV install \
+apt-get -q=2 -V --no-install-recommends install \
 	iperf iperf3 netperf bzip2 bc python-matplotlib python-xmltodict
 pip install flake8
 
@@ -97,7 +97,7 @@ if [ $nojenkins -eq 0 ]; then
 	JENKINS_PORT=$port
 
 	# Jenkins dependencies
-	apt-get -yV install \
+	apt-get -q=2 -V --no-install-recommends install \
 		default-jdk daemon psmisc adduser procps unzip
 	pip install python-jenkins==0.4.14
 

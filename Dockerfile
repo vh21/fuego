@@ -37,20 +37,20 @@ RUN if [ -n "$HTTP_PROXY" ]; then echo 'Acquire::http::proxy "'$HTTP_PROXY'";' >
 # - python-pip: to install filelock, flake8
 # - filelock: parser
 RUN mkdir -p /usr/share/man/man1
-RUN apt-get update && apt-get -yV install \
+RUN apt-get update -q=2 && apt-get -q=2 -V --no-install-recommends install \
 	python-lxml python-simplejson python-yaml python-openpyxl \
 	python-requests python-reportlab python-parsedatetime \
-	python-pip
+	python-pip python-setuptools python-wheel
 RUN pip install filelock
 
 # Fuego command dependencies
-RUN apt-get update && apt-get -yV install \
+RUN apt-get -q=2 -V --no-install-recommends install \
 	git sshpass openssh-client sudo net-tools wget curl lava-tool \
 	bash-completion
 
 # Default SDK for testing locally or on an x86 board
-RUN apt-get update && apt-get -yV install \
-	gcc g++ make cmake bison flex autoconf automake libtool \
+RUN apt-get -q=2 -V --no-install-recommends install \
+	build-essential cmake bison flex automake libtool \
 	libelf-dev libssl-dev libsdl1.2-dev libcairo2-dev libxmu-dev \
 	libxmuu-dev libglib2.0-dev libaio-dev u-boot-tools pkg-config
 
@@ -61,7 +61,7 @@ RUN apt-get update && apt-get -yV install \
 # - python-xmltodict: AGL tests
 # - flake8: Functional.fuego_lint
 # FIXTHIS: install dependencies dynamically on the tests that need them
-RUN apt-get update && apt-get -yV install \
+RUN apt-get -q=2 -V --no-install-recommends install \
 	iperf iperf3 netperf bzip2 bc python-matplotlib python-xmltodict
 RUN pip install flake8
 
@@ -69,11 +69,11 @@ RUN pip install flake8
 # python-serial - used by serio
 # diffstat and vim - used by Tim
 # time - useful for timing command duration
-RUN apt-get update && apt-get -yV install \
+RUN apt-get -q=2 -V --no-install-recommends install \
     python-serial diffstat vim time
 
 # FIXTHIS: determine if these tools are really necessary
-#RUN apt-get update && apt-get -yV install \
+#RUN apt-get -q=2 -V --no-install-recommends install \
 #	apt-utils python-paramiko \
 #	xmlstarlet rsync \
 #	inotify-tools gettext netpipe-tcp \
@@ -100,7 +100,7 @@ ENV JENKINS_HOME=/var/lib/jenkins
 ENV JENKINS_PORT=$JENKINS_PORT
 
 # Jenkins dependencies
-RUN apt-get update && apt-get -yV install \
+RUN apt-get -q=2 -V --no-install-recommends install \
 	default-jdk daemon psmisc adduser procps unzip
 RUN pip install python-jenkins==0.4.14
 
