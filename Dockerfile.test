@@ -15,7 +15,7 @@ RUN apt-get update -q=2 ;\
         python3-pillow ;\
     # Install Docker
     curl -fsSL https://download.docker.com/linux/debian/gpg | apt-key add - ;\
-    echo "deb https://download.docker.com/linux/debian jessie stable" > /etc/apt/sources.list.d/docker.list ;\
+    echo "deb https://download.docker.com/linux/debian stretch stable" > /etc/apt/sources.list.d/docker.list ;\
     apt-get update -q=2 ;\
     apt-get -q=2 -V --no-install-recommends install docker-ce ;\
     # Install Python Dependencies from PyPI
