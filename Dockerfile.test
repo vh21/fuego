@@ -24,7 +24,7 @@ RUN apt-get update -q=2 ;\
         pexpect \
         selenium ;\
     # Install Chrome Driver for SeleniumHQ
-    curl https://chromedriver.storage.googleapis.com/2.29/chromedriver_linux64.zip -o chrome-driver.zip ;\
+    curl https://chromedriver.storage.googleapis.com/73.0.3683.68/chromedriver_linux64.zip -o chrome-driver.zip ;\
     unzip chrome-driver.zip -d /usr/local/bin ;\
     chmod +x /usr/local/bin/chromedriver ;\
     rm -rf /var/lib/apt/lists/* chrome-driver.zip ;\
