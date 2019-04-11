@@ -161,7 +161,6 @@ COPY frontend-install/plugins/flot-plotter-plugin/flot.hpi /tmp
 COPY frontend-install/install-plugins.sh \
     frontend-install/jenkins-support \
     frontend-install/clitest \
-    frontend-install/fix-node-monitors.py \
     /usr/local/bin/
 
 # install flot.hpi manually from local file
@@ -195,8 +194,6 @@ RUN /usr/local/bin/install-plugins.sh \
     pegdown-formatter:1.3 \
     structs:1.17 \
     windows-slaves:1.4
-
-RUN /usr/local/bin/fix-node-monitors.py /var/lib/jenkins/nodeMonitors.xml
 
 # make the mod.js symlink well after flot is installed
 RUN service jenkins start && sleep 30 && \
