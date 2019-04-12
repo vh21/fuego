@@ -90,8 +90,8 @@ fi
 # ==============================================================================
 
 if [ $nojenkins -eq 0 ]; then
-	JENKINS_VERSION=2.164.1
-	JENKINS_SHA=969df594d1958800cd7da55e19ca75cf65f7fbf0
+	JENKINS_VERSION=2.164.2
+	JENKINS_SHA=4536f43f61b1fca6c58bd91040fa09304eea96ab
 	JENKINS_URL=https://pkg.jenkins.io/debian-stable/binary/jenkins_${JENKINS_VERSION}_all.deb
 	JENKINS_UC=https://updates.jenkins.io
 	REF=/var/lib/jenkins/plugins
