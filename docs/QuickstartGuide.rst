@@ -40,7 +40,7 @@ prompt:::
   $ git clone https://bitbucket.org/fuegotest/fuego.git
   $ cd fuego ; ./install.sh
   $ ./start.sh
-  $ firefox http://localhost:8080/fuego
+  $ firefox http://localhost:8090/fuego
 
 The third step (with ./install.sh) will take some time - about 45 minutes
 on my machine.  This is the main step that is building the docker
@@ -60,7 +60,7 @@ the instructions above with these:::
 
 On the last step, to access the Fuego interface you can use any
 browser - not just Firefox.  By default the Fuego interface runs on your
-host machine, on port 8080, with URL path "/fuego".
+host machine, on port 8090, with URL path "/fuego".
 
 In your browser, you should see a screen similar to the following:
 

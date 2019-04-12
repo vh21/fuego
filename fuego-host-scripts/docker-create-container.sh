@@ -3,7 +3,7 @@
 # $2 - name for the docker container (default: fuego-container)
 # $3 - overrides JENKINS_PORT env variable
 #      Additionally you need to change the port on the config manually
-#      docker# sed -i -e 's#8080#8082#g' /etc/default/jenkins
+#      docker# sed -i -e 's#8080#8090#g' /etc/default/jenkins
 #      docker# service jenkins restart
 
 DIR=$(dirname $(realpath "${BASH_SOURCE[0]}"))

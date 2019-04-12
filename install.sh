@@ -59,7 +59,7 @@ done
 set -- "${POSITIONAL[@]}" # restore positional arguments
 
 image_name=${1:-fuego}
-jenkins_port=${2:-8080}
+jenkins_port=${2:-8090}
 
 container_name="${image_name}-container"
 

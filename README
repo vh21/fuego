@@ -58,7 +58,7 @@ container.  If you exit that shell, the container will stop, and you
 will be returned to the host shell.
 
 Once the container is started, a web interface to the test system will
-be available at: http://localhost:8080/fuego (or 8082)
+be available at: http://localhost:8090/fuego (or the port used by Jenkins)
 
 
 Configuration
@@ -111,7 +111,7 @@ Re-build Jenkins' config.xml (if necessary):
 Rewrite Jobs config.xml (if necessary):
     + Configure the job manually and save it
     + Get the xml file
-         java -jar /var/cache/jenkins/war/WEB-INF/jenkins-cli.jar -s http://localhost:8080/fuego get-job docker.default.Benchmark.Dhrystone
+         java -jar /var/cache/jenkins/war/WEB-INF/jenkins-cli.jar -s http://localhost:8090/fuego get-job docker.default.Benchmark.Dhrystone
     + Modify ftc add-jobs (do_add_jobs()) as necessary
 
 Initial test

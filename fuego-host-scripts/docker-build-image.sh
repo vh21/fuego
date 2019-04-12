@@ -1,6 +1,6 @@
 #!/bin/bash
 # $1 - name for the docker image (default: fuego)
-# $2 - port for jenkins (default: 8080)
+# $2 - port for jenkins (default: 8090)
 # $3 - Dockerfile or Dockerfile.nojenkins
 #
 # Example:
@@ -12,7 +12,7 @@ if [ "$1" = "--no-cache" ]; then
 fi
 
 DOCKERIMAGE=${1:-fuego}
-JENKINS_PORT=${2:-8080}
+JENKINS_PORT=${2:-8090}
 DOCKERFILE=${3:-Dockerfile}
 
 if [ "$(id -u)" == "0" ]; then

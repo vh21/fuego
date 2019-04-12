@@ -5,7 +5,7 @@
 # Usage:
 # host$ vi fuego-ro/conf/fuego.conf
 #    jenkins_enabled=0
-# host$ ./fuego-host-scripts/docker-build-image.sh fuego-nojenkins 8080 Dockerfile.nojenkins
+# host$ ./fuego-host-scripts/docker-build-image.sh fuego-nojenkins 8090 Dockerfile.nojenkins
 # host$ ./fuego-host-scripts/docker-create-container.sh fuego-nojenkins fuego-nojenkins-container
 # host$ ./fuego-host-scripts/docker-start-container.sh fuego-nojenkins-container
 # docker# ftc list-boards
