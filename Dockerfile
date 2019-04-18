@@ -46,7 +46,7 @@ RUN pip install filelock
 # Fuego command dependencies
 RUN apt-get -q=2 -V --no-install-recommends install \
 	git sshpass openssh-client sudo net-tools wget curl lava-tool \
-	bash-completion
+	bash-completion iproute2
 
 # Default SDK for testing locally or on an x86 board
 RUN apt-get -q=2 -V --no-install-recommends install \
