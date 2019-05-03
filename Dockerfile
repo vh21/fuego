@@ -60,9 +60,12 @@ RUN apt-get -q=2 -V --no-install-recommends install \
 # - python-matplotlib: Benchmark.iperf3 parser
 # - python-xmltodict: AGL tests
 # - flake8: Functional.fuego_lint
+# - netpipe-tcp - used by Benchmark.netpipe (provides the netpipe server)
+# - iputils-ping - for /bin/ping command, used by some tests
 # FIXTHIS: install dependencies dynamically on the tests that need them
 RUN apt-get -q=2 -V --no-install-recommends install \
-	iperf iperf3 netperf bzip2 bc python-matplotlib python-xmltodict
+	iperf iperf3 netperf bzip2 bc python-matplotlib python-xmltodict \
+    netpipe-tcp iputils-ping
 RUN pip install flake8
 
 # miscelaneous packages:
@@ -70,7 +73,10 @@ RUN pip install flake8
 # diffstat and vim - used by Tim
 # time - useful for timing command duration
 RUN apt-get -q=2 -V --no-install-recommends install \
-    python-serial diffstat vim time
+    python-serial \
+    diffstat \
+    vim \
+    time
 
 # FIXTHIS: determine if these tools are really necessary
 #RUN apt-get -q=2 -V --no-install-recommends install \
@@ -79,6 +85,7 @@ RUN apt-get -q=2 -V --no-install-recommends install \
 #	inotify-tools gettext netpipe-tcp \
 #	at minicom lzop bsdmainutils \
 #	mc netcat openssh-server
+
 
 RUN /bin/bash -c 'echo "dash dash/sh boolean false" | debconf-set-selections ; dpkg-reconfigure dash'
 RUN if [ -n "$HTTP_PROXY" ]; then echo "use_proxy = on" >> /etc/wgetrc; fi
