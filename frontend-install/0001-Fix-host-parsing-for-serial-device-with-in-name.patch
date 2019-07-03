@@ -1,0 +1,57 @@
+From 28480bd16a253153e8fc7b87ff40dd2d6c23c3ed Mon Sep 17 00:00:00 2001
+From: Tim Bird <tim.bird@sony.com>
+Date: Fri, 8 Mar 2019 09:44:15 -0800
+Subject: [PATCH 1/2] Fix host parsing for serial device with '@' in name
+
+Some serial devices have an '@' character in their name.  This
+can cause confusion for serio.  For example, a serial connection that is
+managed by a Sony debug board might be accessed via:
+/dev/serial/by-id/usb-wj@xnk.nu_CDB_Assist_00000042-if04
+
+Serio doesn't handle this name correctly due to the presence of the '@'
+in this name.
+
+I was trying to run a simple command, and got the following:
+  $ sersh -T 0.1 -b 115200 /dev/serial/by-id/usb-wj@xnk.nu_CDB_Assist_00000042-if04 "echo hello"
+ERROR: [Errno 2] could not open port
+/dev/xnk.nu_CDB_Assist_00000042-if04: [Errno 2] No such file or
+directory: '/dev/xnk.nu_CDB_Assist_00000042-if04'
+
+Change the parsing of the host port for sersh, to only use the '@'
+as a username delimiter if it precedes a slash (or there is no slash).
+(I'm pretty sure that Linux device names don't include '@' chars - only
+the weird by-path or by-id strings for character devices.)
+
+Signed-off-by: Tim Bird <tim.bird@sony.com>
+---
+ serio | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
+
+diff --git a/serio b/serio
+index f704a4c..e7becd5 100755
+--- a/serio
++++ b/serio
+@@ -949,11 +949,16 @@ def main():
+ 			exit(EX_USAGE)
+ 
+ 		host_end = tmp_cmd_str.find(' ')
++		host_start = 0
+ 		if '@' in tmp_cmd_str:
+-			# strip off leading [user@]
+-			host_start = tmp_cmd_str.find('@') + 1
+-		else:
+-			host_start = 0
++			at_pos = tmp_cmd_str.find('@')
++			slash_pos = tmp_cmd_str.find('/')
++			# if no slash, or first slash is after the '@'
++			# then treat @ as username delimiter
++			if slash_pos == -1 or slash_pos > at_pos:
++				# strip off leading [user@]
++				host_start = tmp_cmd_str.find('@') + 1
++
+ 		host = tmp_cmd_str[host_start:host_end]
+ 		if '/' in host:
+ 			port = host
+-- 
+2.1.4
+
