@@ -208,7 +208,7 @@ RUN /usr/local/bin/install-plugins.sh \
     matrix-project:1.14 \
     pam-auth:1.5 \
     pegdown-formatter:1.3 \
-    structs:1.17 \
+    structs:1.19 \
     windows-slaves:1.4
 
 # make the mod.js symlink well after flot is installed
