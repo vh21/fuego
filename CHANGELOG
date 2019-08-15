@@ -11,6 +11,27 @@ Note that Fuego is distributed as two repositories, one with docker
 and Jenkins stuff, and one with the fuego tests and script system.
 This file serves as the common changelog for both repositories.
 
+== [1.5.0] - 2019-08-14 ==
+ * Added a new "batch test" feature
+   * Added ability to manually group tests by batch-id, from the command line
+ * Added some new functions to core, for use by test programs:
+   * [[function_run_test|run_test]]
+   * [[function_allocate_next_batch_id|allocate_next_batch_id]]
+ * Simplified directory layout for the Fuego system
+ * Changed the default port to 8090, from 8080
+ * New options to install.sh
+   * Ability to specify the TCP port for the Jenkins server
+   * Ability to build a docker container that does not include a Jenkins server
+   * Ability to build a docker container without using the docker image cache
+ * Ability to install Fuego directly to a host machine (not inside a docker container)
+ * Upgraded Fuego base Linux distro to Debian stretch
+ * Upgraded Jenkins version to 2.164.1
+ * Added many new tests
+ * Added prototype support for sending results to a Squad and fserver back ends
+ * Added new transport: ssh2serial - for ssh to a control board to which the target board is connected by serial port
+ * Added prototype support for board power management via ftc
+ * Fixed output from serio, to support live update of the console log during a command
+
 == [1.4.0] - 2019-01-09 ==
  * Adjust board files with some per-test variables
  * Change PLATFORM to TOOLCHAIN throughout
