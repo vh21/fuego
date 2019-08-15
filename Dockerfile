@@ -2,8 +2,9 @@
 # WARNING: this Dockerfile assumes that the container will be created with
 # several volume bind mounts (see docker-create-container.sh)
 # ==============================================================================
+# FIXTHIS: build this as an extension of the nonjenkins image
 
-FROM debian:jessie
+FROM debian:stretch-slim
 MAINTAINER tim.bird@sony.com
 
 # ==============================================================================
@@ -21,23 +22,71 @@ ENV https_proxy ${HTTP_PROXY}
 ARG DEBIAN_FRONTEND=noninteractive
 
 WORKDIR /
-RUN echo deb http://httpredir.debian.org/debian jessie main non-free > /etc/apt/sources.list
-RUN echo deb http://security.debian.org/debian-security jessie/updates main >> /etc/apt/sources.list
+RUN echo deb http://deb.debian.org/debian stretch main non-free > /etc/apt/sources.list
+RUN echo deb http://security.debian.org/debian-security stretch/updates main >> /etc/apt/sources.list
 RUN if [ -n "$HTTP_PROXY" ]; then echo 'Acquire::http::proxy "'$HTTP_PROXY'";' > /etc/apt/apt.conf.d/80proxy; fi
-RUN apt-get update && apt-get -yV install \
-	apt-utils daemon gcc make cmake python-paramiko python-lxml python-simplejson \
-	python-matplotlib python-serial python-yaml python-openpyxl python-requests \
-	python-reportlab libtool xmlstarlet autoconf automake rsync openjdk-7-jre openjdk-7-jdk \
-	iperf netperf netpipe-tcp sshpass wget git diffstat sudo net-tools vim curl \
-	inotify-tools g++ bzip2 bc libaio-dev gettext pkg-config libglib2.0-dev \
-	time python-pip python-xmltodict at minicom lzop bsdmainutils u-boot-tools \
-	mc netcat lava-tool openssh-server python-parsedatetime \
-	libsdl1.2-dev libcairo2-dev libxmu-dev libxmuu-dev iperf3 \
-	bison flex libelf-dev libssl-dev
 
-RUN pip install python-jenkins==0.4.14
+# Fuego python dependencies
+# - python-lxml: ftc, loggen
+# - python-simplejson: ftc
+# - python-yaml: ftc
+# - python-openpyxl: ftc (also LTP)
+# - python-requests: ftc (also fuego_release_test)
+# - python-reportlab: ftc
+# - python-parsedatetime: ftc
+# - python-pip: to install filelock, flake8
+# - filelock: parser
+RUN mkdir -p /usr/share/man/man1
+RUN apt-get update -q=2 && apt-get -q=2 -V --no-install-recommends install \
+	python-lxml python-simplejson python-yaml python-openpyxl \
+	python-requests python-reportlab python-parsedatetime \
+	python-pip python-setuptools python-wheel
 RUN pip install filelock
+
+# Fuego command dependencies
+RUN apt-get -q=2 -V --no-install-recommends install \
+	git sshpass openssh-client sudo net-tools wget curl lava-tool \
+	bash-completion iproute2
+
+# Default SDK for testing locally or on an x86 board
+RUN apt-get -q=2 -V --no-install-recommends install \
+	build-essential cmake bison flex automake libtool \
+	libelf-dev libssl-dev libsdl1.2-dev libcairo2-dev libxmu-dev \
+	libxmuu-dev libglib2.0-dev libaio-dev u-boot-tools pkg-config
+
+# Default test host dependencies
+# - iperf iperf3 netperf: used as servers on the host
+# - bzip2 bc: used for local tests by Functional.bzip2/bc
+# - python-matplotlib: Benchmark.iperf3 parser
+# - python-xmltodict: AGL tests
+# - flake8: Functional.fuego_lint
+# - netpipe-tcp - used by Benchmark.netpipe (provides the netpipe server)
+# - iputils-ping - for /bin/ping command, used by some tests
+# FIXTHIS: install dependencies dynamically on the tests that need them
+RUN apt-get -q=2 -V --no-install-recommends install \
+	iperf iperf3 netperf bzip2 bc python-matplotlib python-xmltodict \
+    netpipe-tcp iputils-ping
 RUN pip install flake8
+
+# miscelaneous packages:
+# python-serial - used by serio
+# diffstat and vim - used by Tim
+# time - useful for timing command duration
+RUN apt-get -q=2 -V --no-install-recommends install \
+    python-serial \
+    diffstat \
+    vim \
+    time
+
+# FIXTHIS: determine if these tools are really necessary
+#RUN apt-get -q=2 -V --no-install-recommends install \
+#	apt-utils python-paramiko \
+#	xmlstarlet rsync \
+#	inotify-tools gettext netpipe-tcp \
+#	at minicom lzop bsdmainutils \
+#	mc netcat openssh-server
+
+
 RUN /bin/bash -c 'echo "dash dash/sh boolean false" | debconf-set-selections ; dpkg-reconfigure dash'
 RUN if [ -n "$HTTP_PROXY" ]; then echo "use_proxy = on" >> /etc/wgetrc; fi
 RUN if [ -n "$HTTP_PROXY" ]; then echo -e "http_proxy=$HTTP_PROXY\nhttps_proxy=$HTTP_PROXY" >> /etc/environment; fi
@@ -50,68 +99,29 @@ ARG user=jenkins
 ARG group=jenkins
 ARG uid=1000
 ARG gid=${uid}
-ARG JENKINS_VERSION=2.32.1
-ARG JENKINS_SHA=bfc226aabe2bb089623772950c4cc13aee613af1
+ARG JENKINS_PORT=8090
+ARG JENKINS_VERSION=2.164.2
+ARG JENKINS_SHA=4536f43f61b1fca6c58bd91040fa09304eea96ab
 ARG JENKINS_URL=https://pkg.jenkins.io/debian-stable/binary/jenkins_${JENKINS_VERSION}_all.deb
+ARG JENKINS_UC=https://updates.jenkins.io
+ARG REF=/var/lib/jenkins/plugins
 ENV JENKINS_HOME=/var/lib/jenkins
+ENV JENKINS_PORT=$JENKINS_PORT
 
+# Jenkins dependencies
+RUN apt-get -q=2 -V --no-install-recommends install \
+	default-jdk daemon psmisc adduser procps unzip
+RUN pip install python-jenkins==1.4.0
+
+RUN echo -e "JENKINS_PORT=$JENKINS_PORT" >> /etc/environment
 RUN getent group ${gid} >/dev/null || groupadd -g ${gid} ${group}
 RUN useradd -l -m -d "${JENKINS_HOME}" -u ${uid} -g ${gid} -G sudo -s /bin/bash ${user}
 RUN wget -nv ${JENKINS_URL}
 RUN echo "${JENKINS_SHA} jenkins_${JENKINS_VERSION}_all.deb" | sha1sum -c -
+# allow Jenkins to start and install plugins, as part of dpkg installation
+RUN printf "#!/bin/sh\nexit 0" > /usr/sbin/policy-rc.d
 RUN dpkg -i jenkins_${JENKINS_VERSION}_all.deb
 RUN rm jenkins_${JENKINS_VERSION}_all.deb
-
-
-# ==============================================================================
-# Install Fuego Release Test Dependencies
-# ==============================================================================
-
-# TODO: This session should be moved to a separate Dockerfile in the future,
-# that simply extends a fuego-base image and compiles a Fuego that's capable of
-# testing itself.
-
-# Install Dependencies
-RUN apt-get update && \
-    apt-get -yV install \
-        apt-transport-https \
-        ca-certificates \
-        chromium \
-        curl \
-        gnupg2 \
-        imagemagick \
-        python3 \
-        python3-pip \
-        python3-pillow \
-        software-properties-common && \
-    rm -rf /var/lib/apt/lists/* && \
-    python3 -m pip install \
-        docker \
-        pexpect \
-        selenium
-
-# Install Docker
-RUN curl -fsSL https://download.docker.com/linux/$(source /etc/os-release; \
-        echo "$ID")/gpg | sudo apt-key add - && \
-    add-apt-repository \
-        "deb [arch=amd64] https://download.docker.com/linux/$(\
-            source /etc/os-release; echo "$ID") $(lsb_release -cs) stable" && \
-    apt-get update && \
-    apt-get -yV install \
-        docker-ce
-
-# Install Chrome Driver for SeleniumHQ
-RUN CHROME_DRIVER_VERSION=$(curl --silent --fail \
-        https://chromedriver.storage.googleapis.com/LATEST_RELEASE) && \
-    curl https://chromedriver.storage.googleapis.com/$(\
-        echo ${CHROME_DRIVER_VERSION})/chromedriver_linux64.zip \
-            -o chrome-driver.zip && \
-    unzip chrome-driver.zip -d /usr/local/bin && rm chrome-driver.zip && \
-    chmod +x /usr/local/bin/chromedriver
-
-# Setting jenkins as a sudoer. Needed for accessing the dockerd socket.
-RUN echo "jenkins ALL = (root) NOPASSWD:ALL" >> /etc/sudoers
-
 
 # ==============================================================================
 # get ttc script and helpers
@@ -124,12 +134,27 @@ RUN perl -p -i -e "s#config_dir = \"/etc\"#config_dir = \"/fuego-ro/conf\"#" /us
 # Serial Config
 # ==============================================================================
 
-RUN /bin/bash -c 'git clone https://github.com/frowand/serio.git /usr/local/src/serio ;  chown -R jenkins /usr/local/src/serio ; cp /usr/local/src/serio/serio /usr/local/bin/ ; ln -s /usr/local/bin/serio /usr/local/bin/sercp ; ln -s /usr/local/bin/serio /usr/local/bin/sersh'
+RUN git clone https://github.com/frowand/serio.git /usr/local/src/serio
+COPY frontend-install/0001-Fix-host-parsing-for-serial-device-with-in-name.patch \
+  frontend-install/0002-Output-data-from-port-during-command-execution.patch \
+  /tmp/
+RUN /bin/bash -c 'patch -d /usr/local/src/serio -p1 </tmp/0001-Fix-host-parsing-for-serial-device-with-in-name.patch ; \
+  patch -d /usr/local/src/serio -p1 </tmp/0002-Output-data-from-port-during-command-execution.patch ; \
+  chown -R jenkins /usr/local/src/serio ; \
+  cp /usr/local/src/serio/serio /usr/local/bin/ ; \
+  ln -s /usr/local/bin/serio /usr/local/bin/sercp ; \
+  ln -s /usr/local/bin/serio /usr/local/bin/sersh'
 
 RUN /bin/bash -c 'git clone https://github.com/tbird20d/serlogin.git /usr/local/src/serlogin ;  chown -R jenkins /usr/local/src/serlogin ; cp /usr/local/src/serlogin/serlogin /usr/local/bin'
 
 # ==============================================================================
-# Post installation
+# fserver
+# ==============================================================================
+
+RUN /bin/bash -c 'git clone https://github.com/tbird20d/fserver.git /usr/local/lib/fserver ; ln -s /usr/local/lib/fserver/start_local_bg_server /usr/local/bin/start_local_bg_server'
+
+# ==============================================================================
+# Jenkins post installation
 # ==============================================================================
 
 RUN source /etc/default/jenkins && \
@@ -137,13 +162,15 @@ RUN source /etc/default/jenkins && \
 	sed -i -e "s#JENKINS_ARGS.*#JENKINS_ARGS\=\"${JENKINS_ARGS}\"#g" /etc/default/jenkins
 
 RUN source /etc/default/jenkins && \
-	JAVA_ARGS="$JAVA_ARGS -Djenkins.install.runSetupWizard=false" && \
+	JAVA_ARGS="$JAVA_ARGS -Djenkins.install.runSetupWizard=false -Dhudson.model.DirectoryBrowserSupport.allowSymlinkEscape=true" && \
 	if [ -n "$HTTP_PROXY" ]; then \
 		PROXYSERVER=$(echo $http_proxy | sed -E 's/^http://' | sed -E 's/\///g' | sed -E 's/(.*):(.*)/\1/') && \
 		PROXYPORT=$(echo $http_proxy | sed -E 's/^http://' | sed -E 's/\///g' | sed -E 's/(.*):(.*)/\2/') && \
 		JAVA_ARGS="$JAVA_ARGS -Dhttp.proxyHost="${PROXYSERVER}" -Dhttp.proxyPort="${PROXYPORT}" -Dhttps.proxyHost="${PROXYSERVER}" -Dhttps.proxyPort="${PROXYPORT}; \
 	fi && \
 	sed -i -e "s#^JAVA_ARGS.*#JAVA_ARGS\=\"${JAVA_ARGS}\"#g" /etc/default/jenkins;
+
+RUN sed -i -e "s#8080#$JENKINS_PORT#g" /etc/default/jenkins
 
 COPY frontend-install/plugins/flot-plotter-plugin/flot.hpi /tmp
 
@@ -155,46 +182,56 @@ COPY frontend-install/install-plugins.sh \
 # install flot.hpi manually from local file
 RUN service jenkins start && \
 	sleep 30 && \
-    sudo -u jenkins java -jar /var/cache/jenkins/war/WEB-INF/jenkins-cli.jar -s http://localhost:8080/fuego install-plugin /tmp/flot.hpi && \
+    sudo -u jenkins java -jar /var/cache/jenkins/war/WEB-INF/jenkins-cli.jar -remoting -s http://localhost:$JENKINS_PORT/fuego install-plugin /tmp/flot.hpi && \
     sleep 10 && \
     service jenkins stop
 
 # install other plugins from Jenkins update center
 # NOTE: not sure all of these are needed, but keep list
 # compatible with 1.2.1 release for now
-RUN /usr/local/bin/install-plugins.sh ant:1.7 \
-    bouncycastle-api:2.16.2 \
+RUN /usr/local/bin/install-plugins.sh \
+    ant:1.9 \
+    antisamy-markup-formatter:1.5 \
+    bouncycastle-api:2.17 \
+    command-launcher:1.3 \
     description-setter:1.10 \
-    display-url-api:2.1.0 \
+    display-url-api:2.3.1 \
     external-monitor-job:1.7 \
     greenballs:1.15 \
     icon-shim:2.0.3 \
-    javadoc:1.4 \
-    junit:1.21 \
-    ldap:1.17 \
-    mailer:1.20 \
-    matrix-auth:1.7 \
-    matrix-project:1.12 \
-    antisamy-markup-formatter:1.5 \
-    pam-auth:1.3 \
+    javadoc:1.5 \
+    jdk-tool:1.2 \
+    junit:1.27 \
+    ldap:1.20 \
+    mailer:1.23 \
+    matrix-auth:2.3 \
+    matrix-project:1.14 \
+    pam-auth:1.5 \
     pegdown-formatter:1.3 \
-    script-security:1.35 \
-    structs:1.10 \
-    windows-slaves:1.3.1
+    structs:1.19 \
+    windows-slaves:1.4
 
 # make the mod.js symlink well after flot is installed
 RUN service jenkins start && sleep 30 && \
     rm $JENKINS_HOME/plugins/flot/flot/mod.js && \
-    ln -s /fuego-core/engine/scripts/mod.js $JENKINS_HOME/plugins/flot/flot/mod.js
+    ln -s /fuego-core/scripts/mod.js $JENKINS_HOME/plugins/flot/flot/mod.js
 
 RUN ln -s /fuego-rw/logs $JENKINS_HOME/userContent/fuego.logs
 COPY docs/fuego-docs.pdf $JENKINS_HOME/userContent/docs/fuego-docs.pdf
 
-RUN ln -s /fuego-core/engine/scripts/ftc /usr/local/bin/
 COPY frontend-install/config.xml $JENKINS_HOME/config.xml
 COPY frontend-install/jenkins.model.JenkinsLocationConfiguration.xml $JENKINS_HOME/jenkins.model.JenkinsLocationConfiguration.xml
+RUN sed -i -e "s#8080#$JENKINS_PORT#g" $JENKINS_HOME/jenkins.model.JenkinsLocationConfiguration.xml
 
 RUN chown -R jenkins:jenkins $JENKINS_HOME/
+
+# ==============================================================================
+# ftc post installation
+# ==============================================================================
+
+RUN ln -s /fuego-core/scripts/ftc /usr/local/bin/
+COPY fuego-core/scripts/ftc_completion.sh /etc/bash_completion.d/ftc
+RUN echo ". /etc/bash_completion" >> /root/.bashrc
 
 # ==============================================================================
 # Lava
@@ -202,23 +239,11 @@ RUN chown -R jenkins:jenkins $JENKINS_HOME/
 
 RUN ln -s /fuego-ro/scripts/fuego-lava-target-setup /usr/local/bin
 RUN ln -s /fuego-ro/scripts/fuego-lava-target-teardown /usr/local/bin
-# CONVENIENCE HACKS
-# not mounted, yet
-#RUN echo "fuego-create-node --board raspberrypi3" >> /root/firststart.sh
-#RUN echo "fuego-create-jobs --board raspberrypi3 --testplan testplan_docker --distrib nosyslogd.dist" >> /root/firststart.sh
-
-# TRB-2018-03-19 - don't automatically install emdebian armhf toolchains
-# These are old, and have conflicts with recent Debian package releases.
-# Also, users should be encouraged to install the correct toolchain for
-# their board.
-#RUN echo "deb http://emdebian.org/tools/debian/ jessie main" > /etc/apt/sources.list.d/crosstools.list
-#RUN dpkg --add-architecture armhf
-#RUN curl http://emdebian.org/tools/debian/emdebian-toolchain-archive.key | sudo apt-key add -
-#RUN DEBIAN_FRONTEND=noninteractive apt-get update
-#RUN DEBIAN_FRONTEND=noninteractive apt-get -yV install crossbuild-essential-armhf cpp-arm-linux-gnueabihf gcc-arm-linux-gnueabihf binutils-arm-linux-gnueabihf
 
 # ==============================================================================
 # Setup startup command
 # ==============================================================================
 
+# FIXTHIS: when running multiple Fuego containers, or if the host is already
+#  running the netperf server, netperf will complain because the port is taken
 ENTRYPOINT service jenkins start && service netperf start && iperf3 -V -s -D -f M && /bin/bash

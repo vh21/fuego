@@ -40,20 +40,25 @@ access to USB or serial ports, you should run install.sh with the
 '--priv' option, like so:
   ./install.sh --priv
 
+You can change the name of the docker image and the port used by Jenkins
+by passing the corresponding parameters to install.sh.
+  ./install.sh fuego-8082 8082
+
 Running
 -------------------------------------------------------------------------------
 To start your Fuego container, issue the following command top directory:
 
   ./start.sh fuego-container
 
-(or, use the name of whatever container was created in the install stop).
+(or, use the name of whatever container was created in the install step.
+For example, ./start.sh fuego-8082-container).
 
 The shell used to start the container will enter a shell inside the
 container.  If you exit that shell, the container will stop, and you
 will be returned to the host shell.
 
 Once the container is started, a web interface to the test system will
-be available at: http://localhost:8080/fuego
+be available at: http://localhost:8090/fuego (or the port used by Jenkins)
 
 
 Configuration
@@ -106,7 +111,7 @@ Re-build Jenkins' config.xml (if necessary):
 Rewrite Jobs config.xml (if necessary):
     + Configure the job manually and save it
     + Get the xml file
-         java -jar /var/cache/jenkins/war/WEB-INF/jenkins-cli.jar -s http://localhost:8080/fuego get-job docker.default.Benchmark.Dhrystone
+         java -jar /var/cache/jenkins/war/WEB-INF/jenkins-cli.jar -s http://localhost:8090/fuego get-job docker.default.Benchmark.Dhrystone
     + Modify ftc add-jobs (do_add_jobs()) as necessary
 
 Initial test

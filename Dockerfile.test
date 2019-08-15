@@ -1,0 +1,32 @@
+FROM fuego
+
+# ==============================================================================
+# Install Fuego Release Test Dependencies
+# ==============================================================================
+
+RUN apt-get update -q=2 ;\
+    # Install Dependencies
+    apt-get -q=2 -V --no-install-recommends install \
+        apt-transport-https \
+        chromium \
+        imagemagick \
+        python3 \
+        python3-pip \
+        python3-pillow ;\
+    # Install Docker
+    curl -fsSL https://download.docker.com/linux/debian/gpg | apt-key add - ;\
+    echo "deb https://download.docker.com/linux/debian stretch stable" > /etc/apt/sources.list.d/docker.list ;\
+    apt-get update -q=2 ;\
+    apt-get -q=2 -V --no-install-recommends install docker-ce ;\
+    # Install Python Dependencies from PyPI
+    python3 -m pip install \
+        docker \
+        pexpect \
+        selenium ;\
+    # Install Chrome Driver for SeleniumHQ
+    curl https://chromedriver.storage.googleapis.com/73.0.3683.68/chromedriver_linux64.zip -o chrome-driver.zip ;\
+    unzip chrome-driver.zip -d /usr/local/bin ;\
+    chmod +x /usr/local/bin/chromedriver ;\
+    rm -rf /var/lib/apt/lists/* chrome-driver.zip ;\
+    # Setting jenkins as a sudoer. Needed for accessing the dockerd socket.
+    echo "jenkins ALL = (root) NOPASSWD:ALL" >> /etc/sudoers

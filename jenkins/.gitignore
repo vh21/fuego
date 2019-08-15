@@ -1,0 +1,3 @@
+# this .gitignore file is here both to preserve this directory, when empty
+# and to have git ignore all files here, when the dir is populated.
+*

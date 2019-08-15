@@ -1,0 +1,129 @@
+From 6467bece09c8016a5f4a2f584906c6ac5e6a8d70 Mon Sep 17 00:00:00 2001
+From: Tim Bird <tim.bird@sony.com>
+Date: Fri, 8 Mar 2019 12:19:13 -0800
+Subject: [PATCH 2/2] Output data from port during command execution
+
+sersh currently collects all the data from a command before
+printing it on standard output.  For a long-running
+command this makes it appear as if the command is hung.
+
+Introduce a new function read_and_show_until(), which displays
+the data as it is received from the serial port (up until
+the indicated stopping point), and use this in the 'cmd' function
+so that data is shown as it is received - not queued up until
+the end.
+
+This routine also does \r\n -> \n conversion on the fly while
+the serial port is being read.
+
+Signed-off-by: Tim Bird <tim.bird@sony.com>
+---
+ serio | 78 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 75 insertions(+), 3 deletions(-)
+
+diff --git a/serio b/serio
+index e7becd5..da3d602 100755
+--- a/serio
++++ b/serio
+@@ -166,6 +166,79 @@ class RemoteExecute:
+ 			print
+ 		return data
+ 
++	def read_and_show_until(self, count=None, lines=None, delim=None):
++		# FIXME - consider implications of read timeout
++		#         - case count will return fewer bytes than requested
++		#         - case count will return fewer lines than requested
++		#         - case delim will spin forever
++		#         Should timeout be detected and set a different
++		#         exit code?
++
++		data = ""
++
++		if count is not None:
++			for i in range(0, count):
++				ch = self.fp.read(1)
++				data += ch
++				sys.stdout.write("%s" % ch)
++				self.progress(len(data), count)
++
++		elif lines is not None:
++			for i in range(0, lines):
++				line = self.fp.readline()
++				data += line
++				sys.stdout.write("%s" % line)
++				self.progress(len(data), len(data))
++
++		elif delim is not None:
++			buf = ""
++			line_end_buf = ''
++			while not data.endswith(delim):
++				ch = self.serial.read(1)
++				# convert \r\n to \r
++				# that is, drop \r if followed by \n
++				# otherwise, save \r
++				if ch=='\r':
++					if line_end_buf:
++						# save \r if followed by \r
++						data += line_end_buf
++					# keep track of last \r
++					line_end_buf = ch
++					continue
++
++				if ch != '\n':
++					# save \r followed by non-\n
++					data += line_end_buf
++
++				line_end_buf = ''
++
++				# save the character
++				data += ch
++
++				# buffer data as long as it matches delim
++				if delim.startswith(buf+ch):
++					buf+=ch
++					continue
++				else:
++					if buf:
++						sys.stdout.write("%s" % buf)
++						buf=""
++					sys.stdout.write("%s" % ch)
++					sys.stdout.flush()
++
++				self.progress((len(data)-len(delim)), (len(data)-len(delim)))
++
++			data = data[0:-len(delim)]
++			# FIXME - all users of delim do this fix after calling readuntil(),
++			#         consider moving it here:
++			#            consume '\n' leftover from readuntil()
++			#            self.fp.readline()
++
++		self.progress(len(data), len(data))
++		if self.showprogress > 0:
++			print
++		return data
++
+ 	# read data from the serial port, for a fixed amount of time
+ 	# intended for short reads (e.g. to drain a small amount of
+ 	# data from the port, or to get the prompt)
+@@ -432,7 +505,8 @@ class RemoteExecute:
+ 
+ 		# should do this in a thread so we can output while
+ 		# the data is coming back
+-		result = self.readuntil(None, None, self.DELIM)
++		result = self.read_and_show_until(None, None, self.DELIM)
++
+ 		# consume '\n' leftover from readuntil()
+ 		self.fp.readline()
+ 
+@@ -1113,8 +1187,6 @@ def main():
+ 				print 'ERROR: command is required'
+ 				sys.exit(EX_USAGE)
+ 			remote_status, data = sterm.cmd(cmd_str, remote_shell)
+-			if len(data):
+-				print data
+ 			sys.exit(int(remote_status))
+ 
+ 		except Exception, e:
+-- 
+2.1.4
+

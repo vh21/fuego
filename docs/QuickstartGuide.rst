@@ -37,12 +37,10 @@ Download, build, start and access
 To accomplish the first 6 steps, do the following from a Linux command
 prompt:::
 
-  $ git clone https://bitbucket.org/tbird20d/fuego.git
-  $ git clone https://bitbucket.org/tbird20d/fuego-core.git
+  $ git clone https://bitbucket.org/fuegotest/fuego.git
   $ cd fuego ; ./install.sh
   $ ./start.sh
-  $ firefox http://localhost:8080/fuego
-
+  $ firefox http://localhost:8090/fuego
 
 The third step (with ./install.sh) will take some time - about 45 minutes
 on my machine.  This is the main step that is building the docker
@@ -57,12 +55,12 @@ shell.  You should leave it running for the duration of your testing.
 in the 'next' branch, then please replace the 'git clone' command in
 the instructions above with these:::
 
-  $ git clone -b next https://bitbucket.org/tbird20d/fuego.git
-  $ git clone -b next https://bitbucket.org/tbird20d/fuego-core.git''
+  $ git clone -b next https://bitbucket.org/fuegotest/fuego.git
+  $ git clone -b next https://bitbucket.org/fuegotest/fuego-core.git''
 
 On the last step, to access the Fuego interface you can use any
 browser - not just Firefox.  By default the Fuego interface runs on your
-host machine, on port 8080, with URL path "/fuego".
+host machine, on port 8090, with URL path "/fuego".
 
 In your browser, you should see a screen similar to the following:
 

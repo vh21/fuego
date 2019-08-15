@@ -1,0 +1,145 @@
+# ==============================================================================
+# WARNING: this Dockerfile assumes that the container will be created with
+# several volume bind mounts (see docker-create-container.sh)
+# ==============================================================================
+# Usage:
+# host$ vi fuego-ro/conf/fuego.conf
+#    jenkins_enabled=0
+# host$ ./fuego-host-scripts/docker-build-image.sh fuego-nojenkins 8090 Dockerfile.nojenkins
+# host$ ./fuego-host-scripts/docker-create-container.sh fuego-nojenkins fuego-nojenkins-container
+# host$ ./fuego-host-scripts/docker-start-container.sh fuego-nojenkins-container
+# docker# ftc list-boards
+#   docker, bbb, ...
+# docker# ftc list-tests
+#   Functional.hello_world, ...
+# docker# ftc run-test -b docker -t Functional.hello_world
+#   log_compare: pattern 'SUCCESS' found 1 times (expected greater or equal than 1)
+
+FROM debian:stretch-slim
+MAINTAINER tim.bird@sony.com
+
+# ==============================================================================
+# Proxy variables
+# ==============================================================================
+
+ARG HTTP_PROXY
+ENV http_proxy ${HTTP_PROXY}
+ENV https_proxy ${HTTP_PROXY}
+
+# ==============================================================================
+# Prepare basic image
+# ==============================================================================
+
+ARG DEBIAN_FRONTEND=noninteractive
+
+WORKDIR /
+RUN echo deb http://deb.debian.org/debian stretch main non-free > /etc/apt/sources.list
+RUN echo deb http://security.debian.org/debian-security stretch/updates main >> /etc/apt/sources.list
+RUN if [ -n "$HTTP_PROXY" ]; then echo 'Acquire::http::proxy "'$HTTP_PROXY'";' > /etc/apt/apt.conf.d/80proxy; fi
+
+# Fuego python dependencies
+# - python-lxml: ftc, loggen
+# - python-simplejson: ftc
+# - python-yaml: ftc
+# - python-openpyxl: ftc (also LTP)
+# - python-requests: ftc (also fuego_release_test)
+# - python-reportlab: ftc
+# - python-parsedatetime: ftc
+# - python-pip: to install filelock, flake8
+# - filelock: parser
+RUN mkdir -p /usr/share/man/man1
+RUN apt-get update -q=2 && apt-get -q=2 -V --no-install-recommends install \
+	python-lxml python-simplejson python-yaml python-openpyxl \
+	python-requests python-reportlab python-parsedatetime \
+	python-pip python-setuptools python-wheel
+RUN pip install filelock
+
+# Fuego command dependencies
+RUN apt-get -q=2 -V --no-install-recommends install \
+	git sshpass openssh-client sudo net-tools wget curl lava-tool \
+	bash-completion iproute2
+
+# Default SDK for testing locally or on an x86 board
+RUN apt-get -q=2 -V --no-install-recommends install \
+	build-essential cmake bison flex automake libtool \
+	libelf-dev libssl-dev libsdl1.2-dev libcairo2-dev libxmu-dev \
+	libxmuu-dev libglib2.0-dev libaio-dev u-boot-tools pkg-config
+
+# Default test host dependencies
+# - iperf iperf3 netperf: used as servers on the host
+# - bzip2 bc: used for local tests by Functional.bzip2/bc
+# - python-matplotlib: Benchmark.iperf3 parser
+# - python-xmltodict: AGL tests
+# - flake8: Functional.fuego_lint
+# - netpipe-tcp - used by Benchmark.netpipe (provides the netpipe server)
+# - iputils-ping - for /bin/ping command, used by some tests
+# FIXTHIS: install dependencies dynamically on the tests that need them
+RUN apt-get -q=2 -V --no-install-recommends install \
+	iperf iperf3 netperf bzip2 bc python-matplotlib python-xmltodict \
+    netpipe-tcp iputils-ping
+RUN pip install flake8
+
+# miscelaneous packages:
+# python-serial - used by serio
+# diffstat and vim - used by Tim
+# time - useful for timing command duration
+RUN apt-get -q=2 -V --no-install-recommends install \
+    python-serial \
+    diffstat \
+    vim \
+    time
+
+# FIXTHIS: determine if these tools are really necessary
+# RUN apt-get -q=2 -V --no-install-recommends install \
+#	apt-utils python-paramiko \
+#	xmlstarlet rsync \
+#	inotify-tools gettext netpipe-tcp \
+#	at minicom lzop bsdmainutils \
+#	mc netcat openssh-server
+
+RUN /bin/bash -c 'echo "dash dash/sh boolean false" | debconf-set-selections ; dpkg-reconfigure dash'
+RUN if [ -n "$HTTP_PROXY" ]; then echo "use_proxy = on" >> /etc/wgetrc; fi
+RUN if [ -n "$HTTP_PROXY" ]; then echo -e "http_proxy=$HTTP_PROXY\nhttps_proxy=$HTTP_PROXY" >> /etc/environment; fi
+
+# ==============================================================================
+# get ttc script and helpers
+# ==============================================================================
+RUN git clone https://github.com/tbird20d/ttc.git /usr/local/src/ttc
+RUN /usr/local/src/ttc/install.sh /usr/local/bin
+RUN perl -p -i -e "s#config_dir = \"/etc\"#config_dir = \"/fuego-ro/conf\"#" /usr/local/bin/ttc
+
+# ==============================================================================
+# Serial Config
+# ==============================================================================
+
+RUN /bin/bash -c 'git clone https://github.com/frowand/serio.git /usr/local/src/serio ;  cp /usr/local/src/serio/serio /usr/local/bin/ ; ln -s /usr/local/bin/serio /usr/local/bin/sercp ; ln -s /usr/local/bin/serio /usr/local/bin/sersh'
+
+RUN /bin/bash -c 'git clone https://github.com/tbird20d/serlogin.git /usr/local/src/serlogin ;  cp /usr/local/src/serlogin/serlogin /usr/local/bin'
+
+# ==============================================================================
+# fserver
+# ==============================================================================
+
+RUN /bin/bash -c 'git clone https://github.com/tbird20d/fserver.git /usr/local/lib/fserver ; ln -s /usr/local/lib/fserver/start_local_bg_server /usr/local/bin/start_local_bg_server'
+
+# ==============================================================================
+# ftc post installation
+# ==============================================================================
+
+RUN ln -s /fuego-core/scripts/ftc /usr/local/bin/
+COPY fuego-core/scripts/ftc_completion.sh /etc/bash_completion.d/ftc
+RUN echo ". /etc/bash_completion" >> /root/.bashrc
+
+# ==============================================================================
+# Lava
+# ==============================================================================
+
+RUN ln -s /fuego-ro/scripts/fuego-lava-target-setup /usr/local/bin
+RUN ln -s /fuego-ro/scripts/fuego-lava-target-teardown /usr/local/bin
+
+# ==============================================================================
+# Setup startup command
+# ==============================================================================
+
+# FIXTHIS: when running multiple Fuego containers netperf will complain because the port is taken
+ENTRYPOINT service netperf start && iperf3 -V -s -D -f M && /bin/bash

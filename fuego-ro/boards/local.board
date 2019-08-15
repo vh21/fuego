@@ -1,0 +1,16 @@
+inherit "base-board"
+include "base-params"
+
+IPADDR="127.0.0.1"
+SRV_IP="127.0.0.1"
+#LOGIN="root"
+#PASSWORD="root"
+#SSH_KEY="path/to/id_rsa"
+BOARD_TESTDIR="$FUEGO_RW/tests"
+TOOLCHAIN="x86_64"
+TRANSPORT="local"
+ARCHITECTURE="x86_64"
+DISTRIB="nosyslogd.dist"
+
+ARCH_TIMER_NAME="Local timer"
+ARCH_TIMER_ID="LOC"

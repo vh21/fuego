@@ -7,12 +7,6 @@
 #
 # this script should be sourced by ${FUEGO_RO}/toolchains/tools.sh
 
-
-# the Yocto project environment setup script changes PATH so that python uses
-# libs from sysroot, which is not what we want, so save the original path
-# and use it later
-ORIG_PATH=$PATH
-
 PREFIX=aarch64-linux-gnu
 SDKROOT=/usr/$PREFIX
 export_tools
