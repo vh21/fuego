@@ -45,13 +45,14 @@ RUN if [ -n "$HTTP_PROXY" ]; then echo 'Acquire::http::proxy "'$HTTP_PROXY'";' >
 # - python-requests: ftc (also fuego_release_test)
 # - python-reportlab: ftc
 # - python-parsedatetime: ftc
+# - python-pexpect: ssh_exec (part of ttc)
 # - python-pip: to install filelock, flake8
 # - filelock: parser
 RUN mkdir -p /usr/share/man/man1
 RUN apt-get update -q=2 && apt-get -q=2 -V --no-install-recommends install \
 	python-lxml python-simplejson python-yaml python-openpyxl \
 	python-requests python-reportlab python-parsedatetime \
-	python-pip python-setuptools python-wheel
+	python-pexpect python-pip python-setuptools python-wheel
 RUN pip install filelock
 
 # Fuego command dependencies
