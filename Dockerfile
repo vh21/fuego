@@ -53,7 +53,7 @@ RUN apt-get -q=2 -V --no-install-recommends install \
 RUN apt-get -q=2 -V --no-install-recommends install \
 	build-essential cmake bison flex automake libtool \
 	libelf-dev libssl-dev libsdl1.2-dev libcairo2-dev libxmu-dev \
-	libxmuu-dev libglib2.0-dev libaio-dev u-boot-tools pkg-config
+	libxmuu-dev libglib2.0-dev libaio-dev pkg-config rsync u-boot-tools
 
 # Default test host dependencies
 # - iperf iperf3 netperf: used as servers on the host
