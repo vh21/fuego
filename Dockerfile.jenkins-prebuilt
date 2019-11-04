@@ -100,29 +100,16 @@ ARG user=jenkins
 ARG group=jenkins
 ARG uid=1000
 ARG gid=${uid}
-ARG JENKINS_INFO=8090
-ARG JENKINS_VERSION=2.164.2
-ARG JENKINS_SHA=4536f43f61b1fca6c58bd91040fa09304eea96ab
-ARG JENKINS_URL=https://pkg.jenkins.io/debian-stable/binary/jenkins_${JENKINS_VERSION}_all.deb
-ARG JENKINS_UC=https://updates.jenkins.io
-ARG REF=/var/lib/jenkins/plugins
-ENV JENKINS_HOME=/var/lib/jenkins
-ENV JENKINS_PORT=$JENKINS_INFO
+ARG JENKINS_INFO=http://localhost:8080
+ENV JENKINS_URL=$JENKINS_INFO
 
 # Jenkins dependencies
 RUN apt-get -q=2 -V --no-install-recommends install \
 	default-jdk daemon psmisc adduser procps unzip
 RUN pip install python-jenkins==1.4.0
 
-RUN echo -e "JENKINS_PORT=$JENKINS_PORT" >> /etc/environment
 RUN getent group ${gid} >/dev/null || groupadd -g ${gid} ${group}
-RUN useradd -l -m -d "${JENKINS_HOME}" -u ${uid} -g ${gid} -G sudo -s /bin/bash ${user}
-RUN wget -nv ${JENKINS_URL}
-RUN echo "${JENKINS_SHA} jenkins_${JENKINS_VERSION}_all.deb" | sha1sum -c -
-# allow Jenkins to start and install plugins, as part of dpkg installation
-RUN printf "#!/bin/sh\nexit 0" > /usr/sbin/policy-rc.d
-RUN dpkg -i jenkins_${JENKINS_VERSION}_all.deb
-RUN rm jenkins_${JENKINS_VERSION}_all.deb
+RUN useradd -l -m -u ${uid} -g ${gid} -G sudo -s /bin/bash ${user}
 
 # ==============================================================================
 # get ttc script and helpers
@@ -158,21 +145,6 @@ RUN /bin/bash -c 'git clone https://github.com/tbird20d/fserver.git /usr/local/l
 # Jenkins post installation
 # ==============================================================================
 
-RUN source /etc/default/jenkins && \
-	JENKINS_ARGS="$JENKINS_ARGS --prefix=/fuego" && \
-	sed -i -e "s#JENKINS_ARGS.*#JENKINS_ARGS\=\"${JENKINS_ARGS}\"#g" /etc/default/jenkins
-
-RUN source /etc/default/jenkins && \
-	JAVA_ARGS="$JAVA_ARGS -Djenkins.install.runSetupWizard=false -Dhudson.model.DirectoryBrowserSupport.allowSymlinkEscape=true" && \
-	if [ -n "$HTTP_PROXY" ]; then \
-		PROXYSERVER=$(echo $http_proxy | sed -E 's/^http://' | sed -E 's/\///g' | sed -E 's/(.*):(.*)/\1/') && \
-		PROXYPORT=$(echo $http_proxy | sed -E 's/^http://' | sed -E 's/\///g' | sed -E 's/(.*):(.*)/\2/') && \
-		JAVA_ARGS="$JAVA_ARGS -Dhttp.proxyHost="${PROXYSERVER}" -Dhttp.proxyPort="${PROXYPORT}" -Dhttps.proxyHost="${PROXYSERVER}" -Dhttps.proxyPort="${PROXYPORT}; \
-	fi && \
-	sed -i -e "s#^JAVA_ARGS.*#JAVA_ARGS\=\"${JAVA_ARGS}\"#g" /etc/default/jenkins;
-
-RUN sed -i -e "s#8080#$JENKINS_PORT#g" /etc/default/jenkins
-
 COPY frontend-install/plugins/flot-plotter-plugin/flot.hpi /tmp
 
 COPY frontend-install/install-plugins.sh \
@@ -181,50 +153,9 @@ COPY frontend-install/install-plugins.sh \
     /usr/local/bin/
 
 # install flot.hpi manually from local file
-RUN service jenkins start && \
-	sleep 30 && \
-    sudo -u jenkins java -jar /var/cache/jenkins/war/WEB-INF/jenkins-cli.jar -remoting -s http://localhost:$JENKINS_PORT/fuego install-plugin /tmp/flot.hpi && \
-    sleep 10 && \
-    service jenkins stop
-
-# install other plugins from Jenkins update center
-# NOTE: not sure all of these are needed, but keep list
-# compatible with 1.2.1 release for now
-RUN /usr/local/bin/install-plugins.sh \
-    ant:1.9 \
-    antisamy-markup-formatter:1.5 \
-    bouncycastle-api:2.17 \
-    command-launcher:1.3 \
-    description-setter:1.10 \
-    display-url-api:2.3.1 \
-    external-monitor-job:1.7 \
-    greenballs:1.15 \
-    icon-shim:2.0.3 \
-    javadoc:1.5 \
-    jdk-tool:1.2 \
-    junit:1.27 \
-    ldap:1.20 \
-    mailer:1.23 \
-    matrix-auth:2.3 \
-    matrix-project:1.14 \
-    pam-auth:1.5 \
-    pegdown-formatter:1.3 \
-    structs:1.19 \
-    windows-slaves:1.4
-
-# make the mod.js symlink well after flot is installed
-RUN service jenkins start && sleep 30 && \
-    rm $JENKINS_HOME/plugins/flot/flot/mod.js && \
-    ln -s /fuego-core/scripts/mod.js $JENKINS_HOME/plugins/flot/flot/mod.js
-
-RUN ln -s /fuego-rw/logs $JENKINS_HOME/userContent/fuego.logs
-COPY docs/fuego-docs.pdf $JENKINS_HOME/userContent/docs/fuego-docs.pdf
-
-COPY frontend-install/config.xml $JENKINS_HOME/config.xml
-COPY frontend-install/jenkins.model.JenkinsLocationConfiguration.xml $JENKINS_HOME/jenkins.model.JenkinsLocationConfiguration.xml
-RUN sed -i -e "s#8080#$JENKINS_PORT#g" $JENKINS_HOME/jenkins.model.JenkinsLocationConfiguration.xml
-
-RUN chown -R jenkins:jenkins $JENKINS_HOME/
+ENV JENKINS_CLI=/var/cache/jenkins/war/WEB-INF/jenkins-cli.jar
+RUN mkdir -p /var/cache/jenkins/war/WEB-INF && \
+    wget -O $JENKINS_CLI $JENKINS_URL/jnlpJars/jenkins-cli.jar
 
 # ==============================================================================
 # ftc post installation
@@ -247,4 +178,4 @@ RUN ln -s /fuego-ro/scripts/fuego-lava-target-teardown /usr/local/bin
 
 # FIXTHIS: when running multiple Fuego containers, or if the host is already
 #  running the netperf server, netperf will complain because the port is taken
-ENTRYPOINT service jenkins start && service netperf start && iperf3 -V -s -D -f M && /bin/bash
+ENTRYPOINT service netperf start && iperf3 -V -s -D -f M && /bin/bash

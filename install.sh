@@ -7,8 +7,9 @@
 usage() {
     exit_code="$1"
     cat <<HERE
-Usage: install.sh [--help] [--priv] [--no-cache] [--nojenkins] [<image_name>] [<port>]
-
+Usage: install.sh [--help] [--priv] [--no-cache]
+                  [--jenkins <no|install|prebuilt>] [--jenkins-url <url>]
+                  [<image_name>]
 Create the docker image and container with the Fuego test distribution.
 If no <image_name> is provided, the image will be named 'fuego'.
 The container name will be: '<image-name>-container'.
@@ -21,7 +22,14 @@ options:
           test infrastructure that requires access to serial and usb
           devices.
  --no-cache Don't use cache when creating the docker image
- --nojenkins Creates a docker image and container without Jenkins
+ --jenkins <install|prebuilt|no>
+            install: Creates a docker image and container with Jenkins
+           prebuilt: Creates a docker image and container with externally
+                     prebuilt Jenkins
+                 no: Creates a docker image and container without Jenkins
+ --jenkins-url <url>
+           enkins url when select "--jenkins=install|prebuilt". Only port is
+           used in 'install' case.
 HERE
     exit $exit_code
 }
@@ -35,6 +43,8 @@ fi
 priv=0
 NOCACHE=""
 dockerfile="Dockerfile"
+JENKINS="install"
+JENKINS_URL="http://localhost:8090/"
 
 POSITIONAL=()
 while [[ $# -gt 0 ]] ; do
@@ -47,8 +57,15 @@ while [[ $# -gt 0 ]] ; do
       NOCACHE="--no-cache"
       shift
       ;;
-    --nojenkins)
-      dockerfile="Dockerfile.nojenkins"
+    --jenkins)
+      JENKINS="$2"
+      shift 2
+      ;;
+    --jenkins-url)
+      JENKINS_URL="$2"
+      shift 2
+      ;;
+    --)
       shift
       ;;
     *)
@@ -56,11 +73,18 @@ while [[ $# -gt 0 ]] ; do
       shift
   esac
 done
+
+jenkins_info=`echo $JENKINS_URL|awk -F '[/:]' '{print $5}'`
+if [ "$JENKINS" == "no" ]; then
+  dockerfile="Dockerfile.nojenkins"
+elif [[ "$JENKINS" == "prebuilt" ]]; then
+  dockerfile="Dockerfile.jenkins-prebuilt"
+  jenkins_info=${JENKINS_URL:-http://localhost:8090}
+fi
+
 set -- "${POSITIONAL[@]}" # restore positional arguments
 
 image_name=${1:-fuego}
-jenkins_port=${2:-8090}
-
 container_name="${image_name}-container"
 
 # get fuego-core repository, if not already present
@@ -79,7 +103,7 @@ fi
 
 set -e
 
-source fuego-host-scripts/docker-build-image.sh $NOCACHE ${image_name} ${jenkins_port} ${dockerfile}
+source fuego-host-scripts/docker-build-image.sh $NOCACHE ${image_name} ${jenkins_info} ${dockerfile}
 if [ "$priv" == "0" ]; then
     fuego-host-scripts/docker-create-container.sh ${image_name} ${container_name}
 else

@@ -1,6 +1,6 @@
 #!/bin/bash
 # $1 - name for the docker image (default: fuego)
-# $2 - port for jenkins (default: 8090)
+# $2 - port or url for jenkins (default: 8090)
 # $3 - Dockerfile or Dockerfile.nojenkins
 #
 # Example:
@@ -12,7 +12,7 @@ if [ "$1" = "--no-cache" ]; then
 fi
 
 DOCKERIMAGE=${1:-fuego}
-JENKINS_PORT=${2:-8090}
+JENKINS_INFO=${2:-8090}
 DOCKERFILE=${3:-Dockerfile}
 
 if [ "$(id -u)" == "0" ]; then
@@ -23,8 +23,8 @@ else
 	JENKINS_GID=$(id -g $USER)
 fi
 
-echo "Using Port $JENKINS_PORT"
+echo "Using target $JENKINS_INFO"
 
 sudo docker build ${NO_CACHE} -t ${DOCKERIMAGE} --build-arg HTTP_PROXY=$http_proxy \
 	--build-arg uid=$JENKINS_UID --build-arg gid=$JENKINS_GID \
-	--build-arg JENKINS_PORT=$JENKINS_PORT -f $DOCKERFILE .
+	--build-arg JENKINS_INFO=$JENKINS_INFO -f $DOCKERFILE .
